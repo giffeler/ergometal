@@ -1,0 +1,57 @@
+name: MetalErgoMiner
+options:
+  bundleIdPrefix: dev.ergometal
+  deploymentTarget:
+    macOS: "15.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    CODE_SIGNING_ALLOWED: NO
+targets:
+  MetalErgoCore:
+    type: framework
+    platform: macOS
+    sources:
+      - path: Sources/MetalErgoCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ergometal.core
+        DEFINES_MODULE: YES
+        GENERATE_INFOPLIST_FILE: YES
+  ergometal:
+    type: tool
+    platform: macOS
+    sources:
+      - path: Sources/ergometal
+    dependencies:
+      - target: MetalErgoCore
+    settings:
+      base:
+        PRODUCT_NAME: ergometal
+        GENERATE_INFOPLIST_FILE: YES
+        LD_RUNPATH_SEARCH_PATHS: "$(inherited) @loader_path"
+  MetalErgoCoreTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/MetalErgoCoreTests
+    dependencies:
+      - target: MetalErgoCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ergometal.tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  MetalErgoMiner:
+    build:
+      targets:
+        ergometal: all
+        MetalErgoCoreTests: [test]
+    test:
+      targets:
+        - MetalErgoCoreTests
+    run:
+      config: Debug
+      executable: ergometal

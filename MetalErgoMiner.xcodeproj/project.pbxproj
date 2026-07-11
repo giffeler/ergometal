@@ -1,0 +1,583 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0F07CEA0CD741C4147D25204 /* ConsensusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */; };
+		15A0CE51820EF7EC92404956 /* StatisticsHTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AFFD8D84F87585AD3EC95B /* StatisticsHTTPServer.swift */; };
+		1964BD9B8847BEBEDE6D7702 /* ErgoMetalCLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF64D7B5D0E1B535292931E6 /* ErgoMetalCLI.swift */; };
+		2BB717703ACFF0C0A5333634 /* Autolykos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B25F9AC969607EED7D53F37 /* Autolykos.swift */; };
+		36F410B32194B8261E8FB291 /* StratumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C628D393584693C84CD61F70 /* StratumTests.swift */; };
+		52510C256BB69AAE6C6DAAE2 /* ErgoAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525F8B8BCE65C57ECA4F3C77 /* ErgoAddress.swift */; };
+		643FB5AECD85A01A46D9DC5C /* MetalErgoCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */; };
+		65839A8A5DE283CC3F0B21AD /* Blake2b.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F973D0107EE834C7DD1908 /* Blake2b.swift */; };
+		73B6D26E7485A15B717F4FB0 /* MetalErgoCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9810CA39ECEB7638CD118B21 /* UInt256.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3B76913F191F39DD6911B2 /* UInt256.swift */; };
+		99D287999C8E48F4218A81F2 /* Stratum.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD01266E7B9A5D18A424C76E /* Stratum.swift */; };
+		A17FBE53F5CE44520F8E877D /* StatisticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */; };
+		AD834C0F218B93356C32188F /* MetalSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6094919297E34AE8C8B57313 /* MetalSolver.swift */; };
+		BF0819C0CF3E86A15361A9F8 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303DDB16A73D46898E0F7F3C /* Statistics.swift */; };
+		C73B7C4D497CC39331393324 /* Arguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FAFCFE6D8DE609C7FE5988 /* Arguments.swift */; };
+		CA364D1FCBDC347157A59159 /* AutolykosKernels.metal in Sources */ = {isa = PBXBuildFile; fileRef = C832EFD7220872A528987BC7 /* AutolykosKernels.metal */; };
+		E5AF378BF5223C7C5238EB73 /* MiningCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F365F059EFEA3210BEA5702 /* MiningCoordinator.swift */; };
+		F937331C02FFE117545C0086 /* MetalErgoCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3DFC62C46B485CFF59360AA3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB8A78D53A7667338D597271 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17BAA0F04C70C0A7F9C880F8;
+			remoteInfo = MetalErgoCore;
+		};
+		B556608D956F35A8BF2BD2A7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB8A78D53A7667338D597271 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17BAA0F04C70C0A7F9C880F8;
+			remoteInfo = MetalErgoCore;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3B57DCADD76CBB38CC835E3B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				73B6D26E7485A15B717F4FB0 /* MetalErgoCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		21AFFD8D84F87585AD3EC95B /* StatisticsHTTPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsHTTPServer.swift; sourceTree = "<group>"; };
+		29F973D0107EE834C7DD1908 /* Blake2b.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blake2b.swift; sourceTree = "<group>"; };
+		2F365F059EFEA3210BEA5702 /* MiningCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiningCoordinator.swift; sourceTree = "<group>"; };
+		303DDB16A73D46898E0F7F3C /* Statistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Statistics.swift; sourceTree = "<group>"; };
+		35FAFCFE6D8DE609C7FE5988 /* Arguments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arguments.swift; sourceTree = "<group>"; };
+		525F8B8BCE65C57ECA4F3C77 /* ErgoAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgoAddress.swift; sourceTree = "<group>"; };
+		6094919297E34AE8C8B57313 /* MetalSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalSolver.swift; sourceTree = "<group>"; };
+		7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsensusTests.swift; sourceTree = "<group>"; };
+		8D4C6F52AE82BB55EA3B8DB8 /* MetalErgoCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetalErgoCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MetalErgoCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9B25F9AC969607EED7D53F37 /* Autolykos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autolykos.swift; sourceTree = "<group>"; };
+		B68AD6566AEDE4AE53B13B7F /* ergometal */ = {isa = PBXFileReference; includeInIndex = 0; path = ergometal; sourceTree = BUILT_PRODUCTS_DIR; };
+		C628D393584693C84CD61F70 /* StratumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StratumTests.swift; sourceTree = "<group>"; };
+		C832EFD7220872A528987BC7 /* AutolykosKernels.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AutolykosKernels.metal; sourceTree = "<group>"; };
+		CD01266E7B9A5D18A424C76E /* Stratum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stratum.swift; sourceTree = "<group>"; };
+		CF64D7B5D0E1B535292931E6 /* ErgoMetalCLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgoMetalCLI.swift; sourceTree = "<group>"; };
+		E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTests.swift; sourceTree = "<group>"; };
+		FD3B76913F191F39DD6911B2 /* UInt256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt256.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		179F20D091C5173E94A8F174 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F937331C02FFE117545C0086 /* MetalErgoCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9D2BDCE0E503CA4E85707BF8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				643FB5AECD85A01A46D9DC5C /* MetalErgoCore.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		23F05F440F2A9A73E29FE8D2 /* MetalErgoCoreTests */ = {
+			isa = PBXGroup;
+			children = (
+				7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */,
+				E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */,
+				C628D393584693C84CD61F70 /* StratumTests.swift */,
+			);
+			path = MetalErgoCoreTests;
+			sourceTree = "<group>";
+		};
+		40FD672B75B7FD5408FC8EAB = {
+			isa = PBXGroup;
+			children = (
+				67D227A6B6078DFBF3566476 /* Sources */,
+				E9CD3E987BC862FF5851199A /* Tests */,
+				EB9D814AAF723BB38AAFB76E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		42D6C4033CDD942B932BCA4E /* MetalErgoCore */ = {
+			isa = PBXGroup;
+			children = (
+				9B25F9AC969607EED7D53F37 /* Autolykos.swift */,
+				C832EFD7220872A528987BC7 /* AutolykosKernels.metal */,
+				29F973D0107EE834C7DD1908 /* Blake2b.swift */,
+				525F8B8BCE65C57ECA4F3C77 /* ErgoAddress.swift */,
+				6094919297E34AE8C8B57313 /* MetalSolver.swift */,
+				303DDB16A73D46898E0F7F3C /* Statistics.swift */,
+				21AFFD8D84F87585AD3EC95B /* StatisticsHTTPServer.swift */,
+				CD01266E7B9A5D18A424C76E /* Stratum.swift */,
+				FD3B76913F191F39DD6911B2 /* UInt256.swift */,
+			);
+			path = MetalErgoCore;
+			sourceTree = "<group>";
+		};
+		67D227A6B6078DFBF3566476 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C520042DDCBA0E58AAB7C638 /* ergometal */,
+				42D6C4033CDD942B932BCA4E /* MetalErgoCore */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		C520042DDCBA0E58AAB7C638 /* ergometal */ = {
+			isa = PBXGroup;
+			children = (
+				35FAFCFE6D8DE609C7FE5988 /* Arguments.swift */,
+				CF64D7B5D0E1B535292931E6 /* ErgoMetalCLI.swift */,
+				2F365F059EFEA3210BEA5702 /* MiningCoordinator.swift */,
+			);
+			path = ergometal;
+			sourceTree = "<group>";
+		};
+		E9CD3E987BC862FF5851199A /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				23F05F440F2A9A73E29FE8D2 /* MetalErgoCoreTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		EB9D814AAF723BB38AAFB76E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B68AD6566AEDE4AE53B13B7F /* ergometal */,
+				97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */,
+				8D4C6F52AE82BB55EA3B8DB8 /* MetalErgoCoreTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		17BAA0F04C70C0A7F9C880F8 /* MetalErgoCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 14F412B41CF58F2E9D2AA4C3 /* Build configuration list for PBXNativeTarget "MetalErgoCore" */;
+			buildPhases = (
+				45D9B77863E3B0DB0B2E7398 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MetalErgoCore;
+			packageProductDependencies = (
+			);
+			productName = MetalErgoCore;
+			productReference = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		7BB70E918F1B2817D22144AC /* MetalErgoCoreTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D5604AA651D67EB7F19439D /* Build configuration list for PBXNativeTarget "MetalErgoCoreTests" */;
+			buildPhases = (
+				2528B1F9CE480AA1E8F6AB92 /* Sources */,
+				9D2BDCE0E503CA4E85707BF8 /* Frameworks */,
+				3B57DCADD76CBB38CC835E3B /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D177D8DABCF1C002CB935804 /* PBXTargetDependency */,
+			);
+			name = MetalErgoCoreTests;
+			packageProductDependencies = (
+			);
+			productName = MetalErgoCoreTests;
+			productReference = 8D4C6F52AE82BB55EA3B8DB8 /* MetalErgoCoreTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		BA9C0BE1C53ABE3F72F9DDDB /* ergometal */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 97B4022CF3EB3B359ECFB789 /* Build configuration list for PBXNativeTarget "ergometal" */;
+			buildPhases = (
+				26DC3AEBED6C184068277F52 /* Sources */,
+				179F20D091C5173E94A8F174 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				B1E290D11F880E5C01C1B730 /* PBXTargetDependency */,
+			);
+			name = ergometal;
+			packageProductDependencies = (
+			);
+			productName = ergometal;
+			productReference = B68AD6566AEDE4AE53B13B7F /* ergometal */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DB8A78D53A7667338D597271 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = DD396C2AE99D3B13396932B5 /* Build configuration list for PBXProject "MetalErgoMiner" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 40FD672B75B7FD5408FC8EAB;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EB9D814AAF723BB38AAFB76E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				17BAA0F04C70C0A7F9C880F8 /* MetalErgoCore */,
+				7BB70E918F1B2817D22144AC /* MetalErgoCoreTests */,
+				BA9C0BE1C53ABE3F72F9DDDB /* ergometal */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2528B1F9CE480AA1E8F6AB92 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0F07CEA0CD741C4147D25204 /* ConsensusTests.swift in Sources */,
+				A17FBE53F5CE44520F8E877D /* StatisticsTests.swift in Sources */,
+				36F410B32194B8261E8FB291 /* StratumTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		26DC3AEBED6C184068277F52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C73B7C4D497CC39331393324 /* Arguments.swift in Sources */,
+				1964BD9B8847BEBEDE6D7702 /* ErgoMetalCLI.swift in Sources */,
+				E5AF378BF5223C7C5238EB73 /* MiningCoordinator.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45D9B77863E3B0DB0B2E7398 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2BB717703ACFF0C0A5333634 /* Autolykos.swift in Sources */,
+				CA364D1FCBDC347157A59159 /* AutolykosKernels.metal in Sources */,
+				65839A8A5DE283CC3F0B21AD /* Blake2b.swift in Sources */,
+				52510C256BB69AAE6C6DAAE2 /* ErgoAddress.swift in Sources */,
+				AD834C0F218B93356C32188F /* MetalSolver.swift in Sources */,
+				BF0819C0CF3E86A15361A9F8 /* Statistics.swift in Sources */,
+				15A0CE51820EF7EC92404956 /* StatisticsHTTPServer.swift in Sources */,
+				99D287999C8E48F4218A81F2 /* Stratum.swift in Sources */,
+				9810CA39ECEB7638CD118B21 /* UInt256.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		B1E290D11F880E5C01C1B730 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17BAA0F04C70C0A7F9C880F8 /* MetalErgoCore */;
+			targetProxy = B556608D956F35A8BF2BD2A7 /* PBXContainerItemProxy */;
+		};
+		D177D8DABCF1C002CB935804 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17BAA0F04C70C0A7F9C880F8 /* MetalErgoCore */;
+			targetProxy = 3DFC62C46B485CFF59360AA3 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		0C4A19780052062C21DF91B2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.ergometal;
+				PRODUCT_NAME = ergometal;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2C126490993F756706A3DBA4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.ergometal;
+				PRODUCT_NAME = ergometal;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		6EAA79E1E19D924C3F2D010D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		78A1B866EFC36E972332BD70 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.core;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		AD3D5F6D5DD94C7B8EB7DAD8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.core;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		B9E22D58A19F61A6B9C31B56 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		BF5AB6FFC1EF65E88E047A28 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.tests;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		F71D84F30022CC7EF1EFEB3A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.tests;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14F412B41CF58F2E9D2AA4C3 /* Build configuration list for PBXNativeTarget "MetalErgoCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AD3D5F6D5DD94C7B8EB7DAD8 /* Debug */,
+				78A1B866EFC36E972332BD70 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7D5604AA651D67EB7F19439D /* Build configuration list for PBXNativeTarget "MetalErgoCoreTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F71D84F30022CC7EF1EFEB3A /* Debug */,
+				BF5AB6FFC1EF65E88E047A28 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		97B4022CF3EB3B359ECFB789 /* Build configuration list for PBXNativeTarget "ergometal" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0C4A19780052062C21DF91B2 /* Debug */,
+				2C126490993F756706A3DBA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DD396C2AE99D3B13396932B5 /* Build configuration list for PBXProject "MetalErgoMiner" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EAA79E1E19D924C3F2D010D /* Debug */,
+				B9E22D58A19F61A6B9C31B56 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = DB8A78D53A7667338D597271 /* Project object */;
+}

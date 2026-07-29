@@ -3,12 +3,17 @@ import Foundation
 public enum AutolykosError: Error, LocalizedError {
     case invalidMessageLength(Int)
     case invalidNonceLength(Int)
+    case invalidHeight(Int)
+    case invalidDatasetIndex(Int)
     case invalidTableSize(Int)
 
     public var errorDescription: String? {
         switch self {
         case .invalidMessageLength(let n): return "Autolykos message must contain 32 bytes, got \(n)"
         case .invalidNonceLength(let n): return "Autolykos nonce must contain 8 bytes, got \(n)"
+        case .invalidHeight(let n): return "Autolykos height must fit an unsigned 32-bit value, got \(n)"
+        case .invalidDatasetIndex(let n):
+            return "Autolykos dataset index must fit an unsigned 32-bit value, got \(n)"
         case .invalidTableSize(let n): return "Autolykos table size must be positive, got \(n)"
         }
     }
@@ -45,8 +50,14 @@ public enum AutolykosV2 {
     /// Constant M = 1024 consecutive big-endian UInt64 values.
     public static let constantM: [UInt8] = (0..<1024).flatMap { be64(UInt64($0)) }
 
-    public static func datasetElement(index: Int, height: Int) -> UInt256 {
-        var digest = Blake2b256.hash(be32(UInt32(index)) + be32(UInt32(height)) + constantM)
+    public static func datasetElement(index: Int, height: Int) throws -> UInt256 {
+        guard let encodedIndex = UInt32(exactly: index) else {
+            throw AutolykosError.invalidDatasetIndex(index)
+        }
+        guard let encodedHeight = UInt32(exactly: height) else {
+            throw AutolykosError.invalidHeight(height)
+        }
+        var digest = Blake2b256.hash(be32(encodedIndex) + be32(encodedHeight) + constantM)
         digest[0] = 0 // consensus uses drop(1), represented as a zero-prefixed UInt256
         return UInt256(bigEndian: digest)
     }
@@ -65,17 +76,42 @@ public enum AutolykosV2 {
     public static func hit(message: [UInt8], nonce: [UInt8], height: Int, tableSize: Int? = nil) throws -> UInt256 {
         guard message.count == 32 else { throw AutolykosError.invalidMessageLength(message.count) }
         guard nonce.count == 8 else { throw AutolykosError.invalidNonceLength(nonce.count) }
+        guard UInt32(exactly: height) != nil else { throw AutolykosError.invalidHeight(height) }
         let n = tableSize ?? calcN(height: height)
         guard n > 0 else { throw AutolykosError.invalidTableSize(n) }
 
         let messageNonceHash = Blake2b256.hash(message + nonce)
         let tail = messageNonceHash.suffix(8).reduce(UInt64(0)) { ($0 << 8) | UInt64($1) }
         let i = Int(tail % UInt64(n))
-        let f = datasetElement(index: i, height: height).bigEndianBytes.dropFirst()
+        let f = try datasetElement(index: i, height: height).bigEndianBytes.dropFirst()
         let js = try indexes(seed: Array(f) + message + nonce, tableSize: n)
 
         var sum = UInt256.zero
-        for j in js { sum.add(datasetElement(index: j, height: height)) }
+        for j in js { sum.add(try datasetElement(index: j, height: height)) }
         return UInt256(bigEndian: Blake2b256.hash(sum.bigEndianBytes))
+    }
+}
+
+/// Helpers for traversing the variable part of an eight-byte Stratum nonce
+/// without overflowing at the end of the UInt64 range.
+public enum NonceSpace {
+    public static func maximumOffset(variableBytes: Int) -> UInt64? {
+        guard (0...8).contains(variableBytes) else { return nil }
+        return variableBytes == 8 ? .max : (UInt64(1) << UInt64(variableBytes * 8)) - 1
+    }
+
+    public static func batchSize(offset: UInt64, maximumOffset: UInt64, requested: Int) -> Int {
+        guard requested > 0, offset <= maximumOffset else { return 0 }
+        let remainingAfterFirst = maximumOffset - offset
+        let requestedAfterFirst = UInt64(requested - 1)
+        return remainingAfterFirst >= requestedAfterFirst ? requested : Int(remainingAfterFirst) + 1
+    }
+
+    /// Returns the next offset, or nil after the inclusive maximum was consumed.
+    public static func advance(offset: UInt64, count: Int, maximumOffset: UInt64) -> UInt64? {
+        guard count > 0 else { return nil }
+        let (next, overflow) = offset.addingReportingOverflow(UInt64(count))
+        guard !overflow, next <= maximumOffset else { return nil }
+        return next
     }
 }

@@ -18,11 +18,37 @@ final class StratumTests: XCTestCase {
         XCTAssertEqual(job.message, [UInt8](repeating: 0x11, count: 32))
         XCTAssertEqual(job.target, UInt256(encoded: target))
         XCTAssertTrue(job.cleanJobs)
+
+        let livePoolParams: [Any] = [
+            "3eb", 1_839_512, message, "", "", "00000002",
+            "6634674375215649981044791689095340972727658017446627184440307089471", "", false
+        ]
+        let livePoolJob = try ErgoStratumClient.decodeJob(
+            livePoolParams, generation: 8, extraNoncePrefix: extra.prefix,
+            extraNonce2Size: extra.extraNonce2Size)
+        XCTAssertEqual(livePoolJob.version, 2)
+        XCTAssertEqual(livePoolJob.height, 1_839_512)
     }
 
     func testRejectsMalformedExtranonceAndJob() {
         XCTAssertThrowsError(try ErgoStratumClient.decodeSubscription([[], "abcd", 5]))
+        XCTAssertThrowsError(try ErgoStratumClient.decodeSubscription(
+            [[], String(repeating: "aa", count: 9), -1]))
         XCTAssertThrowsError(try ErgoStratumClient.decodeJob([], generation: 1,
             extraNoncePrefix: [], extraNonce2Size: 8))
+
+        let message = String(repeating: "11", count: 32)
+        XCTAssertThrowsError(try ErgoStratumClient.decodeJob(
+            ["job", -1, message, "", "", 2, "1", "", true],
+            generation: 1, extraNoncePrefix: [], extraNonce2Size: 8))
+        XCTAssertThrowsError(try ErgoStratumClient.decodeJob(
+            ["job", 1_500_000, message, "", "", 2, "0", "", true],
+            generation: 1, extraNoncePrefix: [], extraNonce2Size: 8))
+        XCTAssertThrowsError(try ErgoStratumClient.decodeJob(
+            ["job", 1_500_000, message, "", "", 2, "1", "", true],
+            generation: 1, extraNoncePrefix: [0xaa], extraNonce2Size: 8))
+        XCTAssertThrowsError(try ErgoStratumClient.decodeJob(
+            ["job", 1_500_000, message, "", "", 1, "1", "", true],
+            generation: 1, extraNoncePrefix: [], extraNonce2Size: 8))
     }
 }

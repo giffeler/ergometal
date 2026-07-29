@@ -39,8 +39,15 @@ public struct MinerSnapshot: Codable, Sendable {
     public var nonces: UInt64
     public var hashrate: Double
     public var averageHashrate: Double
+    public var effectiveHashrate: Double
     public var datasetBytes: UInt64
     public var datasetBuildSeconds: Double
+    public var datasetActivationSeconds: Double
+    public var datasetSource: DatasetBuildSource?
+    public var prefetchHeight: Int?
+    public var prefetchProgress: Double
+    public var prefetchBuildSeconds: Double?
+    public var prefetchError: String?
     public var gpuSeconds: Double
     public var searchSeconds: Double
     public var reconnects: Int
@@ -59,7 +66,11 @@ public final class StatisticsStore: @unchecked Sendable {
         value = MinerSnapshot(schemaVersion: 1, sessionID: UUID(), startedAt: now, sampledAt: now,
             mode: mode, state: .starting, device: device, profile: profile, poolHost: nil,
             poolConnected: false, job: JobStatistics(), nonces: 0, hashrate: 0,
-            averageHashrate: 0, datasetBytes: 0, datasetBuildSeconds: 0, gpuSeconds: 0, searchSeconds: 0,
+            averageHashrate: 0, effectiveHashrate: 0, datasetBytes: 0,
+            datasetBuildSeconds: 0, datasetActivationSeconds: 0, datasetSource: nil,
+            prefetchHeight: nil, prefetchProgress: 0, prefetchBuildSeconds: nil,
+            prefetchError: nil,
+            gpuSeconds: 0, searchSeconds: 0,
             reconnects: 0, protocolErrors: 0, thermalState: Self.thermalName,
             shares: ShareStatistics(), lastError: nil)
     }
@@ -79,6 +90,8 @@ public final class StatisticsStore: @unchecked Sendable {
         let now = Date()
         value.hashrate = wallSeconds > 0 ? Double(nonces) / wallSeconds : 0
         value.averageHashrate = value.searchSeconds > 0 ? Double(value.nonces) / value.searchSeconds : 0
+        let elapsed = now.timeIntervalSince(value.startedAt)
+        value.effectiveHashrate = elapsed > 0 ? Double(value.nonces) / elapsed : 0
         value.sampledAt = now
     }
 
@@ -96,14 +109,21 @@ public final class StatisticsStore: @unchecked Sendable {
         ergometal_hashrate{\(labels)} \(s.hashrate)
         # TYPE ergometal_nonces_total counter
         ergometal_nonces_total{\(labels)} \(s.nonces)
+        # HELP ergometal_effective_hashrate Nonces searched per wall-clock second, including dataset work.
+        # TYPE ergometal_effective_hashrate gauge
+        ergometal_effective_hashrate{\(labels)} \(s.effectiveHashrate)
         # TYPE ergometal_gpu_seconds_total counter
         ergometal_gpu_seconds_total{\(labels)} \(s.gpuSeconds)
         # TYPE ergometal_search_seconds_total counter
         ergometal_search_seconds_total{\(labels)} \(s.searchSeconds)
         # TYPE ergometal_dataset_build_seconds gauge
         ergometal_dataset_build_seconds{\(labels)} \(s.datasetBuildSeconds)
+        # TYPE ergometal_dataset_activation_seconds gauge
+        ergometal_dataset_activation_seconds{\(labels)} \(s.datasetActivationSeconds)
         # TYPE ergometal_dataset_bytes gauge
         ergometal_dataset_bytes{\(labels)} \(s.datasetBytes)
+        # TYPE ergometal_dataset_prefetch_progress gauge
+        ergometal_dataset_prefetch_progress{\(labels)} \(s.prefetchProgress)
         # TYPE ergometal_pool_connected gauge
         ergometal_pool_connected{\(labels)} \(s.poolConnected ? 1 : 0)
         # TYPE ergometal_shares_found_total counter
@@ -165,7 +185,10 @@ public final class JSONLEventWriter: @unchecked Sendable {
         do {
             handle = try FileHandle(forWritingTo: url)
             try handle?.seekToEnd()
-        } catch { failure = error }
+        } catch {
+            failure = error
+            fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
+        }
     }
 
     public func write(_ event: MinerEvent) {
@@ -179,6 +202,7 @@ public final class JSONLEventWriter: @unchecked Sendable {
             failure = error
             try? handle.close()
             self.handle = nil
+            fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
         }
     }
 

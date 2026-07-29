@@ -7,6 +7,7 @@ final class MiningCoordinator: @unchecked Sendable {
     private let condition = NSCondition()
     private var queuedJob: ErgoStratumJob?
     private var latestGeneration: UInt64 = 0
+    private var latestHeight: Int?
     private var stopped = false
     private var reconnectAttempt = 0
     weak var client: ErgoStratumClient?
@@ -18,16 +19,17 @@ final class MiningCoordinator: @unchecked Sendable {
     func handle(_ event: StratumEvent) {
         switch event {
         case .connected:
-            reconnectAttempt = 0
-            stats.update { $0.poolConnected = true; $0.state = .starting }
+            stats.update { $0.poolConnected = true; $0.state = .starting; $0.lastError = nil }
             emit("pool_connected")
         case .authorized:
+            reconnectAttempt = 0
+            stats.update { $0.lastError = nil }
             emit("pool_authorized")
         case .difficulty(let value):
             stats.update { $0.job.difficulty = value }
         case .job(let job):
             condition.lock()
-            latestGeneration = job.generation; queuedJob = job
+            latestGeneration = job.generation; latestHeight = job.height; queuedJob = job
             condition.broadcast(); condition.unlock()
             stats.update {
                 $0.job = JobStatistics(id: job.id, height: job.height, receivedAt: job.receivedAt, difficulty: $0.job.difficulty)
@@ -43,6 +45,7 @@ final class MiningCoordinator: @unchecked Sendable {
             guard !isStopped else { return }
             condition.lock()
             latestGeneration &+= 1
+            latestHeight = nil
             queuedJob = nil
             condition.broadcast()
             condition.unlock()
@@ -67,10 +70,24 @@ final class MiningCoordinator: @unchecked Sendable {
         return !stopped && latestGeneration == job.generation
     }
 
+    func isHeightCurrent(_ height: Int) -> Bool {
+        condition.lock(); defer { condition.unlock() }
+        return !stopped && latestHeight == height
+    }
+
+    func isEitherHeightCurrent(_ first: Int, _ second: Int) -> Bool {
+        condition.lock(); defer { condition.unlock() }
+        return !stopped && (latestHeight == first || latestHeight == second)
+    }
+
     var isStopped: Bool { condition.lock(); defer { condition.unlock() }; return stopped }
 
     func stop() {
-        condition.lock(); stopped = true; condition.broadcast(); condition.unlock()
+        condition.lock()
+        guard !stopped else { condition.unlock(); return }
+        stopped = true
+        condition.broadcast()
+        condition.unlock()
         client?.disconnect()
         stats.update { $0.state = .stopped }
         emit("session_ended")

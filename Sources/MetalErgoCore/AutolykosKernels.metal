@@ -59,21 +59,9 @@ inline void initHash(thread ulong h[8]) {
     h[0] ^= 0x01010020UL;
 }
 
-inline void hashBytes(thread const uchar *bytes, uint length, thread ulong h[8]) {
-    initHash(h);
-    ulong m[16];
-    for (uint i = 0; i < 16; ++i) m[i] = 0;
-    for (uint i = 0; i < length; ++i) m[i >> 3] |= ulong(bytes[i]) << ((i & 7) * 8);
-    compress(h, m, length, true);
-}
-
 inline uint digestLimb(thread const ulong h[8], uint limb) {
     uint little = uint(h[limb >> 1] >> ((limb & 1) * 32));
     return bswap32(little);
-}
-
-inline uchar limbByte(uint limb, uint offset) {
-    return uchar(limb >> ((3 - offset) * 8));
 }
 
 inline void datasetHash(uint index, uint height, thread uint out[8]) {
@@ -101,11 +89,73 @@ kernel void buildDataset(
     device uint *dataset [[buffer(0)]],
     constant uint &height [[buffer(1)]],
     constant uint &tableSize [[buffer(2)]],
-    uint id [[thread_position_in_grid]])
+    constant uint &startIndex [[buffer(3)]],
+    uint localID [[thread_position_in_grid]])
 {
+    uint id = startIndex + localID;
     if (id >= tableSize) return;
     uint value[8]; datasetHash(id, height, value);
     for (uint i = 0; i < 8; ++i) dataset[id * 8 + i] = value[i];
+}
+
+inline void hashMessageNonce(
+    constant const uint *message,
+    ulong nonce,
+    thread ulong h[8])
+{
+    initHash(h);
+    ulong m[16];
+    for (uint i = 0; i < 16; ++i) m[i] = 0;
+    for (uint i = 0; i < 4; ++i) {
+        m[i] = ulong(bswap32(message[i * 2])) |
+               (ulong(bswap32(message[i * 2 + 1])) << 32);
+    }
+    m[4] = bswap64(nonce);
+    compress(h, m, 40, true);
+}
+
+inline void hashSum(thread const uint sum[8], thread ulong h[8]) {
+    initHash(h);
+    ulong m[16];
+    for (uint i = 0; i < 4; ++i) {
+        m[i] = ulong(bswap32(sum[i * 2])) |
+               (ulong(bswap32(sum[i * 2 + 1])) << 32);
+    }
+    for (uint i = 4; i < 16; ++i) m[i] = 0;
+    compress(h, m, 32, true);
+}
+
+inline void hashIndexSeed(
+    device const uint *dataset,
+    uint firstIndex,
+    constant const uint *message,
+    ulong nonce,
+    thread ulong h[8])
+{
+    // seed = dataset[firstIndex].dropFirst() || message || nonce (71 bytes).
+    // Keep it in 32-bit big-endian words and pack pairs directly into the
+    // little-endian BLAKE2b message words, avoiding a per-nonce byte buffer.
+    device const uint *element = dataset + firstIndex * 8;
+    uint words[18];
+    for (uint i = 0; i < 7; ++i) {
+        words[i] = (element[i] << 8) | (element[i + 1] >> 24);
+    }
+    words[7] = (element[7] << 8) | (message[0] >> 24);
+    for (uint i = 0; i < 7; ++i) {
+        words[8 + i] = (message[i] << 8) | (message[i + 1] >> 24);
+    }
+    words[15] = (message[7] << 8) | uint(nonce >> 56);
+    words[16] = uint(nonce >> 24);
+    words[17] = uint(nonce) << 8;
+
+    initHash(h);
+    ulong m[16];
+    for (uint i = 0; i < 9; ++i) {
+        m[i] = ulong(bswap32(words[i * 2])) |
+               (ulong(bswap32(words[i * 2 + 1])) << 32);
+    }
+    for (uint i = 9; i < 16; ++i) m[i] = 0;
+    compress(h, m, 71, true);
 }
 
 inline bool belowTarget(thread const uint hit[8], constant const uint *target) {
@@ -122,44 +172,27 @@ kernel void searchNonces(
     device ulong *results [[buffer(3)]],
     device atomic_uint *resultCount [[buffer(4)]],
     constant ulong &baseNonce [[buffer(5)]],
-    constant uint &height [[buffer(6)]],
-    constant uint &tableSize [[buffer(7)]],
+    constant uint &tableSize [[buffer(6)]],
     uint id [[thread_position_in_grid]])
 {
     ulong nonce = baseNonce + ulong(id);
-    uchar input[128];
-    for (uint i = 0; i < 32; ++i) input[i] = limbByte(message[i >> 2], i & 3);
-    for (uint i = 0; i < 8; ++i) input[32 + i] = uchar(nonce >> ((7 - i) * 8));
-
-    ulong firstHash[8]; hashBytes(input, 40, firstHash);
-    ulong tail = 0;
-    for (uint i = 24; i < 32; ++i) {
-        uint limb = digestLimb(firstHash, i >> 2);
-        tail = (tail << 8) | ulong(limbByte(limb, i & 3));
-    }
+    ulong firstHash[8]; hashMessageNonce(message, nonce, firstHash);
+    ulong tail = bswap64(firstHash[3]);
     uint firstIndex = uint(tail % ulong(tableSize));
 
-    // seed = dataset[firstIndex].dropFirst() || message || nonce (71 bytes)
-    for (uint i = 1; i < 32; ++i) {
-        uint limb = dataset[firstIndex * 8 + (i >> 2)];
-        input[i - 1] = limbByte(limb, i & 3);
-    }
-    for (uint i = 0; i < 32; ++i) input[31 + i] = limbByte(message[i >> 2], i & 3);
-    for (uint i = 0; i < 8; ++i) input[63 + i] = uchar(nonce >> ((7 - i) * 8));
-    ulong indexHash[8]; hashBytes(input, 71, indexHash);
-
-    uchar indexBytes[35];
-    for (uint i = 0; i < 32; ++i) {
-        uint limb = digestLimb(indexHash, i >> 2);
-        indexBytes[i] = limbByte(limb, i & 3);
-    }
-    indexBytes[32] = indexBytes[0]; indexBytes[33] = indexBytes[1]; indexBytes[34] = indexBytes[2];
+    ulong indexHash[8]; hashIndexSeed(dataset, firstIndex, message, nonce, indexHash);
+    uint indexWords[8];
+    for (uint i = 0; i < 8; ++i) indexWords[i] = digestLimb(indexHash, i);
 
     uint sum[8]; for (uint i = 0; i < 8; ++i) sum[i] = 0;
     for (uint k = 0; k < 32; ++k) {
-        uint raw = (uint(indexBytes[k]) << 24) | (uint(indexBytes[k + 1]) << 16) |
-                   (uint(indexBytes[k + 2]) << 8) | uint(indexBytes[k + 3]);
-        uint j = uint(ulong(raw) % ulong(tableSize));
+        uint wordIndex = k >> 2;
+        uint shift = (k & 3) * 8;
+        uint raw = shift == 0
+            ? indexWords[wordIndex]
+            : (indexWords[wordIndex] << shift) |
+              (indexWords[(wordIndex + 1) & 7] >> (32 - shift));
+        uint j = raw % tableSize;
         ulong carry = 0;
         for (int limb = 7; limb >= 0; --limb) {
             ulong total = ulong(sum[limb]) + ulong(dataset[j * 8 + uint(limb)]) + carry;
@@ -167,8 +200,7 @@ kernel void searchNonces(
         }
     }
 
-    for (uint i = 0; i < 32; ++i) input[i] = limbByte(sum[i >> 2], i & 3);
-    ulong hitHash[8]; hashBytes(input, 32, hitHash);
+    ulong hitHash[8]; hashSum(sum, hitHash);
     uint hit[8]; for (uint i = 0; i < 8; ++i) hit[i] = digestLimb(hitHash, i);
     if (belowTarget(hit, target)) {
         uint slot = atomic_fetch_add_explicit(resultCount, 1U, memory_order_relaxed);

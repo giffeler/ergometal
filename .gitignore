@@ -2,7 +2,7 @@
 .DS_Store
 
 # Xcode build products and per-user state
-DerivedData/
+DerivedData*/
 build/
 *.hmap
 *.ipa

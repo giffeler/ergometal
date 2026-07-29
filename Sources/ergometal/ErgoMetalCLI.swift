@@ -3,6 +3,14 @@ import MetalErgoCore
 
 @main
 enum ErgoMetalCLI {
+    private static let maximumBatchNonces = 16_777_216
+    private static let prebuildBatchNonces = 65_536
+    private enum PrebuildMode: String {
+        case auto
+        case on
+        case off
+    }
+
     static func main() {
         do {
             let args = try Arguments(Array(CommandLine.arguments.dropFirst()))
@@ -21,6 +29,7 @@ enum ErgoMetalCLI {
     }
 
     private static func devices(_ args: Arguments) throws {
+        try args.validate(flagOptions: ["json"])
         let devices = MetalAutolykosSolver.devices()
         if args.has("json") {
             let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -35,11 +44,23 @@ enum ErgoMetalCLI {
     }
 
     private static func benchmark(_ args: Arguments) throws {
-        let duration = try args.int("duration", default: 60)
-        let height = try args.int("height", default: 614_399)
-        let tableOverride = args.string("table-size").flatMap(Int.init)
+        try args.validate(
+            valueOptions: ["duration", "height", "profile", "table-size", "batch-nonces",
+                           "prebuild", "threadgroup-size", "api-bind", "stats-file"],
+            flagOptions: ["json"])
+        let duration = try args.int("duration", default: 60, in: 1...Int.max)
+        let height = try args.int("height", default: 614_399, in: 0...Int(UInt32.max))
+        let tableOverride = try args.optionalInt("table-size", in: 1...Int(UInt32.max))
         let profile = args.string("profile", default: "efficiency")!
         guard ["efficiency", "peak"].contains(profile) else { throw CLIError.invalidArgument(profile) }
+        let prebuildValue = args.string("prebuild", default: "off")!
+        guard prebuildValue == "on" || prebuildValue == "off" else {
+            throw CLIError.invalidArgument("--prebuild \(prebuildValue)")
+        }
+        let batchSize = try args.int(
+            "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
+            in: 1...maximumBatchNonces)
+        let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
         let solver = try MetalAutolykosSolver()
         let stats = StatisticsStore(mode: .benchmark, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
@@ -50,30 +71,61 @@ enum ErgoMetalCLI {
 
         stats.update { $0.state = .buildingDataset }
         let build = try solver.buildDataset(height: height, tableSize: tableOverride)
-        stats.update { $0.datasetBytes = build.bytes; $0.datasetBuildSeconds = build.seconds; $0.state = .searching }
+        stats.update {
+            $0.datasetBytes = build.bytes
+            $0.datasetBuildSeconds = build.seconds
+            $0.datasetActivationSeconds = build.activationSeconds
+            $0.datasetSource = build.source
+            $0.state = .searching
+        }
         writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "dataset_completed",
-            fields: ["height": String(height), "table_size": String(build.tableSize), "seconds": String(build.seconds)]))
+            fields: ["height": String(height), "table_size": String(build.tableSize),
+                     "seconds": String(build.seconds), "activation_seconds": String(build.activationSeconds),
+                     "source": build.source.rawValue]))
+        if prebuildValue == "on" {
+            _ = try solver.prefetchDataset(height: height + 1, tableSize: tableOverride)
+            writer.write(MinerEvent(
+                sessionID: stats.snapshot().sessionID,
+                type: "dataset_prefetch_started",
+                fields: ["height": String(height + 1)]))
+        }
 
         let message = Blake2b256.hash(Array("ergometal-autolykos-v2-benchmark".utf8))
         let target = UInt256(limbs: [0x0000ffff] + [UInt32](repeating: .max, count: 7))
-        let batchSize = try args.int("batch-nonces", default: profile == "peak" ? 262_144 : 65_536)
-        let group = try args.int("threadgroup-size", default: 128)
         var nonce: UInt64 = 0
         let end = Date(timeIntervalSinceNow: Double(duration))
+        var nextStatusAt = Date.distantPast
         var verified = 0
         while Date() < end {
             thermalPauseIfNeeded(profile: profile)
+            let activeBatchSize = solver.prefetchStatus()?.finished == false
+                ? min(batchSize, prebuildBatchNonces)
+                : batchSize
             let batch = try solver.search(message: message, target: target, baseNonce: nonce,
-                                          nonceCount: batchSize, threadgroupSize: group)
+                                          nonceCount: activeBatchSize, threadgroupSize: group)
             stats.recordBatch(nonces: batch.nonceCount, gpuSeconds: batch.gpuSeconds, wallSeconds: batch.wallSeconds)
             for candidate in batch.candidates {
                 let bytes = nonceBytes(candidate)
                 if try AutolykosV2.hit(message: message, nonce: bytes, height: height,
                                        tableSize: build.tableSize) < target { verified += 1 }
             }
-            nonce &+= UInt64(batchSize)
-            if !args.has("json") { printStatus(stats.snapshot(), suffix: "verified=\(verified)") }
+            nonce &+= UInt64(activeBatchSize)
+            let now = Date()
+            if now >= nextStatusAt {
+                let prefetch = solver.prefetchStatus()
+                stats.update {
+                    $0.prefetchHeight = prefetch?.height
+                    $0.prefetchProgress = prefetch?.progress ?? 0
+                    $0.prefetchBuildSeconds = prefetch?.seconds
+                    $0.prefetchError = prefetch?.errorDescription
+                }
+                if !args.has("json") {
+                    printStatus(stats.snapshot(), suffix: "verified=\(verified)")
+                }
+                nextStatusAt = now.addingTimeInterval(1)
+            }
         }
+        solver.cancelPrefetch()
         stats.update { $0.state = .stopped }
         writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "session_ended",
             fields: ["verified_candidates": String(verified)]))
@@ -92,6 +144,7 @@ enum ErgoMetalCLI {
     }
 
     private static func replay(_ args: Arguments) throws {
+        try args.validate(valueOptions: ["fixture"])
         let path = try args.require("fixture")
         let fixture = try JSONDecoder().decode(ReplayFixture.self, from: Data(contentsOf: URL(fileURLWithPath: path)))
         guard let message = [UInt8](hex: fixture.messageHex), let nonce = [UInt8](hex: fixture.nonceHex),
@@ -102,12 +155,29 @@ enum ErgoMetalCLI {
     }
 
     private static func mine(_ args: Arguments) throws {
+        try args.validate(valueOptions: ["pool", "wallet", "worker", "network", "profile",
+                                         "prebuild", "batch-nonces", "threadgroup-size",
+                                         "api-bind", "stats-file"])
         let pool = try args.require("pool")
         let wallet = try args.require("wallet")
         let worker = args.string("worker", default: "metal")!
-        let network = args.string("network", default: "mainnet")!
+        guard !worker.isEmpty else { throw CLIError.invalidArgument("--worker must not be empty") }
+        let networkValue = args.string("network", default: "mainnet")!
+        guard let network = ErgoNetwork(rawValue: networkValue) else {
+            throw CLIError.invalidArgument("--network \(networkValue)")
+        }
         guard ErgoAddress.isPlausible(wallet, network: network) else { throw CLIError.invalidAddress }
         let profile = args.string("profile", default: "efficiency")!
+        guard ["efficiency", "peak"].contains(profile) else { throw CLIError.invalidArgument("--profile \(profile)") }
+        let prebuildValue = args.string("prebuild", default: "auto")!
+        guard let requestedPrebuild = PrebuildMode(rawValue: prebuildValue) else {
+            throw CLIError.invalidArgument("--prebuild \(prebuildValue)")
+        }
+        var prebuildEnabled = requestedPrebuild != .off
+        let batchSize = try args.int(
+            "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
+            in: 1...maximumBatchNonces)
+        let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
         let solver = try MetalAutolykosSolver()
         let stats = StatisticsStore(mode: .mining, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
@@ -125,27 +195,128 @@ enum ErgoMetalCLI {
         signal(SIGINT, SIG_IGN); signal(SIGTERM, SIG_IGN)
         let sigint = DispatchSource.makeSignalSource(signal: SIGINT, queue: signalQueue)
         let sigterm = DispatchSource.makeSignalSource(signal: SIGTERM, queue: signalQueue)
-        sigint.setEventHandler { coordinator.stop() }; sigterm.setEventHandler { coordinator.stop() }
+        sigint.setEventHandler { coordinator.stop(); solver.cancelPrefetch() }
+        sigterm.setEventHandler { coordinator.stop(); solver.cancelPrefetch() }
         sigint.resume(); sigterm.resume(); client.connect()
 
-        let batchSize = try args.int("batch-nonces", default: profile == "peak" ? 262_144 : 65_536)
-        let group = try args.int("threadgroup-size", default: 128)
+        var nextStatusAt = Date.distantPast
+        var reportedPrefetchHeight: Int?
+        var coldBuildCancellations = 0
+        var coldLookaheadHeight: Int?
         while !coordinator.isStopped, let job = coordinator.nextJob() {
             guard job.extraNoncePrefix.count + job.extraNonce2Size == 8 else {
                 coordinator.handle(.protocolError("pool extranonce layout is not 8 bytes")); continue
             }
+
+            if let preparedHeight = coldLookaheadHeight {
+                if job.height == preparedHeight {
+                    coldLookaheadHeight = nil
+                    coldBuildCancellations = 0
+                } else if preparedHeight > 0, job.height == preparedHeight - 1 {
+                    // The lookahead is ready; wait for its height instead of
+                    // replacing it for a same-height template refresh.
+                    continue
+                } else {
+                    coldLookaheadHeight = nil
+                }
+            }
+
+            if prebuildEnabled, coldBuildCancellations >= 2, job.height < Int(UInt32.max) {
+                let lookaheadHeight = job.height + 1
+                stats.update { $0.state = .buildingDataset }
+                writer.write(MinerEvent(
+                    sessionID: stats.snapshot().sessionID,
+                    type: "dataset_lookahead_started",
+                    fields: ["current_height": String(job.height),
+                             "height": String(lookaheadHeight),
+                             "cold_cancellations": String(coldBuildCancellations)]))
+                do {
+                    let lookahead = try solver.buildDataset(
+                        height: lookaheadHeight,
+                        shouldContinue: {
+                            coordinator.isEitherHeightCurrent(job.height, lookaheadHeight)
+                        })
+                    coldLookaheadHeight = lookaheadHeight
+                    stats.update {
+                        $0.datasetBytes = lookahead.bytes
+                        $0.datasetBuildSeconds = lookahead.seconds
+                        $0.datasetActivationSeconds = lookahead.activationSeconds
+                        $0.datasetSource = lookahead.source
+                    }
+                    writer.write(MinerEvent(
+                        sessionID: stats.snapshot().sessionID,
+                        type: "dataset_lookahead_completed",
+                        fields: ["height": String(lookaheadHeight),
+                                 "seconds": String(lookahead.seconds),
+                                 "source": lookahead.source.rawValue]))
+                } catch MetalSolverError.cancelled {
+                    continue
+                }
+                continue
+            }
+
             stats.update { $0.state = .buildingDataset }
             do {
-                let build = try solver.buildDataset(height: job.height)
-                guard coordinator.isCurrent(job) else { continue }
-                stats.update { $0.datasetBytes = build.bytes; $0.datasetBuildSeconds = build.seconds; $0.state = .searching }
+                let build = try solver.buildDataset(
+                    height: job.height,
+                    shouldContinue: { coordinator.isHeightCurrent(job.height) })
+                guard coordinator.isCurrent(job) else {
+                    if !coordinator.isHeightCurrent(job.height) {
+                        coldBuildCancellations += 1
+                    }
+                    continue
+                }
+                coldBuildCancellations = 0
+                stats.update {
+                    $0.datasetBytes = build.bytes
+                    $0.datasetBuildSeconds = build.seconds
+                    $0.datasetActivationSeconds = build.activationSeconds
+                    $0.datasetSource = build.source
+                    $0.prefetchHeight = nil
+                    $0.prefetchProgress = 0
+                    $0.prefetchBuildSeconds = nil
+                    $0.prefetchError = nil
+                    $0.state = .searching
+                    $0.lastError = nil
+                }
+                writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "dataset_completed",
+                    fields: ["height": String(job.height), "table_size": String(build.tableSize),
+                             "seconds": String(build.seconds),
+                             "activation_seconds": String(build.activationSeconds),
+                             "source": build.source.rawValue]))
+                if prebuildEnabled, job.height < Int(UInt32.max) {
+                    do {
+                        if try solver.prefetchDataset(height: job.height + 1) {
+                            reportedPrefetchHeight = nil
+                            writer.write(MinerEvent(
+                                sessionID: stats.snapshot().sessionID,
+                                type: "dataset_prefetch_started",
+                                fields: ["height": String(job.height + 1)]))
+                        }
+                    } catch {
+                        if requestedPrebuild == .on { throw error }
+                        prebuildEnabled = false
+                        writer.write(MinerEvent(
+                            sessionID: stats.snapshot().sessionID,
+                            type: "dataset_prefetch_disabled",
+                            fields: ["reason": error.localizedDescription]))
+                    }
+                }
                 var base = job.extraNoncePrefix.reduce(UInt64(0)) { ($0 << 8) | UInt64($1) }
                 base <<= UInt64(job.extraNonce2Size * 8)
-                let variableMask: UInt64 = job.extraNonce2Size == 8 ? .max : (UInt64(1) << UInt64(job.extraNonce2Size * 8)) - 1
+                guard let variableMask = NonceSpace.maximumOffset(variableBytes: job.extraNonce2Size) else {
+                    coordinator.handle(.protocolError("pool extranonce2 size is outside 0...8 bytes"))
+                    continue
+                }
                 var offset: UInt64 = 0
                 while coordinator.isCurrent(job) && !coordinator.isStopped {
                     thermalPauseIfNeeded(profile: profile)
-                    let count = min(batchSize, Int(variableMask &- offset &+ 1))
+                    let activeBatchSize = solver.prefetchStatus()?.finished == false
+                        ? min(batchSize, prebuildBatchNonces)
+                        : batchSize
+                    let count = NonceSpace.batchSize(offset: offset, maximumOffset: variableMask,
+                                                     requested: activeBatchSize)
+                    guard count > 0 else { break }
                     let batch = try solver.search(message: job.message, target: job.target,
                         baseNonce: base | offset, nonceCount: count, threadgroupSize: group)
                     stats.recordBatch(nonces: count, gpuSeconds: batch.gpuSeconds, wallSeconds: batch.wallSeconds)
@@ -154,17 +325,61 @@ enum ErgoMetalCLI {
                         let hit = try AutolykosV2.hit(message: job.message, nonce: nonceBytes(nonce), height: job.height)
                         guard hit < job.target else { continue }
                         stats.update { $0.shares.found += 1 }
-                        _ = try client.submit(job: job, nonce: nonce)
-                        stats.update { $0.shares.submitted += 1 }
+                        do {
+                            _ = try client.submit(job: job, nonce: nonce)
+                            stats.update { $0.shares.submitted += 1 }
+                        } catch StratumError.notReady {
+                            stats.update { $0.shares.stale += 1 }
+                            break
+                        }
                     }
-                    offset = (offset + UInt64(count)) & variableMask
-                    printStatus(stats.snapshot(), suffix: "shares=\(stats.snapshot().shares.accepted)/\(stats.snapshot().shares.rejected)")
+                    let now = Date()
+                    if now >= nextStatusAt {
+                        let prefetch = solver.prefetchStatus()
+                        stats.update {
+                            $0.prefetchHeight = prefetch?.height
+                            $0.prefetchProgress = prefetch?.progress ?? 0
+                            $0.prefetchBuildSeconds = prefetch?.seconds
+                            $0.prefetchError = prefetch?.errorDescription
+                        }
+                        if let prefetch, prefetch.finished, reportedPrefetchHeight != prefetch.height {
+                            reportedPrefetchHeight = prefetch.height
+                            if let failure = prefetch.errorDescription {
+                                if requestedPrebuild == .auto { prebuildEnabled = false }
+                                writer.write(MinerEvent(
+                                    sessionID: stats.snapshot().sessionID,
+                                    type: "dataset_prefetch_failed",
+                                    fields: ["height": String(prefetch.height),
+                                             "message": failure]))
+                            } else {
+                                writer.write(MinerEvent(
+                                    sessionID: stats.snapshot().sessionID,
+                                    type: "dataset_prefetch_completed",
+                                    fields: ["height": String(prefetch.height),
+                                             "seconds": String(prefetch.seconds ?? 0)]))
+                            }
+                        }
+                        let snapshot = stats.snapshot()
+                        printStatus(snapshot,
+                            suffix: "shares=\(snapshot.shares.accepted)/\(snapshot.shares.rejected)")
+                        nextStatusAt = now.addingTimeInterval(1)
+                    }
+                    guard let next = NonceSpace.advance(offset: offset, count: count,
+                                                        maximumOffset: variableMask) else {
+                        coordinator.handle(.protocolError("nonce space exhausted for job \(job.id)"))
+                        break
+                    }
+                    offset = next
                 }
+            } catch MetalSolverError.cancelled {
+                coldBuildCancellations += 1
+                continue
             } catch {
                 stats.update { $0.lastError = error.localizedDescription; $0.state = .failed }
                 writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "error", fields: ["message": error.localizedDescription]))
             }
         }
+        solver.cancelPrefetch()
         print("\nStopped")
     }
 

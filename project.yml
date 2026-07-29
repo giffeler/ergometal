@@ -2,12 +2,13 @@ name: MetalErgoMiner
 options:
   bundleIdPrefix: dev.ergometal
   deploymentTarget:
-    macOS: "15.0"
+    macOS: "26.6"
   createIntermediateGroups: true
 settings:
   base:
+    ARCHS: arm64
     SWIFT_VERSION: "5.0"
-    MACOSX_DEPLOYMENT_TARGET: "15.0"
+    MACOSX_DEPLOYMENT_TARGET: "26.6"
     CODE_SIGNING_ALLOWED: NO
 targets:
   MetalErgoCore:

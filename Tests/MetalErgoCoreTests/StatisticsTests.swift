@@ -12,6 +12,8 @@ final class StatisticsTests: XCTestCase {
         stats.recordBatch(nonces: 65_536, gpuSeconds: 0.1, wallSeconds: 0.2)
         let output = stats.prometheus()
         XCTAssertTrue(output.contains("ergometal_nonces_total"))
+        XCTAssertTrue(output.contains("ergometal_effective_hashrate"))
+        XCTAssertTrue(output.contains("ergometal_dataset_prefetch_progress"))
         XCTAssertTrue(output.contains("ergometal_shares_accepted_total"))
         XCTAssertFalse(output.contains("pool.example"))
     }

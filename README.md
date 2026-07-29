@@ -44,7 +44,7 @@ MTL_CAPTURE_ENABLED=1 ergometal benchmark --duration 10 --height 614400 \
 
 The output can be large and the destination must not already exist. Open the `.gputrace` file in Xcode's Metal debugger for replay and counter profiling.
 
-The miner builds datasets in cancellable chunks, discards stale work when the pool advances, and promotes a completed next-height dataset without rebuilding it. After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short and GPU work is fairly time-sliced so the next dataset meets the block-height deadline; afterwards, the selected profile's larger batch size is restored. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
+The miner builds datasets in cancellable chunks, discards stale work when the pool advances, and promotes a completed next-height dataset without rebuilding it. Search-only BLAKE2b messages use a fixed-block scalar Metal path, while two independent result-buffer sets keep the next GPU search queued during CPU verification and share handling. After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short and GPU work is fairly time-sliced so the next dataset meets the block-height deadline; afterwards, the selected profile's larger batch size is restored. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
 
 ## Observability
 

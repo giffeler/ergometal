@@ -76,8 +76,47 @@ public struct SearchBatch: Sendable {
     public let baseNonce: UInt64
     public let nonceCount: Int
     public let candidates: [UInt64]
+    /// Absolute system-uptime timestamps allow overlapping submissions to be
+    /// merged without double-counting their active search window.
+    public let wallStartTime: TimeInterval
+    public let wallEndTime: TimeInterval
     public let gpuSeconds: Double
     public let wallSeconds: Double
+}
+
+/// A queued Metal search. Waiting is deliberately separate from submission so
+/// callers can keep the next command buffer ready while processing the current
+/// batch on the CPU.
+public final class SearchSubmission: @unchecked Sendable {
+    public let baseNonce: UInt64
+    public let nonceCount: Int
+
+    private let condition = NSCondition()
+    private var result: Result<SearchBatch, Error>?
+
+    fileprivate init(baseNonce: UInt64, nonceCount: Int) {
+        self.baseNonce = baseNonce
+        self.nonceCount = nonceCount
+    }
+
+    fileprivate func resolve(_ result: Result<SearchBatch, Error>) {
+        condition.lock()
+        guard self.result == nil else {
+            condition.unlock()
+            return
+        }
+        self.result = result
+        condition.broadcast()
+        condition.unlock()
+    }
+
+    public func wait() throws -> SearchBatch {
+        condition.lock()
+        while result == nil { condition.wait() }
+        let result = self.result!
+        condition.unlock()
+        return try result.get()
+    }
 }
 
 private final class MetalBundleToken {}
@@ -139,8 +178,20 @@ private final class DatasetPrefetchTask {
     }
 }
 
+private final class SearchResources {
+    let resultBuffer: MTLBuffer
+    let resultCountBuffer: MTLBuffer
+    var inUse = false
+
+    init(resultBuffer: MTLBuffer, resultCountBuffer: MTLBuffer) {
+        self.resultBuffer = resultBuffer
+        self.resultCountBuffer = resultCountBuffer
+    }
+}
+
 public final class MetalAutolykosSolver {
     private static let maximumResults = 256
+    private static let searchPipelineDepth = 2
     private static let synchronousBuildChunkElements = 1_048_576
     private static let prefetchBuildChunkElements = 262_144
 
@@ -150,9 +201,8 @@ public final class MetalAutolykosSolver {
     private let buildPipeline: MTLComputePipelineState
     private let searchPipeline: MTLComputePipelineState
     private let constantMBuffer: MTLBuffer
-    private let resultBuffer: MTLBuffer
-    private let resultCountBuffer: MTLBuffer
-    private let searchLock = NSLock()
+    private let searchResources: [SearchResources]
+    private let searchResourceState = NSCondition()
     private let commandGate = MetalCommandGate()
     private let state = NSCondition()
     private let prefetchWorker = DispatchQueue(label: "dev.ergometal.dataset-prefetch", qos: .userInitiated)
@@ -164,19 +214,24 @@ public final class MetalAutolykosSolver {
         guard let commandQueue = device.makeCommandQueue(),
               let constantMBuffer = device.makeBuffer(
                 length: 1_024 * MemoryLayout<UInt64>.size,
-                options: .storageModeShared),
-              let resultBuffer = device.makeBuffer(
-                length: Self.maximumResults * MemoryLayout<UInt64>.size,
-                options: .storageModeShared),
-              let resultCountBuffer = device.makeBuffer(
-                length: MemoryLayout<UInt32>.size,
                 options: .storageModeShared)
         else { throw MetalSolverError.noDevice }
+        var searchResources: [SearchResources] = []
+        for _ in 0..<Self.searchPipelineDepth {
+            guard let resultBuffer = device.makeBuffer(
+                    length: Self.maximumResults * MemoryLayout<UInt64>.size,
+                    options: .storageModeShared),
+                  let resultCountBuffer = device.makeBuffer(
+                    length: MemoryLayout<UInt32>.size,
+                    options: .storageModeShared)
+            else { throw MetalSolverError.noDevice }
+            searchResources.append(SearchResources(
+                resultBuffer: resultBuffer, resultCountBuffer: resultCountBuffer))
+        }
         self.device = device
         self.commandQueue = commandQueue
         self.constantMBuffer = constantMBuffer
-        self.resultBuffer = resultBuffer
-        self.resultCountBuffer = resultCountBuffer
+        self.searchResources = searchResources
         self.info = MetalDeviceInfo(
             name: device.name,
             registryID: device.registryID,
@@ -359,7 +414,19 @@ public final class MetalAutolykosSolver {
         message: [UInt8], target: UInt256, baseNonce: UInt64, nonceCount: Int,
         threadgroupSize requested: Int? = nil
     ) throws -> SearchBatch {
-        searchLock.lock(); defer { searchLock.unlock() }
+        try enqueueSearch(
+            message: message, target: target, baseNonce: baseNonce,
+            nonceCount: nonceCount, threadgroupSize: requested
+        ).wait()
+    }
+
+    /// Encodes and commits a search without waiting for it. Two independent
+    /// result-buffer pairs allow one batch to execute while the preceding
+    /// result is copied and verified on the CPU.
+    public func enqueueSearch(
+        message: [UInt8], target: UInt256, baseNonce: UInt64, nonceCount: Int,
+        threadgroupSize requested: Int? = nil
+    ) throws -> SearchSubmission {
         guard message.count == 32 else { throw AutolykosError.invalidMessageLength(message.count) }
         guard nonceCount > 0, UInt32(exactly: nonceCount) != nil else {
             throw MetalSolverError.invalidNonceCount(nonceCount)
@@ -374,13 +441,19 @@ public final class MetalAutolykosSolver {
         guard let dataset else { throw MetalSolverError.commandEncoding }
         let messageWords = UInt256(bigEndian: message).limbs
         let targetWords = target.limbs
-        commandGate.enter(); defer { commandGate.leave() }
+        let resources = acquireSearchResources()
+
+        commandGate.enter()
         guard let command = commandQueue.makeCommandBuffer(),
               let encoder = command.makeComputeCommandEncoder()
-        else { throw MetalSolverError.commandEncoding }
+        else {
+            commandGate.leave()
+            releaseSearchResources(resources)
+            throw MetalSolverError.commandEncoding
+        }
         command.label = "searchNonces"
         encoder.label = "searchNonces"
-        resultCountBuffer.contents().storeBytes(of: UInt32(0), as: UInt32.self)
+        resources.resultCountBuffer.contents().storeBytes(of: UInt32(0), as: UInt32.self)
 
         var base = baseNonce
         var n = UInt32(dataset.spec.tableSize)
@@ -392,29 +465,68 @@ public final class MetalAutolykosSolver {
         targetWords.withUnsafeBytes {
             encoder.setBytes($0.baseAddress!, length: $0.count, index: 2)
         }
-        encoder.setBuffer(resultBuffer, offset: 0, index: 3)
-        encoder.setBuffer(resultCountBuffer, offset: 0, index: 4)
+        encoder.setBuffer(resources.resultBuffer, offset: 0, index: 3)
+        encoder.setBuffer(resources.resultCountBuffer, offset: 0, index: 4)
         encoder.setBytes(&base, length: MemoryLayout<UInt64>.size, index: 5)
         encoder.setBytes(&n, length: MemoryLayout<UInt32>.size, index: 6)
         let width = min(requested ?? 128, searchPipeline.maxTotalThreadsPerThreadgroup)
         encoder.dispatchThreads(MTLSize(width: nonceCount, height: 1, depth: 1),
             threadsPerThreadgroup: MTLSize(width: width, height: 1, depth: 1))
         encoder.endEncoding()
-        let started = ContinuousClock.now
-        command.commit()
-        command.waitUntilCompleted()
-        if let error = command.error { throw MetalSolverError.pipeline(error.localizedDescription) }
 
-        let rawResultCount = resultCountBuffer.contents().load(as: UInt32.self)
-        guard rawResultCount <= Self.maximumResults else {
-            throw MetalSolverError.resultOverflow(limit: Self.maximumResults, found: rawResultCount)
+        let submission = SearchSubmission(baseNonce: baseNonce, nonceCount: nonceCount)
+        let wallStartTime = ProcessInfo.processInfo.systemUptime
+        command.addCompletedHandler { [weak self, dataset, resources, submission] command in
+            _ = dataset
+            let result: Result<SearchBatch, Error>
+            if let error = command.error {
+                result = .failure(MetalSolverError.pipeline(error.localizedDescription))
+            } else {
+                let rawResultCount = resources.resultCountBuffer.contents().load(as: UInt32.self)
+                if rawResultCount > Self.maximumResults {
+                    result = .failure(MetalSolverError.resultOverflow(
+                        limit: Self.maximumResults, found: rawResultCount))
+                } else {
+                    let resultCount = Int(rawResultCount)
+                    let pointer = resources.resultBuffer.contents().bindMemory(
+                        to: UInt64.self, capacity: Self.maximumResults)
+                    let candidates = (0..<resultCount).map { pointer[$0] }.sorted()
+                    let wallEndTime = ProcessInfo.processInfo.systemUptime
+                    result = .success(SearchBatch(
+                        baseNonce: baseNonce,
+                        nonceCount: nonceCount,
+                        candidates: candidates,
+                        wallStartTime: wallStartTime,
+                        wallEndTime: wallEndTime,
+                        gpuSeconds: max(0, command.gpuEndTime - command.gpuStartTime),
+                        wallSeconds: max(0, wallEndTime - wallStartTime)))
+                }
+            }
+            self?.releaseSearchResources(resources)
+            submission.resolve(result)
         }
-        let resultCount = Int(rawResultCount)
-        let pointer = resultBuffer.contents().bindMemory(to: UInt64.self, capacity: Self.maximumResults)
-        let candidates = (0..<resultCount).map { pointer[$0] }.sorted()
-        return SearchBatch(baseNonce: baseNonce, nonceCount: nonceCount, candidates: candidates,
-            gpuSeconds: max(0, command.gpuEndTime - command.gpuStartTime),
-            wallSeconds: started.duration(to: .now).seconds)
+        command.commit()
+        commandGate.leave()
+        return submission
+    }
+
+    private func acquireSearchResources() -> SearchResources {
+        searchResourceState.lock()
+        while true {
+            if let resources = searchResources.first(where: { !$0.inUse }) {
+                resources.inUse = true
+                searchResourceState.unlock()
+                return resources
+            }
+            searchResourceState.wait()
+        }
+    }
+
+    private func releaseSearchResources(_ resources: SearchResources) {
+        searchResourceState.lock()
+        resources.inUse = false
+        searchResourceState.signal()
+        searchResourceState.unlock()
     }
 
     private func datasetSpec(height: Int, tableSize override: Int?) throws -> DatasetSpec {

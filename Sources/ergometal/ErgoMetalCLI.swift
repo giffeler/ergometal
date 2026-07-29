@@ -5,6 +5,8 @@ import MetalErgoCore
 enum ErgoMetalCLI {
     private static let maximumBatchNonces = 16_777_216
     private static let prebuildBatchNonces = 65_536
+    private static let searchPipelineDepth = 2
+    private static let searchStatisticsBatchCount = 16
     private enum PrebuildMode: String {
         case auto
         case on
@@ -13,6 +15,64 @@ enum ErgoMetalCLI {
     private enum GPUTracePhase: String {
         case build
         case search
+    }
+
+    private struct SearchStatisticsSample {
+        let nonces: Int
+        let gpuSeconds: Double
+        let activeSearchSeconds: Double
+    }
+
+    /// Search command buffers can overlap on Apple GPUs. Aggregate a short
+    /// rolling command window and merge submit-to-completion intervals so
+    /// active time is neither counted twice nor exposed as callback jitter.
+    private struct SearchStatisticsAccumulator {
+        private var nonces = 0
+        private var batchCount = 0
+        private var wallIntervals: [(start: TimeInterval, end: TimeInterval)] = []
+        private var gpuSeconds = 0.0
+        private var accountedWallEnd: TimeInterval?
+
+        mutating func append(
+            _ batch: SearchBatch,
+            flush: Bool = false
+        ) -> SearchStatisticsSample? {
+            nonces += batch.nonceCount
+            batchCount += 1
+            gpuSeconds += max(0, batch.gpuSeconds)
+            if batch.wallEndTime > batch.wallStartTime {
+                wallIntervals.append((batch.wallStartTime, batch.wallEndTime))
+            }
+            return batchCount >= ErgoMetalCLI.searchStatisticsBatchCount || flush ? take() : nil
+        }
+
+        mutating func flush() -> SearchStatisticsSample? {
+            batchCount == 0 ? nil : take()
+        }
+
+        private mutating func take() -> SearchStatisticsSample {
+            let ordered = wallIntervals.sorted { $0.start < $1.start }
+            var activeSearchSeconds = 0.0
+            var cursor = accountedWallEnd
+            for interval in ordered {
+                if let cursor, interval.end <= cursor { continue }
+                let start = cursor.map { max($0, interval.start) } ?? interval.start
+                if interval.end > start {
+                    activeSearchSeconds += interval.end - start
+                }
+                cursor = max(cursor ?? interval.end, interval.end)
+            }
+            accountedWallEnd = cursor
+            let sample = SearchStatisticsSample(
+                nonces: nonces,
+                gpuSeconds: gpuSeconds,
+                activeSearchSeconds: max(0, activeSearchSeconds))
+            nonces = 0
+            batchCount = 0
+            wallIntervals.removeAll(keepingCapacity: true)
+            gpuSeconds = 0
+            return sample
+        }
     }
 
     static func main() {
@@ -117,28 +177,24 @@ enum ErgoMetalCLI {
         var nextStatusAt = Date.distantPast
         var verified = 0
         var searchTracePending = tracePhase == .search && tracePath != nil
-        while Date() < end {
-            thermalPauseIfNeeded(profile: profile)
-            let activeBatchSize = solver.prefetchStatus()?.finished == false
-                ? min(batchSize, prebuildBatchNonces)
-                : batchSize
-            if searchTracePending, let tracePath {
-                try solver.startGPUCapture(path: tracePath)
-            }
-            let batch = try solver.search(
-                message: message, target: target, baseNonce: nonce,
-                nonceCount: activeBatchSize, threadgroupSize: group)
-            if searchTracePending {
-                solver.stopGPUCapture()
-                searchTracePending = false
-            }
-            stats.recordBatch(nonces: batch.nonceCount, gpuSeconds: batch.gpuSeconds, wallSeconds: batch.wallSeconds)
+        var statisticsAccumulator = SearchStatisticsAccumulator()
+
+        func record(_ batch: SearchBatch, flush: Bool = false) throws {
+            let sample = statisticsAccumulator.append(batch, flush: flush)
             for candidate in batch.candidates {
                 let bytes = nonceBytes(candidate)
-                if try AutolykosV2.hit(message: message, nonce: bytes, height: height,
-                                       tableSize: build.tableSize) < target { verified += 1 }
+                if try AutolykosV2.hit(
+                    message: message, nonce: bytes, height: height,
+                    tableSize: build.tableSize) < target
+                {
+                    verified += 1
+                }
             }
-            nonce &+= UInt64(activeBatchSize)
+            guard let sample else { return }
+            stats.recordBatch(
+                nonces: sample.nonces,
+                gpuSeconds: sample.gpuSeconds,
+                wallSeconds: sample.activeSearchSeconds)
             let now = Date()
             if now >= nextStatusAt {
                 let prefetch = solver.prefetchStatus()
@@ -153,6 +209,65 @@ enum ErgoMetalCLI {
                 }
                 nextStatusAt = now.addingTimeInterval(1)
             }
+        }
+
+        // A trace remains intentionally limited to one command buffer. Normal
+        // operation below then keeps two independent search submissions queued.
+        if searchTracePending, let tracePath, Date() < end {
+            thermalPauseIfNeeded(profile: profile)
+            let activeBatchSize = solver.prefetchStatus()?.finished == false
+                ? min(batchSize, prebuildBatchNonces)
+                : batchSize
+            try solver.startGPUCapture(path: tracePath)
+            let batch = try solver.search(
+                message: message, target: target, baseNonce: nonce,
+                nonceCount: activeBatchSize, threadgroupSize: group)
+            solver.stopGPUCapture()
+            searchTracePending = false
+            try record(batch, flush: true)
+            nonce &+= UInt64(activeBatchSize)
+        }
+
+        var pending: [SearchSubmission] = []
+        while Date() < end || !pending.isEmpty {
+            while pending.count < searchPipelineDepth, Date() < end {
+                thermalPauseIfNeeded(profile: profile)
+                let activeBatchSize = solver.prefetchStatus()?.finished == false
+                    ? min(batchSize, prebuildBatchNonces)
+                    : batchSize
+                pending.append(try solver.enqueueSearch(
+                    message: message,
+                    target: target,
+                    baseNonce: nonce,
+                    nonceCount: activeBatchSize,
+                    threadgroupSize: group))
+                nonce &+= UInt64(activeBatchSize)
+            }
+            guard !pending.isEmpty else { break }
+
+            let batch = try pending.removeFirst().wait()
+
+            // Refill before CPU verification so the GPU and CPU stages overlap.
+            while pending.count < searchPipelineDepth, Date() < end {
+                thermalPauseIfNeeded(profile: profile)
+                let activeBatchSize = solver.prefetchStatus()?.finished == false
+                    ? min(batchSize, prebuildBatchNonces)
+                    : batchSize
+                pending.append(try solver.enqueueSearch(
+                    message: message,
+                    target: target,
+                    baseNonce: nonce,
+                    nonceCount: activeBatchSize,
+                    threadgroupSize: group))
+                nonce &+= UInt64(activeBatchSize)
+            }
+            try record(batch)
+        }
+        if let sample = statisticsAccumulator.flush() {
+            stats.recordBatch(
+                nonces: sample.nonces,
+                gpuSeconds: sample.gpuSeconds,
+                wallSeconds: sample.activeSearchSeconds)
         }
         solver.cancelPrefetch()
         stats.update { $0.state = .stopped }
@@ -374,17 +489,55 @@ enum ErgoMetalCLI {
                     continue
                 }
                 var offset: UInt64 = 0
-                while coordinator.isCurrent(job) && !coordinator.isStopped {
+                var nonceSpaceExhausted = false
+                var pending: [SearchSubmission] = []
+                var statisticsAccumulator = SearchStatisticsAccumulator()
+
+                func enqueueNextBatch() throws -> Bool {
+                    guard !nonceSpaceExhausted,
+                          coordinator.isCurrent(job),
+                          !coordinator.isStopped
+                    else { return false }
                     thermalPauseIfNeeded(profile: profile)
                     let activeBatchSize = solver.prefetchStatus()?.finished == false
                         ? min(batchSize, prebuildBatchNonces)
                         : batchSize
                     let count = NonceSpace.batchSize(offset: offset, maximumOffset: variableMask,
                                                      requested: activeBatchSize)
-                    guard count > 0 else { break }
-                    let batch = try solver.search(message: job.message, target: job.target,
-                        baseNonce: base | offset, nonceCount: count, threadgroupSize: group)
-                    stats.recordBatch(nonces: count, gpuSeconds: batch.gpuSeconds, wallSeconds: batch.wallSeconds)
+                    guard count > 0 else {
+                        nonceSpaceExhausted = true
+                        return false
+                    }
+                    pending.append(try solver.enqueueSearch(
+                        message: job.message,
+                        target: job.target,
+                        baseNonce: base | offset,
+                        nonceCount: count,
+                        threadgroupSize: group))
+                    if let next = NonceSpace.advance(
+                        offset: offset, count: count, maximumOffset: variableMask)
+                    {
+                        offset = next
+                    } else {
+                        nonceSpaceExhausted = true
+                    }
+                    return true
+                }
+
+                while pending.count < searchPipelineDepth, try enqueueNextBatch() {}
+                while !pending.isEmpty {
+                    let batch = try pending.removeFirst().wait()
+
+                    // Keep the next GPU command ready before CPU verification
+                    // and any synchronous Stratum submission work.
+                    while pending.count < searchPipelineDepth, try enqueueNextBatch() {}
+                    let statisticsSample = statisticsAccumulator.append(batch)
+                    if let statisticsSample {
+                        stats.recordBatch(
+                            nonces: statisticsSample.nonces,
+                            gpuSeconds: statisticsSample.gpuSeconds,
+                            wallSeconds: statisticsSample.activeSearchSeconds)
+                    }
                     for nonce in batch.candidates {
                         guard coordinator.isCurrent(job) else { stats.update { $0.shares.stale += 1 }; break }
                         let hit = try AutolykosV2.hit(message: job.message, nonce: nonceBytes(nonce), height: job.height)
@@ -399,7 +552,7 @@ enum ErgoMetalCLI {
                         }
                     }
                     let now = Date()
-                    if now >= nextStatusAt {
+                    if statisticsSample != nil, now >= nextStatusAt {
                         let prefetch = solver.prefetchStatus()
                         stats.update {
                             $0.prefetchHeight = prefetch?.height
@@ -429,12 +582,18 @@ enum ErgoMetalCLI {
                             suffix: "shares=\(snapshot.shares.accepted)/\(snapshot.shares.rejected)")
                         nextStatusAt = now.addingTimeInterval(1)
                     }
-                    guard let next = NonceSpace.advance(offset: offset, count: count,
-                                                        maximumOffset: variableMask) else {
-                        coordinator.handle(.protocolError("nonce space exhausted for job \(job.id)"))
-                        break
-                    }
-                    offset = next
+                }
+                if let statisticsSample = statisticsAccumulator.flush() {
+                    stats.recordBatch(
+                        nonces: statisticsSample.nonces,
+                        gpuSeconds: statisticsSample.gpuSeconds,
+                        wallSeconds: statisticsSample.activeSearchSeconds)
+                }
+                if nonceSpaceExhausted,
+                   coordinator.isCurrent(job),
+                   !coordinator.isStopped
+                {
+                    coordinator.handle(.protocolError("nonce space exhausted for job \(job.id)"))
                 }
             } catch MetalSolverError.cancelled {
                 coldBuildCancellations += 1

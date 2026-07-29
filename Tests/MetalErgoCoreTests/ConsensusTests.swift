@@ -128,6 +128,28 @@ final class ConsensusTests: XCTestCase {
         }
     }
 
+    func testMetalQueuesTwoSearchesWithIndependentResults() throws {
+        let solver = try MetalAutolykosSolver()
+        _ = try solver.buildDataset(height: 614_400, tableSize: 2_048)
+        let message = [UInt8](repeating: 0xa5, count: 32)
+
+        let first = try solver.enqueueSearch(
+            message: message, target: .max, baseNonce: 1_000, nonceCount: 64)
+        let second = try solver.enqueueSearch(
+            message: message, target: .max, baseNonce: 2_000, nonceCount: 64)
+
+        XCTAssertEqual(first.baseNonce, 1_000)
+        XCTAssertEqual(second.baseNonce, 2_000)
+        let firstBatch = try first.wait()
+        let secondBatch = try second.wait()
+        XCTAssertEqual(firstBatch.candidates, Array(1_000..<1_064).map(UInt64.init))
+        XCTAssertEqual(secondBatch.candidates, Array(2_000..<2_064).map(UInt64.init))
+        XCTAssertEqual(firstBatch.nonceCount, 64)
+        XCTAssertEqual(secondBatch.nonceCount, 64)
+        XCTAssertGreaterThanOrEqual(firstBatch.gpuSeconds, 0)
+        XCTAssertGreaterThanOrEqual(secondBatch.wallSeconds, 0)
+    }
+
     func testMetalRejectsUnsafeInputsAndCandidateOverflow() throws {
         let solver = try MetalAutolykosSolver()
         XCTAssertThrowsError(try solver.buildDataset(height: -1, tableSize: 1_024))

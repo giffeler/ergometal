@@ -101,72 +101,160 @@ kernel void buildDataset(
     for (uint i = 0; i < 8; ++i) dataset[id * 8 + i] = value[i];
 }
 
-inline void hashMessageNonce(
+// The search path hashes three fixed, single-block messages for every nonce.
+// Keep their BLAKE2b state in named scalars so the compiler does not have to
+// materialize the generic message/state arrays used by datasetHash.
+struct SearchDigest {
+    ulong h0;
+    ulong h1;
+    ulong h2;
+    ulong h3;
+};
+
+#define SEARCH_MIX(a, b, c, d, x, y) \
+    do { \
+        a = a + b + (x); d = rotr64(d ^ a, 32); \
+        c += d; b = rotr64(b ^ c, 24); \
+        a = a + b + (y); d = rotr64(d ^ a, 16); \
+        c += d; b = rotr64(b ^ c, 63); \
+    } while (false)
+
+#define SEARCH_ROUND(x0, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15) \
+    SEARCH_MIX(v0,v4,v8,v12,x0,x1); SEARCH_MIX(v1,v5,v9,v13,x2,x3); \
+    SEARCH_MIX(v2,v6,v10,v14,x4,x5); SEARCH_MIX(v3,v7,v11,v15,x6,x7); \
+    SEARCH_MIX(v0,v5,v10,v15,x8,x9); SEARCH_MIX(v1,v6,v11,v12,x10,x11); \
+    SEARCH_MIX(v2,v7,v8,v13,x12,x13); SEARCH_MIX(v3,v4,v9,v14,x14,x15)
+
+#define SEARCH_COMPRESS(out, count, M0, M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11, M12, M13, M14, M15) \
+    do { \
+        ulong v0 = B2B_IV[0] ^ 0x01010020UL; \
+        ulong v1 = B2B_IV[1]; ulong v2 = B2B_IV[2]; ulong v3 = B2B_IV[3]; \
+        ulong v4 = B2B_IV[4]; ulong v5 = B2B_IV[5]; ulong v6 = B2B_IV[6]; ulong v7 = B2B_IV[7]; \
+        ulong v8 = B2B_IV[0]; ulong v9 = B2B_IV[1]; ulong v10 = B2B_IV[2]; ulong v11 = B2B_IV[3]; \
+        ulong v12 = B2B_IV[4] ^ ulong(count); ulong v13 = B2B_IV[5]; \
+        ulong v14 = ~B2B_IV[6]; ulong v15 = B2B_IV[7]; \
+        SEARCH_ROUND(M0,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12,M13,M14,M15); \
+        SEARCH_ROUND(M14,M10,M4,M8,M9,M15,M13,M6,M1,M12,M0,M2,M11,M7,M5,M3); \
+        SEARCH_ROUND(M11,M8,M12,M0,M5,M2,M15,M13,M10,M14,M3,M6,M7,M1,M9,M4); \
+        SEARCH_ROUND(M7,M9,M3,M1,M13,M12,M11,M14,M2,M6,M5,M10,M4,M0,M15,M8); \
+        SEARCH_ROUND(M9,M0,M5,M7,M2,M4,M10,M15,M14,M1,M11,M12,M6,M8,M3,M13); \
+        SEARCH_ROUND(M2,M12,M6,M10,M0,M11,M8,M3,M4,M13,M7,M5,M15,M14,M1,M9); \
+        SEARCH_ROUND(M12,M5,M1,M15,M14,M13,M4,M10,M0,M7,M6,M3,M9,M2,M8,M11); \
+        SEARCH_ROUND(M13,M11,M7,M14,M12,M1,M3,M9,M5,M0,M15,M4,M8,M6,M2,M10); \
+        SEARCH_ROUND(M6,M15,M14,M9,M11,M3,M0,M8,M12,M2,M13,M7,M1,M4,M10,M5); \
+        SEARCH_ROUND(M10,M2,M8,M4,M7,M6,M1,M5,M15,M11,M9,M14,M3,M12,M13,M0); \
+        SEARCH_ROUND(M0,M1,M2,M3,M4,M5,M6,M7,M8,M9,M10,M11,M12,M13,M14,M15); \
+        SEARCH_ROUND(M14,M10,M4,M8,M9,M15,M13,M6,M1,M12,M0,M2,M11,M7,M5,M3); \
+        (out).h0 = (B2B_IV[0] ^ 0x01010020UL) ^ v0 ^ v8; \
+        (out).h1 = B2B_IV[1] ^ v1 ^ v9; \
+        (out).h2 = B2B_IV[2] ^ v2 ^ v10; \
+        (out).h3 = B2B_IV[3] ^ v3 ^ v11; \
+    } while (false)
+
+inline ulong packBigEndianWords(uint first, uint second) {
+    return ulong(bswap32(first)) | (ulong(bswap32(second)) << 32);
+}
+
+inline SearchDigest searchMessageNonce(
     constant const uint *message,
-    ulong nonce,
-    thread ulong h[8])
+    ulong nonce)
 {
-    initHash(h);
-    ulong m[16];
-    for (uint i = 0; i < 16; ++i) m[i] = 0;
-    for (uint i = 0; i < 4; ++i) {
-        m[i] = ulong(bswap32(message[i * 2])) |
-               (ulong(bswap32(message[i * 2 + 1])) << 32);
-    }
-    m[4] = bswap64(nonce);
-    compress(h, m, 40, true);
+    SearchDigest digest;
+    SEARCH_COMPRESS(
+        digest, 40UL,
+        packBigEndianWords(message[0], message[1]),
+        packBigEndianWords(message[2], message[3]),
+        packBigEndianWords(message[4], message[5]),
+        packBigEndianWords(message[6], message[7]),
+        bswap64(nonce),
+        0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL);
+    return digest;
 }
 
-inline void hashSum(thread const uint sum[8], thread ulong h[8]) {
-    initHash(h);
-    ulong m[16];
-    for (uint i = 0; i < 4; ++i) {
-        m[i] = ulong(bswap32(sum[i * 2])) |
-               (ulong(bswap32(sum[i * 2 + 1])) << 32);
-    }
-    for (uint i = 4; i < 16; ++i) m[i] = 0;
-    compress(h, m, 32, true);
-}
-
-inline void hashIndexSeed(
+inline SearchDigest searchIndexSeed(
     device const uint *dataset,
     uint firstIndex,
     constant const uint *message,
-    ulong nonce,
-    thread ulong h[8])
+    ulong nonce)
 {
     // seed = dataset[firstIndex].dropFirst() || message || nonce (71 bytes).
-    // Keep it in 32-bit big-endian words and pack pairs directly into the
-    // little-endian BLAKE2b message words, avoiding a per-nonce byte buffer.
     device const uint *element = dataset + firstIndex * 8;
-    uint words[18];
-    for (uint i = 0; i < 7; ++i) {
-        words[i] = (element[i] << 8) | (element[i + 1] >> 24);
-    }
-    words[7] = (element[7] << 8) | (message[0] >> 24);
-    for (uint i = 0; i < 7; ++i) {
-        words[8 + i] = (message[i] << 8) | (message[i + 1] >> 24);
-    }
-    words[15] = (message[7] << 8) | uint(nonce >> 56);
-    words[16] = uint(nonce >> 24);
-    words[17] = uint(nonce) << 8;
-
-    initHash(h);
-    ulong m[16];
-    for (uint i = 0; i < 9; ++i) {
-        m[i] = ulong(bswap32(words[i * 2])) |
-               (ulong(bswap32(words[i * 2 + 1])) << 32);
-    }
-    for (uint i = 9; i < 16; ++i) m[i] = 0;
-    compress(h, m, 71, true);
+    SearchDigest digest;
+    SEARCH_COMPRESS(
+        digest, 71UL,
+        packBigEndianWords(
+            (element[0] << 8) | (element[1] >> 24),
+            (element[1] << 8) | (element[2] >> 24)),
+        packBigEndianWords(
+            (element[2] << 8) | (element[3] >> 24),
+            (element[3] << 8) | (element[4] >> 24)),
+        packBigEndianWords(
+            (element[4] << 8) | (element[5] >> 24),
+            (element[5] << 8) | (element[6] >> 24)),
+        packBigEndianWords(
+            (element[6] << 8) | (element[7] >> 24),
+            (element[7] << 8) | (message[0] >> 24)),
+        packBigEndianWords(
+            (message[0] << 8) | (message[1] >> 24),
+            (message[1] << 8) | (message[2] >> 24)),
+        packBigEndianWords(
+            (message[2] << 8) | (message[3] >> 24),
+            (message[3] << 8) | (message[4] >> 24)),
+        packBigEndianWords(
+            (message[4] << 8) | (message[5] >> 24),
+            (message[5] << 8) | (message[6] >> 24)),
+        packBigEndianWords(
+            (message[6] << 8) | (message[7] >> 24),
+            (message[7] << 8) | uint(nonce >> 56)),
+        packBigEndianWords(uint(nonce >> 24), uint(nonce) << 8),
+        0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL);
+    return digest;
 }
 
-inline bool belowTarget(thread const uint hit[8], constant const uint *target) {
-    for (uint i = 0; i < 8; ++i) {
-        if (hit[i] != target[i]) return hit[i] < target[i];
-    }
-    return false;
+inline SearchDigest searchSum(thread const uint sum[8]) {
+    SearchDigest digest;
+    SEARCH_COMPRESS(
+        digest, 32UL,
+        packBigEndianWords(sum[0], sum[1]),
+        packBigEndianWords(sum[2], sum[3]),
+        packBigEndianWords(sum[4], sum[5]),
+        packBigEndianWords(sum[6], sum[7]),
+        0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL, 0UL);
+    return digest;
 }
+
+inline void searchDigestWords(SearchDigest digest, thread uint words[8]) {
+    words[0] = bswap32(uint(digest.h0));
+    words[1] = bswap32(uint(digest.h0 >> 32));
+    words[2] = bswap32(uint(digest.h1));
+    words[3] = bswap32(uint(digest.h1 >> 32));
+    words[4] = bswap32(uint(digest.h2));
+    words[5] = bswap32(uint(digest.h2 >> 32));
+    words[6] = bswap32(uint(digest.h3));
+    words[7] = bswap32(uint(digest.h3 >> 32));
+}
+
+inline bool searchDigestBelowTarget(SearchDigest digest, constant const uint *target) {
+    uint word = bswap32(uint(digest.h0));
+    if (word != target[0]) return word < target[0];
+    word = bswap32(uint(digest.h0 >> 32));
+    if (word != target[1]) return word < target[1];
+    word = bswap32(uint(digest.h1));
+    if (word != target[2]) return word < target[2];
+    word = bswap32(uint(digest.h1 >> 32));
+    if (word != target[3]) return word < target[3];
+    word = bswap32(uint(digest.h2));
+    if (word != target[4]) return word < target[4];
+    word = bswap32(uint(digest.h2 >> 32));
+    if (word != target[5]) return word < target[5];
+    word = bswap32(uint(digest.h3));
+    if (word != target[6]) return word < target[6];
+    return bswap32(uint(digest.h3 >> 32)) < target[7];
+}
+
+#undef SEARCH_COMPRESS
+#undef SEARCH_ROUND
+#undef SEARCH_MIX
 
 kernel void searchNonces(
     device const uint *dataset [[buffer(0)]],
@@ -179,13 +267,13 @@ kernel void searchNonces(
     uint id [[thread_position_in_grid]])
 {
     ulong nonce = baseNonce + ulong(id);
-    ulong firstHash[8]; hashMessageNonce(message, nonce, firstHash);
-    ulong tail = bswap64(firstHash[3]);
+    SearchDigest firstHash = searchMessageNonce(message, nonce);
+    ulong tail = bswap64(firstHash.h3);
     uint firstIndex = uint(tail % ulong(tableSize));
 
-    ulong indexHash[8]; hashIndexSeed(dataset, firstIndex, message, nonce, indexHash);
+    SearchDigest indexHash = searchIndexSeed(dataset, firstIndex, message, nonce);
     uint indexWords[8];
-    for (uint i = 0; i < 8; ++i) indexWords[i] = digestLimb(indexHash, i);
+    searchDigestWords(indexHash, indexWords);
 
     uint sum[8]; for (uint i = 0; i < 8; ++i) sum[i] = 0;
     for (uint k = 0; k < 32; ++k) {
@@ -203,9 +291,8 @@ kernel void searchNonces(
         }
     }
 
-    ulong hitHash[8]; hashSum(sum, hitHash);
-    uint hit[8]; for (uint i = 0; i < 8; ++i) hit[i] = digestLimb(hitHash, i);
-    if (belowTarget(hit, target)) {
+    SearchDigest hitHash = searchSum(sum);
+    if (searchDigestBelowTarget(hitHash, target)) {
         uint slot = atomic_fetch_add_explicit(resultCount, 1U, memory_order_relaxed);
         if (slot < 256) results[slot] = nonce;
     }

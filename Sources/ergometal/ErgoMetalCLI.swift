@@ -127,8 +127,11 @@ enum ErgoMetalCLI {
         }
         solver.cancelPrefetch()
         stats.update { $0.state = .stopped }
-        writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "session_ended",
-            fields: ["verified_candidates": String(verified)]))
+        let finalSnapshot = stats.refresh()
+        var finalFields = finalSnapshot.eventFields
+        finalFields["verified_candidates"] = String(verified)
+        writer.write(MinerEvent(sessionID: finalSnapshot.sessionID, type: "session_ended",
+            fields: finalFields))
         if args.has("json") {
             let encoder = JSONEncoder(); encoder.outputFormatting = [.prettyPrinted, .sortedKeys]; encoder.dateEncodingStrategy = .iso8601
             FileHandle.standardOutput.write(try encoder.encode(stats.snapshot())); print()
@@ -157,7 +160,7 @@ enum ErgoMetalCLI {
     private static func mine(_ args: Arguments) throws {
         try args.validate(valueOptions: ["pool", "wallet", "worker", "network", "profile",
                                          "prebuild", "batch-nonces", "threadgroup-size",
-                                         "api-bind", "stats-file"])
+                                         "api-bind", "stats-file", "stats-interval"])
         let pool = try args.require("pool")
         let wallet = try args.require("wallet")
         let worker = args.string("worker", default: "metal")!
@@ -178,6 +181,7 @@ enum ErgoMetalCLI {
             "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
             in: 1...maximumBatchNonces)
         let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
+        let statsInterval = try args.int("stats-interval", default: 60, in: 1...3_600)
         let solver = try MetalAutolykosSolver()
         let stats = StatisticsStore(mode: .mining, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
@@ -190,6 +194,30 @@ enum ErgoMetalCLI {
         coordinator.client = client
         stats.update { $0.poolHost = client.redactedHost }
         writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "session_started"))
+
+        let statsTimer = DispatchSource.makeTimerSource(
+            queue: DispatchQueue(label: "dev.ergometal.statistics"))
+        statsTimer.schedule(
+            deadline: .now() + .seconds(statsInterval),
+            repeating: .seconds(statsInterval),
+            leeway: .milliseconds(min(1_000, statsInterval * 50)))
+        statsTimer.setEventHandler {
+            guard !coordinator.isStopped else { return }
+            let prefetch = solver.prefetchStatus()
+            stats.update {
+                $0.prefetchHeight = prefetch?.height
+                $0.prefetchProgress = prefetch?.progress ?? 0
+                $0.prefetchBuildSeconds = prefetch?.seconds
+                $0.prefetchError = prefetch?.errorDescription
+            }
+            coordinator.recordStatisticsSample()
+        }
+        statsTimer.resume()
+        defer {
+            statsTimer.cancel()
+            solver.cancelPrefetch()
+            coordinator.stop()
+        }
 
         let signalQueue = DispatchQueue(label: "dev.ergometal.signals")
         signal(SIGINT, SIG_IGN); signal(SIGTERM, SIG_IGN)
@@ -267,6 +295,14 @@ enum ErgoMetalCLI {
                     continue
                 }
                 coldBuildCancellations = 0
+                if build.source == .prefetched, reportedPrefetchHeight != job.height {
+                    reportedPrefetchHeight = job.height
+                    writer.write(MinerEvent(
+                        sessionID: stats.snapshot().sessionID,
+                        type: "dataset_prefetch_completed",
+                        fields: ["height": String(job.height),
+                                 "seconds": String(build.seconds)]))
+                }
                 stats.update {
                     $0.datasetBytes = build.bytes
                     $0.datasetBuildSeconds = build.seconds
@@ -379,7 +415,6 @@ enum ErgoMetalCLI {
                 writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "error", fields: ["message": error.localizedDescription]))
             }
         }
-        solver.cancelPrefetch()
         print("\nStopped")
     }
 

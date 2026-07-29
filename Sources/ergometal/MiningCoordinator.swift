@@ -9,6 +9,7 @@ final class MiningCoordinator: @unchecked Sendable {
     private var latestGeneration: UInt64 = 0
     private var latestHeight: Int?
     private var stopped = false
+    private var stopFinalized = false
     private var reconnectAttempt = 0
     weak var client: ErgoStratumClient?
 
@@ -82,15 +83,41 @@ final class MiningCoordinator: @unchecked Sendable {
 
     var isStopped: Bool { condition.lock(); defer { condition.unlock() }; return stopped }
 
-    func stop() {
+    func recordStatisticsSample() {
         condition.lock()
         guard !stopped else { condition.unlock(); return }
+        let snapshot = stats.refresh()
+        writer.write(MinerEvent(
+            sessionID: snapshot.sessionID,
+            type: "statistics_sample",
+            fields: snapshot.eventFields))
+        condition.unlock()
+    }
+
+    func stop() {
+        condition.lock()
+        if stopped {
+            while !stopFinalized { condition.wait() }
+            condition.unlock()
+            return
+        }
         stopped = true
         condition.broadcast()
         condition.unlock()
         client?.disconnect()
-        stats.update { $0.state = .stopped }
-        emit("session_ended")
+        stats.update {
+            $0.state = .stopped
+            $0.poolConnected = false
+        }
+        let snapshot = stats.refresh()
+        writer.write(MinerEvent(
+            sessionID: snapshot.sessionID,
+            type: "session_ended",
+            fields: snapshot.eventFields))
+        condition.lock()
+        stopFinalized = true
+        condition.broadcast()
+        condition.unlock()
     }
 
     private func emit(_ type: String, _ fields: [String: String] = [:]) {

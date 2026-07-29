@@ -104,6 +104,7 @@ Usage:
                  [--prebuild auto|on|off]
                  [--batch-nonces N] [--threadgroup-size N]
                  [--api-bind 127.0.0.1:4078] [--stats-file path]
+                 [--stats-interval 60]
 
 The pool password defaults to ERGOMETAL_POOL_PASSWORD or "x" and is never logged.
 """

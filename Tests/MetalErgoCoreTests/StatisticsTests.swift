@@ -18,6 +18,29 @@ final class StatisticsTests: XCTestCase {
         XCTAssertFalse(output.contains("pool.example"))
     }
 
+    func testRefreshAndEventFieldsCaptureLongTermStatisticsWithoutPoolHost() {
+        let stats = StatisticsStore(mode: .mining, profile: "peak")
+        stats.update { snapshot in
+            snapshot.poolHost = "private.pool.example:1234"
+            snapshot.job = JobStatistics(id: "job-1", height: 1_839_730, difficulty: 42)
+            snapshot.datasetSource = .prefetched
+            snapshot.shares.accepted = 3
+        }
+        stats.recordBatch(nonces: 65_536, gpuSeconds: 0.1, wallSeconds: 0.2)
+
+        let snapshot = stats.refresh()
+        let fields = snapshot.eventFields
+
+        XCTAssertEqual(fields["nonces"], "65536")
+        XCTAssertEqual(fields["height"], "1839730")
+        XCTAssertEqual(fields["dataset_source"], "prefetched")
+        XCTAssertEqual(fields["shares_accepted"], "3")
+        XCTAssertGreaterThan(Double(fields["elapsed_seconds"] ?? "") ?? -1, 0)
+        XCTAssertGreaterThan(Double(fields["effective_hashrate"] ?? "") ?? 0, 0)
+        XCTAssertFalse(fields.values.contains { $0.contains("private.pool.example") })
+        XCTAssertNil(fields["pool_host"])
+    }
+
     func testEventWriterAppendsValidJSONLines() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let stats = StatisticsStore()

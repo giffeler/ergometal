@@ -139,13 +139,15 @@ private final class DatasetPrefetchTask {
 
 public final class MetalAutolykosSolver {
     private static let maximumResults = 256
-    private static let buildChunkElements = 262_144
+    private static let synchronousBuildChunkElements = 1_048_576
+    private static let prefetchBuildChunkElements = 262_144
 
     public let device: MTLDevice
     public let info: MetalDeviceInfo
     private let commandQueue: MTLCommandQueue
     private let buildPipeline: MTLComputePipelineState
     private let searchPipeline: MTLComputePipelineState
+    private let constantMBuffer: MTLBuffer
     private let resultBuffer: MTLBuffer
     private let resultCountBuffer: MTLBuffer
     private let searchLock = NSLock()
@@ -158,6 +160,9 @@ public final class MetalAutolykosSolver {
     public init(device: MTLDevice? = MTLCreateSystemDefaultDevice()) throws {
         guard let device else { throw MetalSolverError.noDevice }
         guard let commandQueue = device.makeCommandQueue(),
+              let constantMBuffer = device.makeBuffer(
+                length: 1_024 * MemoryLayout<UInt64>.size,
+                options: .storageModeShared),
               let resultBuffer = device.makeBuffer(
                 length: Self.maximumResults * MemoryLayout<UInt64>.size,
                 options: .storageModeShared),
@@ -167,6 +172,7 @@ public final class MetalAutolykosSolver {
         else { throw MetalSolverError.noDevice }
         self.device = device
         self.commandQueue = commandQueue
+        self.constantMBuffer = constantMBuffer
         self.resultBuffer = resultBuffer
         self.resultCountBuffer = resultCountBuffer
         self.info = MetalDeviceInfo(
@@ -176,6 +182,10 @@ public final class MetalAutolykosSolver {
             maxBufferBytes: UInt64(device.maxBufferLength),
             unifiedMemory: device.hasUnifiedMemory
         )
+        let constantM = constantMBuffer.contents().bindMemory(to: UInt64.self, capacity: 1_024)
+        for index in 0..<1_024 {
+            constantM[index] = UInt64(index).bigEndian
+        }
 
         let library: MTLLibrary
         do {
@@ -452,7 +462,7 @@ public final class MetalAutolykosSolver {
         var startIndex = 0
         while startIndex < slot.spec.tableSize {
             guard shouldContinue?() != false else { throw MetalSolverError.cancelled }
-            let count = min(Self.buildChunkElements, slot.spec.tableSize - startIndex)
+            let count = min(Self.synchronousBuildChunkElements, slot.spec.tableSize - startIndex)
             try encodeBuildChunk(slot: slot, startIndex: startIndex, count: count)
             startIndex += count
         }
@@ -467,7 +477,7 @@ public final class MetalAutolykosSolver {
                 state.unlock()
                 guard !cancelled else { throw MetalSolverError.cancelled }
                 let count = min(
-                    Self.buildChunkElements,
+                    Self.prefetchBuildChunkElements,
                     task.slot.spec.tableSize - task.completedElements)
                 try encodeBuildChunk(
                     slot: task.slot,
@@ -503,6 +513,7 @@ public final class MetalAutolykosSolver {
         encoder.setBytes(&height, length: MemoryLayout<UInt32>.size, index: 1)
         encoder.setBytes(&tableSize, length: MemoryLayout<UInt32>.size, index: 2)
         encoder.setBytes(&start, length: MemoryLayout<UInt32>.size, index: 3)
+        encoder.setBuffer(constantMBuffer, offset: 0, index: 4)
         let width = min(buildPipeline.maxTotalThreadsPerThreadgroup, 256)
         encoder.dispatchThreads(
             MTLSize(width: count, height: 1, depth: 1),

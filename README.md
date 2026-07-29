@@ -12,7 +12,7 @@ Only a public payout address is required. Private keys and wallet seed phrases a
 
 ## Build
 
-Requirements: Xcode 26.6, macOS 26.6 or later, and an Apple Silicon Mac. Builds target arm64 only; Intel Macs and universal builds are not supported.
+Requirements: Xcode 26.6, macOS 26.5 or later, and an Apple Silicon Mac. Builds target arm64 only; Intel Macs and universal builds are not supported.
 
 Current mainnet datasets require substantial unified memory. Mining uses one height-specific dataset; the default `--prebuild auto` strategy keeps it active while building the next height in a second buffer. It automatically falls back to a single buffer if Metal's recommended working set cannot hold both datasets plus at least 512 MB or 10% headroom.
 
@@ -46,7 +46,7 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 - `/metrics` — Prometheus text format
 - `/healthz` — process and solver health
 
-Status and metrics distinguish active search hashrate from effective wall-clock hashrate and expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. A history write failure is reported but never stops mining.
+Status and metrics distinguish active search hashrate from effective wall-clock hashrate and expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file. A history write failure is reported but never stops mining.
 
 ## Independent implementation and provenance
 

@@ -57,6 +57,44 @@ public struct MinerSnapshot: Codable, Sendable {
     public var lastError: String?
 }
 
+public extension MinerSnapshot {
+    /// A credential-free, flat representation for append-only event logs.
+    var eventFields: [String: String] {
+        var fields = [
+            "elapsed_seconds": String(max(0, sampledAt.timeIntervalSince(startedAt))),
+            "state": state.rawValue,
+            "profile": profile,
+            "nonces": String(nonces),
+            "hashrate": String(hashrate),
+            "average_hashrate": String(averageHashrate),
+            "effective_hashrate": String(effectiveHashrate),
+            "gpu_seconds": String(gpuSeconds),
+            "search_seconds": String(searchSeconds),
+            "dataset_bytes": String(datasetBytes),
+            "dataset_build_seconds": String(datasetBuildSeconds),
+            "dataset_activation_seconds": String(datasetActivationSeconds),
+            "prefetch_progress": String(prefetchProgress),
+            "pool_connected": String(poolConnected),
+            "reconnects": String(reconnects),
+            "protocol_errors": String(protocolErrors),
+            "thermal_state": thermalState,
+            "shares_found": String(shares.found),
+            "shares_submitted": String(shares.submitted),
+            "shares_accepted": String(shares.accepted),
+            "shares_rejected": String(shares.rejected),
+            "shares_stale": String(shares.stale)
+        ]
+        if let id = job.id { fields["job_id"] = id }
+        if let height = job.height { fields["height"] = String(height) }
+        if let difficulty = job.difficulty { fields["difficulty"] = String(difficulty) }
+        if let source = datasetSource { fields["dataset_source"] = source.rawValue }
+        if let height = prefetchHeight { fields["prefetch_height"] = String(height) }
+        if let seconds = prefetchBuildSeconds { fields["prefetch_build_seconds"] = String(seconds) }
+        if let error = prefetchError { fields["prefetch_error"] = error }
+        return fields
+    }
+}
+
 public final class StatisticsStore: @unchecked Sendable {
     private let lock = NSLock()
     private var value: MinerSnapshot
@@ -93,6 +131,20 @@ public final class StatisticsStore: @unchecked Sendable {
         let elapsed = now.timeIntervalSince(value.startedAt)
         value.effectiveHashrate = elapsed > 0 ? Double(value.nonces) / elapsed : 0
         value.sampledAt = now
+        value.thermalState = Self.thermalName
+    }
+
+    /// Refreshes wall-clock dependent values even while no search batch is
+    /// completing, for example during a long dataset build.
+    @discardableResult
+    public func refresh() -> MinerSnapshot {
+        lock.lock(); defer { lock.unlock() }
+        let now = Date()
+        let elapsed = now.timeIntervalSince(value.startedAt)
+        value.effectiveHashrate = elapsed > 0 ? Double(value.nonces) / elapsed : 0
+        value.sampledAt = now
+        value.thermalState = Self.thermalName
+        return value
     }
 
     public func snapshot() -> MinerSnapshot {

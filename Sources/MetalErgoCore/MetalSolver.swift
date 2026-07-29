@@ -12,6 +12,7 @@ public enum MetalSolverError: Error, LocalizedError {
     case invalidNonceRange(base: UInt64, count: Int)
     case invalidThreadgroupSize(Int)
     case resultOverflow(limit: Int, found: UInt32)
+    case capture(String)
     case cancelled
 
     public var errorDescription: String? {
@@ -29,6 +30,7 @@ public enum MetalSolverError: Error, LocalizedError {
         case .invalidThreadgroupSize(let size): return "Threadgroup size must be positive, got \(size)"
         case .resultOverflow(let limit, let found):
             return "Metal candidate buffer can hold \(limit) nonces, but the batch found \(found)"
+        case .capture(let message): return "Metal GPU capture failed: \(message)"
         case .cancelled: return "Metal dataset build was cancelled"
         }
     }
@@ -215,6 +217,37 @@ public final class MetalAutolykosSolver {
         }
     }
 
+    public func startGPUCapture(path: String) throws {
+        let manager = MTLCaptureManager.shared()
+        guard !manager.isCapturing else {
+            throw MetalSolverError.capture("another capture is already active")
+        }
+        guard manager.supportsDestination(.gpuTraceDocument) else {
+            throw MetalSolverError.capture("GPU trace documents are not supported")
+        }
+        let url = URL(fileURLWithPath: path).standardizedFileURL
+        guard url.pathExtension == "gputrace" else {
+            throw MetalSolverError.capture("output path must end in .gputrace")
+        }
+        guard !FileManager.default.fileExists(atPath: url.path) else {
+            throw MetalSolverError.capture("output file already exists at \(url.path)")
+        }
+        let descriptor = MTLCaptureDescriptor()
+        descriptor.captureObject = commandQueue
+        descriptor.destination = .gpuTraceDocument
+        descriptor.outputURL = url
+        do {
+            try manager.startCapture(with: descriptor)
+        } catch {
+            throw MetalSolverError.capture(error.localizedDescription)
+        }
+    }
+
+    public func stopGPUCapture() {
+        let manager = MTLCaptureManager.shared()
+        if manager.isCapturing { manager.stopCapture() }
+    }
+
     @discardableResult
     public func buildDataset(
         height: Int,
@@ -345,6 +378,8 @@ public final class MetalAutolykosSolver {
         guard let command = commandQueue.makeCommandBuffer(),
               let encoder = command.makeComputeCommandEncoder()
         else { throw MetalSolverError.commandEncoding }
+        command.label = "searchNonces"
+        encoder.label = "searchNonces"
         resultCountBuffer.contents().storeBytes(of: UInt32(0), as: UInt32.self)
 
         var base = baseNonce
@@ -505,6 +540,8 @@ public final class MetalAutolykosSolver {
         guard let command = commandQueue.makeCommandBuffer(),
               let encoder = command.makeComputeCommandEncoder()
         else { throw MetalSolverError.commandEncoding }
+        command.label = "buildDataset[\(startIndex)..<\(startIndex + count)]"
+        encoder.label = "buildDataset"
         var height = UInt32(slot.spec.height)
         var tableSize = UInt32(slot.spec.tableSize)
         var start = UInt32(startIndex)

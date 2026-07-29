@@ -35,6 +35,15 @@ ergometal mine --pool stratum+tls://POOL:PORT --wallet ERGO_ADDRESS --worker m4 
 
 `benchmark` uses the consensus table size unless `--table-size` is explicitly supplied for a small diagnostic run. `mine` has no default pool and supports Miningcore-compatible Ergo Stratum v1 over TCP or certificate-validated TLS.
 
+For a replayable Metal GPU trace, enable capture and select either the dataset build or the first search batch:
+
+```sh
+MTL_CAPTURE_ENABLED=1 ergometal benchmark --duration 10 --height 614400 \
+  --gpu-trace search.gputrace --gpu-trace-phase search
+```
+
+The output can be large and the destination must not already exist. Open the `.gputrace` file in Xcode's Metal debugger for replay and counter profiling.
+
 The miner builds datasets in cancellable chunks, discards stale work when the pool advances, and promotes a completed next-height dataset without rebuilding it. After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short and GPU work is fairly time-sliced so the next dataset meets the block-height deadline; afterwards, the selected profile's larger batch size is restored. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
 
 ## Observability

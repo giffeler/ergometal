@@ -97,6 +97,7 @@ Usage:
   ergometal benchmark [--duration 60] [--height 614399] [--profile efficiency|peak]
                       [--table-size N] [--prebuild on|off]
                       [--batch-nonces N] [--threadgroup-size N]
+                      [--gpu-trace path.gputrace] [--gpu-trace-phase build|search]
                       [--api-bind 127.0.0.1:4078] [--stats-file path] [--json]
   ergometal replay --fixture path
   ergometal mine --pool stratum+tcp://host:port --wallet address [--worker name]

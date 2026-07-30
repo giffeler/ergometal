@@ -8,6 +8,8 @@ final class StatisticsTests: XCTestCase {
             snapshot.poolHost = "pool.example:1234"
             snapshot.state = .searching
             snapshot.shares.accepted = 2
+            snapshot.socTemperatureAverageCelsius = 61.25
+            snapshot.socTemperatureMaximumCelsius = 67.5
         }
         stats.recordBatch(nonces: 65_536, gpuSeconds: 0.1, wallSeconds: 0.2)
         let output = stats.prometheus()
@@ -15,6 +17,8 @@ final class StatisticsTests: XCTestCase {
         XCTAssertTrue(output.contains("ergometal_effective_hashrate"))
         XCTAssertTrue(output.contains("ergometal_dataset_prefetch_progress"))
         XCTAssertTrue(output.contains("ergometal_shares_accepted_total"))
+        XCTAssertTrue(output.contains("ergometal_soc_temperature_average_celsius"))
+        XCTAssertTrue(output.contains("ergometal_soc_temperature_maximum_celsius"))
         XCTAssertFalse(output.contains("pool.example"))
     }
 
@@ -39,6 +43,21 @@ final class StatisticsTests: XCTestCase {
         XCTAssertGreaterThan(Double(fields["effective_hashrate"] ?? "") ?? 0, 0)
         XCTAssertFalse(fields.values.contains { $0.contains("private.pool.example") })
         XCTAssertNil(fields["pool_host"])
+    }
+
+    func testEventFieldsIncludeSoCTemperatureTelemetry() {
+        var snapshot = StatisticsStore().snapshot()
+        snapshot.socTemperatureAverageCelsius = 61.25
+        snapshot.socTemperatureMaximumCelsius = 67.5
+        snapshot.socTemperatureSensorCount = 12
+        snapshot.temperatureSource = "iohid_soc_die"
+
+        let fields = snapshot.eventFields
+
+        XCTAssertEqual(fields["soc_temperature_average_celsius"], "61.25")
+        XCTAssertEqual(fields["soc_temperature_maximum_celsius"], "67.5")
+        XCTAssertEqual(fields["soc_temperature_sensor_count"], "12")
+        XCTAssertEqual(fields["temperature_source"], "iohid_soc_die")
     }
 
     func testEventWriterAppendsValidJSONLines() throws {

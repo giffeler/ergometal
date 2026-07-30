@@ -6,7 +6,7 @@ Autolykos v2 is a memory-hard k-sum construction.
 
 ## Status and safety
 
-This is experimental mining software, not financial advice. It can sustain high GPU and unified-memory load, increase power use, and reduce foreground graphics performance. The default `efficiency` profile uses responsive batches and pauses in serious or critical thermal state. macOS does not expose stable unprivileged GPU temperature, fan, or power readings, so the miner does not invent those values.
+This is experimental mining software, not financial advice. It can sustain high GPU and unified-memory load, increase power use, and reduce foreground graphics performance. The default `efficiency` profile uses responsive batches and pauses in serious or critical thermal state. The miner records the public macOS thermal state and, when available, best-effort unprivileged Apple Silicon SoC die temperatures. These readings are identified by their source and are not presented as a model-specific GPU sensor.
 
 Only a public payout address is required. Private keys and wallet seed phrases are never accepted. Pool passwords can be supplied through `ERGOMETAL_POOL_PASSWORD`; URLs, addresses, and passwords are excluded from metrics and event data.
 
@@ -55,7 +55,7 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 - `/metrics` — Prometheus text format
 - `/healthz` — process and solver health
 
-The terminal shows current, active-average, and effective wall-clock hashrate alongside prebuild progress. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file. A history write failure is reported but never stops mining.
+The terminal shows current, active-average, and effective wall-clock hashrate alongside prebuild progress. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file. Numeric thermal telemetry is stored as `soc_temperature_average_celsius`, `soc_temperature_maximum_celsius`, `soc_temperature_sensor_count`, and `temperature_source`; unsupported systems report `temperature_source=unavailable` without failing the run. A history write failure is reported but never stops mining.
 
 ## Independent implementation and provenance
 

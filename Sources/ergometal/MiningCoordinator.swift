@@ -33,9 +33,18 @@ final class MiningCoordinator: @unchecked Sendable {
             latestGeneration = job.generation; latestHeight = job.height; queuedJob = job
             condition.broadcast(); condition.unlock()
             stats.update {
-                $0.job = JobStatistics(id: job.id, height: job.height, receivedAt: job.receivedAt, difficulty: $0.job.difficulty)
+                $0.job = JobStatistics(
+                    id: job.id,
+                    height: job.height,
+                    receivedAt: job.receivedAt,
+                    difficulty: $0.job.difficulty,
+                    targetHex: job.target.hex)
             }
-            emit("job_received", ["id": job.id, "height": String(job.height)])
+            emit("job_received", [
+                "id": job.id,
+                "height": String(job.height),
+                "job_target_hex": job.target.hex
+            ])
         case .shareResult(_, let accepted, let message):
             stats.update { if accepted { $0.shares.accepted += 1 } else { $0.shares.rejected += 1 } }
             emit(accepted ? "share_accepted" : "share_rejected", message.map { ["reason": $0] } ?? [:])

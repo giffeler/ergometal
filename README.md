@@ -20,11 +20,15 @@ If Xcode reports a missing Metal compiler, install Apple's matching component on
 
 ```sh
 xcodegen generate
-xcodebuild -project MetalErgoMiner.xcodeproj -scheme MetalErgoMiner build
-xcodebuild -project MetalErgoMiner.xcodeproj -scheme MetalErgoMiner test
+xcodebuild -project MetalErgoMiner.xcodeproj -scheme MetalErgoMiner \
+  -configuration Release -derivedDataPath DerivedData \
+  -destination 'platform=macOS,arch=arm64' CODE_SIGNING_ALLOWED=NO build
+xcodebuild -project MetalErgoMiner.xcodeproj -scheme MetalErgoMiner \
+  -configuration Debug -derivedDataPath /tmp/ergometal-tests \
+  -destination 'platform=macOS,arch=arm64' CODE_SIGNING_ALLOWED=NO test
 ```
 
-The generated executable is available under Xcode's build products. From Xcode, select the `MetalErgoMiner` scheme and set one of these argument sets:
+The canonical release executable is `DerivedData/Build/Products/Release/ergometal`; its sibling `MetalErgoCore.framework` is also required at runtime. Release builds always use `-derivedDataPath DerivedData`, while disposable test products stay under `/tmp`, preventing parallel stale executables inside the repository. From Xcode, select the `MetalErgoMiner` scheme and set one of these argument sets:
 
 ```sh
 ergometal devices
@@ -55,7 +59,7 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 - `/metrics` — Prometheus text format
 - `/healthz` — process and solver health
 
-The terminal shows current, active-average, and effective wall-clock hashrate alongside prebuild progress. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file. Numeric thermal telemetry is stored as `soc_temperature_average_celsius`, `soc_temperature_maximum_celsius`, `soc_temperature_sensor_count`, and `temperature_source`; unsupported systems report `temperature_source=unavailable` without failing the run. A history write failure is reported but never stops mining.
+The terminal shows current, active-average, and effective wall-clock hashrate alongside prebuild progress. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file. Numeric thermal telemetry is stored as `soc_temperature_average_celsius`, `soc_temperature_maximum_celsius`, `soc_temperature_sensor_count`, and `temperature_source`; unsupported systems report `temperature_source=unavailable` without failing the run. Every received job records its full 256-bit pool target as `job_target_hex`. The cumulative `shares_expected` counter adds `nonces × target / 2^256` for each completed search batch, allowing accepted-share luck to be evaluated even when targets change during a run. A history write failure is reported but never stops mining.
 
 ## Independent implementation and provenance
 

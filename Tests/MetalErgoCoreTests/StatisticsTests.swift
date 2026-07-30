@@ -17,6 +17,7 @@ final class StatisticsTests: XCTestCase {
         XCTAssertTrue(output.contains("ergometal_effective_hashrate"))
         XCTAssertTrue(output.contains("ergometal_dataset_prefetch_progress"))
         XCTAssertTrue(output.contains("ergometal_shares_accepted_total"))
+        XCTAssertTrue(output.contains("ergometal_shares_expected_total"))
         XCTAssertTrue(output.contains("ergometal_soc_temperature_average_celsius"))
         XCTAssertTrue(output.contains("ergometal_soc_temperature_maximum_celsius"))
         XCTAssertFalse(output.contains("pool.example"))
@@ -26,8 +27,13 @@ final class StatisticsTests: XCTestCase {
         let stats = StatisticsStore(mode: .mining, profile: "peak")
         stats.update { snapshot in
             snapshot.poolHost = "private.pool.example:1234"
-            snapshot.job = JobStatistics(id: "job-1", height: 1_839_730, difficulty: 42)
+            snapshot.job = JobStatistics(
+                id: "job-1",
+                height: 1_839_730,
+                difficulty: 42,
+                targetHex: String(repeating: "ab", count: 32))
             snapshot.datasetSource = .prefetched
+            snapshot.shares.expected = 4.25
             snapshot.shares.accepted = 3
         }
         stats.recordBatch(nonces: 65_536, gpuSeconds: 0.1, wallSeconds: 0.2)
@@ -37,7 +43,9 @@ final class StatisticsTests: XCTestCase {
 
         XCTAssertEqual(fields["nonces"], "65536")
         XCTAssertEqual(fields["height"], "1839730")
+        XCTAssertEqual(fields["job_target_hex"], String(repeating: "ab", count: 32))
         XCTAssertEqual(fields["dataset_source"], "prefetched")
+        XCTAssertEqual(fields["shares_expected"], "4.25")
         XCTAssertEqual(fields["shares_accepted"], "3")
         XCTAssertGreaterThan(Double(fields["elapsed_seconds"] ?? "") ?? -1, 0)
         XCTAssertGreaterThan(Double(fields["effective_hashrate"] ?? "") ?? 0, 0)
@@ -58,6 +66,20 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(fields["soc_temperature_maximum_celsius"], "67.5")
         XCTAssertEqual(fields["soc_temperature_sensor_count"], "12")
         XCTAssertEqual(fields["temperature_source"], "iohid_soc_die")
+    }
+
+    func testExpectedSharesUseFull256BitTarget() {
+        let stats = StatisticsStore()
+        let halfRangeTarget = UInt256(
+            limbs: [0x8000_0000] + [UInt32](repeating: 0, count: 7))
+
+        stats.recordBatch(
+            nonces: 1_000,
+            gpuSeconds: 0.1,
+            wallSeconds: 0.2,
+            shareTarget: halfRangeTarget)
+
+        XCTAssertEqual(stats.snapshot().shares.expected, 500, accuracy: 1e-12)
     }
 
     func testEventWriterAppendsValidJSONLines() throws {

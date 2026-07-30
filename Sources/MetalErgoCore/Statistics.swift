@@ -123,13 +123,25 @@ public struct JobStatistics: Codable, Sendable {
     public var height: Int?
     public var receivedAt: Date?
     public var difficulty: Double?
+    public var targetHex: String?
 
-    public init(id: String? = nil, height: Int? = nil, receivedAt: Date? = nil, difficulty: Double? = nil) {
-        self.id = id; self.height = height; self.receivedAt = receivedAt; self.difficulty = difficulty
+    public init(
+        id: String? = nil,
+        height: Int? = nil,
+        receivedAt: Date? = nil,
+        difficulty: Double? = nil,
+        targetHex: String? = nil
+    ) {
+        self.id = id
+        self.height = height
+        self.receivedAt = receivedAt
+        self.difficulty = difficulty
+        self.targetHex = targetHex
     }
 }
 
 public struct ShareStatistics: Codable, Sendable {
+    public var expected = 0.0
     public var found = 0
     public var submitted = 0
     public var accepted = 0
@@ -197,6 +209,7 @@ public extension MinerSnapshot {
             "thermal_state": thermalState,
             "soc_temperature_sensor_count": String(socTemperatureSensorCount),
             "temperature_source": temperatureSource,
+            "shares_expected": String(shares.expected),
             "shares_found": String(shares.found),
             "shares_submitted": String(shares.submitted),
             "shares_accepted": String(shares.accepted),
@@ -206,6 +219,7 @@ public extension MinerSnapshot {
         if let id = job.id { fields["job_id"] = id }
         if let height = job.height { fields["height"] = String(height) }
         if let difficulty = job.difficulty { fields["difficulty"] = String(difficulty) }
+        if let targetHex = job.targetHex { fields["job_target_hex"] = targetHex }
         if let source = datasetSource { fields["dataset_source"] = source.rawValue }
         if let height = prefetchHeight { fields["prefetch_height"] = String(height) }
         if let seconds = prefetchBuildSeconds { fields["prefetch_build_seconds"] = String(seconds) }
@@ -253,11 +267,19 @@ public final class StatisticsStore: @unchecked Sendable {
         value.thermalState = Self.thermalName
     }
 
-    public func recordBatch(nonces: Int, gpuSeconds: Double, wallSeconds: Double) {
+    public func recordBatch(
+        nonces: Int,
+        gpuSeconds: Double,
+        wallSeconds: Double,
+        shareTarget: UInt256? = nil
+    ) {
         lock.lock(); defer { lock.unlock() }
         value.nonces += UInt64(nonces)
         value.gpuSeconds += gpuSeconds
         value.searchSeconds += wallSeconds
+        if let shareTarget {
+            value.shares.expected += Double(nonces) * Self.shareProbability(for: shareTarget)
+        }
         let now = Date()
         value.hashrate = wallSeconds > 0 ? Double(nonces) / wallSeconds : 0
         value.averageHashrate = value.searchSeconds > 0 ? Double(value.nonces) / value.searchSeconds : 0
@@ -318,6 +340,9 @@ public final class StatisticsStore: @unchecked Sendable {
         ergometal_pool_connected{\(labels)} \(s.poolConnected ? 1 : 0)
         # TYPE ergometal_shares_found_total counter
         ergometal_shares_found_total{\(labels)} \(s.shares.found)
+        # HELP ergometal_shares_expected_total Expected candidate shares for all searched nonces and their job targets.
+        # TYPE ergometal_shares_expected_total counter
+        ergometal_shares_expected_total{\(labels)} \(s.shares.expected)
         # TYPE ergometal_shares_submitted_total counter
         ergometal_shares_submitted_total{\(labels)} \(s.shares.submitted)
         # TYPE ergometal_shares_accepted_total counter
@@ -348,6 +373,15 @@ public final class StatisticsStore: @unchecked Sendable {
             """
         }
         return output + "\n"
+    }
+
+    /// A uniformly distributed 256-bit hit is below `target` with probability
+    /// target / 2^256. Limbs are stored most-significant first.
+    private static func shareProbability(for target: UInt256) -> Double {
+        let radix = 4_294_967_296.0
+        return target.limbs.reversed().reduce(0.0) {
+            ($0 + Double($1)) / radix
+        }
     }
 
     private static var thermalName: String {

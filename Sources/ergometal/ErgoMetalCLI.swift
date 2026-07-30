@@ -544,7 +544,8 @@ enum ErgoMetalCLI {
                         stats.recordBatch(
                             nonces: statisticsSample.nonces,
                             gpuSeconds: statisticsSample.gpuSeconds,
-                            wallSeconds: statisticsSample.activeSearchSeconds)
+                            wallSeconds: statisticsSample.activeSearchSeconds,
+                            shareTarget: job.target)
                     }
                     for nonce in batch.candidates {
                         guard coordinator.isCurrent(job) else { stats.update { $0.shares.stale += 1 }; break }
@@ -595,7 +596,8 @@ enum ErgoMetalCLI {
                     stats.recordBatch(
                         nonces: statisticsSample.nonces,
                         gpuSeconds: statisticsSample.gpuSeconds,
-                        wallSeconds: statisticsSample.activeSearchSeconds)
+                        wallSeconds: statisticsSample.activeSearchSeconds,
+                        shareTarget: job.target)
                 }
                 if nonceSpaceExhausted,
                    coordinator.isCurrent(job),

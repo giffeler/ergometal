@@ -44,7 +44,7 @@ MTL_CAPTURE_ENABLED=1 ergometal benchmark --duration 10 --height 614400 \
 
 The output can be large and the destination must not already exist. Open the `.gputrace` file in Xcode's Metal debugger for replay and counter profiling.
 
-The miner builds datasets in cancellable chunks, discards stale work when the pool advances, and promotes a completed next-height dataset without rebuilding it. Search-only BLAKE2b messages use a fixed-block scalar Metal path, while two independent result-buffer sets keep the next GPU search queued during CPU verification and share handling. After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short and GPU work is fairly time-sliced so the next dataset meets the block-height deadline; afterwards, the selected profile's larger batch size is restored. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
+The miner builds datasets in cancellable chunks, discards stale work when the pool advances, and promotes a completed next-height dataset without rebuilding it. Search-only BLAKE2b messages use a fixed-block scalar Metal path, while two independent result-buffer sets keep the next GPU search queued during CPU verification and share handling. After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short and GPU work is fairly time-sliced so the next dataset meets the block-height deadline; afterwards, the selected profile's larger batch size is restored. The default prebuild search cap is 65,536 nonces and can be tuned with `--prebuild-batch-nonces`. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
 
 ## Observability
 
@@ -55,7 +55,7 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 - `/metrics` — Prometheus text format
 - `/healthz` — process and solver health
 
-Status and metrics distinguish active search hashrate from effective wall-clock hashrate and expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file. A history write failure is reported but never stops mining.
+The terminal shows current, active-average, and effective wall-clock hashrate alongside prebuild progress. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file. A history write failure is reported but never stops mining.
 
 ## Independent implementation and provenance
 

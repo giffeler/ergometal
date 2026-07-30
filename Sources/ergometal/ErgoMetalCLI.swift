@@ -4,7 +4,7 @@ import MetalErgoCore
 @main
 enum ErgoMetalCLI {
     private static let maximumBatchNonces = 16_777_216
-    private static let prebuildBatchNonces = 65_536
+    private static let defaultPrebuildBatchNonces = 65_536
     private static let searchPipelineDepth = 2
     private static let searchStatisticsBatchCount = 16
     private enum PrebuildMode: String {
@@ -110,7 +110,8 @@ enum ErgoMetalCLI {
     private static func benchmark(_ args: Arguments) throws {
         try args.validate(
             valueOptions: ["duration", "height", "profile", "table-size", "batch-nonces",
-                           "prebuild", "threadgroup-size", "api-bind", "stats-file",
+                           "prebuild", "prebuild-batch-nonces", "threadgroup-size",
+                           "api-bind", "stats-file",
                            "gpu-trace", "gpu-trace-phase"],
             flagOptions: ["json"])
         let duration = try args.int("duration", default: 60, in: 1...Int.max)
@@ -124,6 +125,9 @@ enum ErgoMetalCLI {
         }
         let batchSize = try args.int(
             "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
+            in: 1...maximumBatchNonces)
+        let prebuildBatchSize = try args.int(
+            "prebuild-batch-nonces", default: defaultPrebuildBatchNonces,
             in: 1...maximumBatchNonces)
         let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
         let tracePath = args.string("gpu-trace")
@@ -216,7 +220,7 @@ enum ErgoMetalCLI {
         if searchTracePending, let tracePath, Date() < end {
             thermalPauseIfNeeded(profile: profile)
             let activeBatchSize = solver.prefetchStatus()?.finished == false
-                ? min(batchSize, prebuildBatchNonces)
+                ? min(batchSize, prebuildBatchSize)
                 : batchSize
             try solver.startGPUCapture(path: tracePath)
             let batch = try solver.search(
@@ -233,7 +237,7 @@ enum ErgoMetalCLI {
             while pending.count < searchPipelineDepth, Date() < end {
                 thermalPauseIfNeeded(profile: profile)
                 let activeBatchSize = solver.prefetchStatus()?.finished == false
-                    ? min(batchSize, prebuildBatchNonces)
+                    ? min(batchSize, prebuildBatchSize)
                     : batchSize
                 pending.append(try solver.enqueueSearch(
                     message: message,
@@ -251,7 +255,7 @@ enum ErgoMetalCLI {
             while pending.count < searchPipelineDepth, Date() < end {
                 thermalPauseIfNeeded(profile: profile)
                 let activeBatchSize = solver.prefetchStatus()?.finished == false
-                    ? min(batchSize, prebuildBatchNonces)
+                    ? min(batchSize, prebuildBatchSize)
                     : batchSize
                 pending.append(try solver.enqueueSearch(
                     message: message,
@@ -303,7 +307,8 @@ enum ErgoMetalCLI {
 
     private static func mine(_ args: Arguments) throws {
         try args.validate(valueOptions: ["pool", "wallet", "worker", "network", "profile",
-                                         "prebuild", "batch-nonces", "threadgroup-size",
+                                         "prebuild", "prebuild-batch-nonces",
+                                         "batch-nonces", "threadgroup-size",
                                          "api-bind", "stats-file", "stats-interval"])
         let pool = try args.require("pool")
         let wallet = try args.require("wallet")
@@ -323,6 +328,9 @@ enum ErgoMetalCLI {
         var prebuildEnabled = requestedPrebuild != .off
         let batchSize = try args.int(
             "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
+            in: 1...maximumBatchNonces)
+        let prebuildBatchSize = try args.int(
+            "prebuild-batch-nonces", default: defaultPrebuildBatchNonces,
             in: 1...maximumBatchNonces)
         let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
         let statsInterval = try args.int("stats-interval", default: 60, in: 1...3_600)
@@ -500,7 +508,7 @@ enum ErgoMetalCLI {
                     else { return false }
                     thermalPauseIfNeeded(profile: profile)
                     let activeBatchSize = solver.prefetchStatus()?.finished == false
-                        ? min(batchSize, prebuildBatchNonces)
+                        ? min(batchSize, prebuildBatchSize)
                         : batchSize
                     let count = NonceSpace.batchSize(offset: offset, maximumOffset: variableMask,
                                                      requested: activeBatchSize)
@@ -620,7 +628,17 @@ enum ErgoMetalCLI {
     }
 
     private static func printStatus(_ s: MinerSnapshot, suffix: String) {
-        let text = String(format: "\r%7.2f MH/s  nonces=%llu  %@", s.hashrate / 1_000_000, s.nonces, suffix)
+        let prefetch = s.prefetchHeight == nil
+            ? "prefetch=off"
+            : String(format: "prefetch=%5.1f%%", min(1, max(0, s.prefetchProgress)) * 100)
+        let text = String(
+            format: "\rcurrent=%6.2f  avg=%6.2f  effective=%6.2f MH/s  %@  nonces=%llu  %@    ",
+            s.hashrate / 1_000_000,
+            s.averageHashrate / 1_000_000,
+            s.effectiveHashrate / 1_000_000,
+            prefetch,
+            s.nonces,
+            suffix)
         FileHandle.standardOutput.write(Data(text.utf8))
     }
 

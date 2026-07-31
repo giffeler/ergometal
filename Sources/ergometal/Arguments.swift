@@ -99,6 +99,9 @@ Usage:
                       [--batch-nonces N] [--prebuild-batch-nonces N]
                       [--threadgroup-size N]
                       [--build-chunk-elements N] [--prefetch-chunk-elements N]
+                      [--dataset-threadgroup-size 128|256]
+                      [--dataset-kernel u32pair|baseline]
+                      [--dataset-scheduling overlap|serialized]
                       [--gpu-trace path.gputrace] [--gpu-trace-phase build|search]
                       [--api-bind 127.0.0.1:4078] [--stats-file path] [--json]
   ergometal replay --fixture path
@@ -108,6 +111,9 @@ Usage:
                  [--batch-nonces N] [--prebuild-batch-nonces N]
                  [--threadgroup-size N]
                  [--build-chunk-elements N] [--prefetch-chunk-elements N]
+                 [--dataset-threadgroup-size 128|256]
+                 [--dataset-kernel u32pair|baseline]
+                 [--dataset-scheduling overlap|serialized]
                  [--api-bind 127.0.0.1:4078] [--stats-file path]
                  [--stats-interval 60]
 

@@ -101,6 +101,116 @@ kernel void buildDataset(
     for (uint i = 0; i < 8; ++i) dataset[id * 8 + i] = value[i];
 }
 
+// Exact BLAKE2b arithmetic represented as two 32-bit halves. Apple GPUs are
+// substantially faster on these operations than on native 64-bit integer
+// arithmetic; the explicit carry and cross-word rotates preserve consensus.
+constant uint2 B2B_IV32[8] = {
+    uint2(0xf3bcc908U, 0x6a09e667U), uint2(0x84caa73bU, 0xbb67ae85U),
+    uint2(0xfe94f82bU, 0x3c6ef372U), uint2(0x5f1d36f1U, 0xa54ff53aU),
+    uint2(0xade682d1U, 0x510e527fU), uint2(0x2b3e6c1fU, 0x9b05688cU),
+    uint2(0xfb41bd6bU, 0x1f83d9abU), uint2(0x137e2179U, 0x5be0cd19U)
+};
+
+inline uint2 add64x32(uint2 a, uint2 b) {
+    uint low = a.x + b.x;
+    return uint2(low, a.y + b.y + uint(low < a.x));
+}
+inline uint2 add64x32(uint2 a, uint2 b, uint2 c) {
+    return add64x32(add64x32(a, b), c);
+}
+inline uint2 rotr32x32(uint2 x) { return x.yx; }
+inline uint2 rotr24x32(uint2 x) {
+    return uint2((x.x >> 24) | (x.y << 8), (x.y >> 24) | (x.x << 8));
+}
+inline uint2 rotr16x32(uint2 x) {
+    return uint2((x.x >> 16) | (x.y << 16), (x.y >> 16) | (x.x << 16));
+}
+inline uint2 rotr63x32(uint2 x) {
+    return uint2((x.x << 1) | (x.y >> 31), (x.y << 1) | (x.x >> 31));
+}
+inline uint2 split64(ulong value) { return uint2(uint(value), uint(value >> 32)); }
+
+inline void mix32x32(
+    thread uint2 v[16], uint a, uint b, uint c, uint d, uint2 x, uint2 y)
+{
+    v[a] = add64x32(v[a], v[b], x); v[d] = rotr32x32(v[d] ^ v[a]);
+    v[c] = add64x32(v[c], v[d]); v[b] = rotr24x32(v[b] ^ v[c]);
+    v[a] = add64x32(v[a], v[b], y); v[d] = rotr16x32(v[d] ^ v[a]);
+    v[c] = add64x32(v[c], v[d]); v[b] = rotr63x32(v[b] ^ v[c]);
+}
+
+#define B2B32_ROUND(v, m, s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15) \
+    mix32x32(v,0,4,8,12,m[s0],m[s1]); mix32x32(v,1,5,9,13,m[s2],m[s3]); \
+    mix32x32(v,2,6,10,14,m[s4],m[s5]); mix32x32(v,3,7,11,15,m[s6],m[s7]); \
+    mix32x32(v,0,5,10,15,m[s8],m[s9]); mix32x32(v,1,6,11,12,m[s10],m[s11]); \
+    mix32x32(v,2,7,8,13,m[s12],m[s13]); mix32x32(v,3,4,9,14,m[s14],m[s15])
+
+inline void compress32x32(
+    thread uint2 h[8], thread const uint2 m[16], uint count, bool finalBlock)
+{
+    uint2 v[16];
+    for (uint i = 0; i < 8; ++i) { v[i] = h[i]; v[i + 8] = B2B_IV32[i]; }
+    v[12].x ^= count;
+    if (finalBlock) v[14] = ~v[14];
+    B2B32_ROUND(v,m, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+    B2B32_ROUND(v,m, 14,10,4,8,9,15,13,6,1,12,0,2,11,7,5,3);
+    B2B32_ROUND(v,m, 11,8,12,0,5,2,15,13,10,14,3,6,7,1,9,4);
+    B2B32_ROUND(v,m, 7,9,3,1,13,12,11,14,2,6,5,10,4,0,15,8);
+    B2B32_ROUND(v,m, 9,0,5,7,2,4,10,15,14,1,11,12,6,8,3,13);
+    B2B32_ROUND(v,m, 2,12,6,10,0,11,8,3,4,13,7,5,15,14,1,9);
+    B2B32_ROUND(v,m, 12,5,1,15,14,13,4,10,0,7,6,3,9,2,8,11);
+    B2B32_ROUND(v,m, 13,11,7,14,12,1,3,9,5,0,15,4,8,6,2,10);
+    B2B32_ROUND(v,m, 6,15,14,9,11,3,0,8,12,2,13,7,1,4,10,5);
+    B2B32_ROUND(v,m, 10,2,8,4,7,6,1,5,15,11,9,14,3,12,13,0);
+    B2B32_ROUND(v,m, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+    B2B32_ROUND(v,m, 14,10,4,8,9,15,13,6,1,12,0,2,11,7,5,3);
+    for (uint i = 0; i < 8; ++i) h[i] ^= v[i] ^ v[i + 8];
+}
+
+inline void datasetHashU32Pair(
+    uint index,
+    uint height,
+    constant const ulong *autolykosM,
+    thread uint out[8])
+{
+    uint2 h[8];
+    for (uint i = 0; i < 8; ++i) h[i] = B2B_IV32[i];
+    h[0].x ^= 0x01010020U;
+    uint2 m[16];
+    m[0] = uint2(bswap32(index), bswap32(height));
+    for (uint i = 1; i < 16; ++i) m[i] = split64(autolykosM[i - 1]);
+    compress32x32(h, m, 128U, false);
+    for (uint block = 1; block < 64; ++block) {
+        uint first = 15 + (block - 1) * 16;
+        for (uint i = 0; i < 16; ++i) m[i] = split64(autolykosM[first + i]);
+        compress32x32(h, m, (block + 1) * 128, false);
+    }
+    for (uint i = 0; i < 16; ++i) m[i] = uint2(0U);
+    m[0] = split64(autolykosM[1023]);
+    compress32x32(h, m, 8200U, true);
+    for (uint i = 0; i < 8; ++i) {
+        uint2 word = h[i >> 1];
+        out[i] = bswap32((i & 1) == 0 ? word.x : word.y);
+    }
+    out[0] &= 0x00ffffffU;
+}
+
+kernel void buildDatasetU32Pair(
+    device uint *dataset [[buffer(0)]],
+    constant uint &height [[buffer(1)]],
+    constant uint &tableSize [[buffer(2)]],
+    constant uint &startIndex [[buffer(3)]],
+    constant const ulong *autolykosM [[buffer(4)]],
+    uint localID [[thread_position_in_grid]])
+{
+    uint id = startIndex + localID;
+    if (id >= tableSize) return;
+    uint value[8]; datasetHashU32Pair(id, height, autolykosM, value);
+    for (uint i = 0; i < 8; ++i) dataset[id * 8 + i] = value[i];
+}
+
+#undef B2B32_ROUND
+
 // The search path hashes three fixed, single-block messages for every nonce.
 // Keep their BLAKE2b state in named scalars so the compiler does not have to
 // materialize the generic message/state arrays used by datasetHash.

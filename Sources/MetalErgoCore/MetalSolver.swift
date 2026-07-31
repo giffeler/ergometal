@@ -53,6 +53,23 @@ public enum DatasetBuildSource: String, Codable, Sendable {
     case cached
 }
 
+public enum DatasetKernel: String, CaseIterable, Codable, Sendable {
+    case baseline
+    case u32Pair = "u32pair"
+
+    fileprivate var functionName: String {
+        switch self {
+        case .baseline: return "buildDataset"
+        case .u32Pair: return "buildDatasetU32Pair"
+        }
+    }
+}
+
+public enum DatasetScheduling: String, CaseIterable, Codable, Sendable {
+    case serialized
+    case overlap
+}
+
 public struct DatasetWorkMetrics: Codable, Sendable, Equatable {
     public var coldBuildsCompleted = 0
     public var coldBuildsCancelled = 0
@@ -228,7 +245,10 @@ public final class MetalAutolykosSolver {
 
     public let device: MTLDevice
     public let info: MetalDeviceInfo
-    private let commandQueue: MTLCommandQueue
+    public let datasetKernel: DatasetKernel
+    public let datasetScheduling: DatasetScheduling
+    private let searchCommandQueue: MTLCommandQueue
+    private let buildCommandQueue: MTLCommandQueue
     private let buildPipeline: MTLComputePipelineState
     private let searchPipeline: MTLComputePipelineState
     private let constantMBuffer: MTLBuffer
@@ -239,6 +259,7 @@ public final class MetalAutolykosSolver {
     private let prefetchWorker = DispatchQueue(label: "dev.ergometal.dataset-prefetch", qos: .userInitiated)
     private let synchronousBuildChunkElements: Int
     private let prefetchBuildChunkElements: Int
+    private let datasetThreadgroupSize: Int
     private var activeDataset: DatasetSlot?
     private var prefetchTask: DatasetPrefetchTask?
     private var workMetrics = DatasetWorkMetrics()
@@ -246,7 +267,10 @@ public final class MetalAutolykosSolver {
     public init(
         device: MTLDevice? = MTLCreateSystemDefaultDevice(),
         synchronousBuildChunkElements: Int = MetalAutolykosSolver.defaultSynchronousBuildChunkElements,
-        prefetchBuildChunkElements: Int = MetalAutolykosSolver.defaultPrefetchBuildChunkElements
+        prefetchBuildChunkElements: Int = MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
+        datasetThreadgroupSize: Int = 256,
+        datasetKernel: DatasetKernel = .u32Pair,
+        datasetScheduling: DatasetScheduling = .overlap
     ) throws {
         guard synchronousBuildChunkElements > 0 else {
             throw MetalSolverError.invalidDatasetChunkSize(synchronousBuildChunkElements)
@@ -254,12 +278,22 @@ public final class MetalAutolykosSolver {
         guard prefetchBuildChunkElements > 0 else {
             throw MetalSolverError.invalidDatasetChunkSize(prefetchBuildChunkElements)
         }
+        guard datasetThreadgroupSize > 0 else {
+            throw MetalSolverError.invalidThreadgroupSize(datasetThreadgroupSize)
+        }
         guard let device else { throw MetalSolverError.noDevice }
-        guard let commandQueue = device.makeCommandQueue(),
+        guard let searchCommandQueue = device.makeCommandQueue(),
               let constantMBuffer = device.makeBuffer(
                 length: 1_024 * MemoryLayout<UInt64>.size,
                 options: .storageModeShared)
         else { throw MetalSolverError.noDevice }
+        let buildCommandQueue: MTLCommandQueue
+        if datasetScheduling == .overlap {
+            guard let queue = device.makeCommandQueue() else { throw MetalSolverError.noDevice }
+            buildCommandQueue = queue
+        } else {
+            buildCommandQueue = searchCommandQueue
+        }
         var searchResources: [SearchResources] = []
         for _ in 0..<Self.searchPipelineDepth {
             guard let resultBuffer = device.makeBuffer(
@@ -273,11 +307,15 @@ public final class MetalAutolykosSolver {
                 resultBuffer: resultBuffer, resultCountBuffer: resultCountBuffer))
         }
         self.device = device
-        self.commandQueue = commandQueue
+        self.datasetKernel = datasetKernel
+        self.datasetScheduling = datasetScheduling
+        self.searchCommandQueue = searchCommandQueue
+        self.buildCommandQueue = buildCommandQueue
         self.constantMBuffer = constantMBuffer
         self.searchResources = searchResources
         self.synchronousBuildChunkElements = synchronousBuildChunkElements
         self.prefetchBuildChunkElements = prefetchBuildChunkElements
+        self.datasetThreadgroupSize = datasetThreadgroupSize
         self.info = MetalDeviceInfo(
             name: device.name,
             registryID: device.registryID,
@@ -296,8 +334,8 @@ public final class MetalAutolykosSolver {
         } catch {
             throw MetalSolverError.pipeline(error.localizedDescription)
         }
-        guard let build = library.makeFunction(name: "buildDataset") else {
-            throw MetalSolverError.functionMissing("buildDataset")
+        guard let build = library.makeFunction(name: datasetKernel.functionName) else {
+            throw MetalSolverError.functionMissing(datasetKernel.functionName)
         }
         guard let search = library.makeFunction(name: "searchNonces") else {
             throw MetalSolverError.functionMissing("searchNonces")
@@ -334,7 +372,7 @@ public final class MetalAutolykosSolver {
             throw MetalSolverError.capture("output file already exists at \(url.path)")
         }
         let descriptor = MTLCaptureDescriptor()
-        descriptor.captureObject = commandQueue
+        descriptor.captureObject = device
         descriptor.destination = .gpuTraceDocument
         descriptor.outputURL = url
         do {
@@ -480,6 +518,50 @@ public final class MetalAutolykosSolver {
         return workMetrics
     }
 
+    /// Copies selected elements from the private active dataset for exact
+    /// consensus verification without making the mining buffer CPU-visible.
+    public func datasetElements(at indices: [Int]) throws -> [UInt256] {
+        guard !indices.isEmpty else { return [] }
+        state.lock()
+        let dataset = activeDataset
+        state.unlock()
+        guard let dataset else { throw MetalSolverError.commandEncoding }
+        for index in indices where index < 0 || index >= dataset.spec.tableSize {
+            throw AutolykosError.invalidDatasetIndex(index)
+        }
+        let elementBytes = 8 * MemoryLayout<UInt32>.size
+        guard let staging = device.makeBuffer(
+            length: indices.count * elementBytes,
+            options: .storageModeShared)
+        else { throw MetalSolverError.allocation(
+            bytes: UInt64(indices.count * elementBytes),
+            available: info.recommendedWorkingSetBytes) }
+
+        enterSerializedGate(); defer { leaveSerializedGate() }
+        guard let command = searchCommandQueue.makeCommandBuffer(),
+              let encoder = command.makeBlitCommandEncoder()
+        else { throw MetalSolverError.commandEncoding }
+        for (destination, index) in indices.enumerated() {
+            encoder.copy(
+                from: dataset.buffer,
+                sourceOffset: index * elementBytes,
+                to: staging,
+                destinationOffset: destination * elementBytes,
+                size: elementBytes)
+        }
+        encoder.endEncoding()
+        command.commit()
+        command.waitUntilCompleted()
+        if let error = command.error {
+            throw MetalSolverError.pipeline(error.localizedDescription)
+        }
+        let words = staging.contents().bindMemory(
+            to: UInt32.self, capacity: indices.count * 8)
+        return (0..<indices.count).map { element in
+            UInt256(limbs: (0..<8).map { words[element * 8 + $0] })
+        }
+    }
+
     public func search(
         message: [UInt8], target: UInt256, baseNonce: UInt64, nonceCount: Int,
         threadgroupSize requested: Int? = nil
@@ -513,11 +595,11 @@ public final class MetalAutolykosSolver {
         let targetWords = target.limbs
         let resources = acquireSearchResources()
 
-        commandGate.enter()
-        guard let command = commandQueue.makeCommandBuffer(),
+        enterSerializedGate()
+        guard let command = searchCommandQueue.makeCommandBuffer(),
               let encoder = command.makeComputeCommandEncoder()
         else {
-            commandGate.leave()
+            leaveSerializedGate()
             releaseSearchResources(resources)
             throw MetalSolverError.commandEncoding
         }
@@ -576,8 +658,16 @@ public final class MetalAutolykosSolver {
             submission.resolve(result)
         }
         command.commit()
-        commandGate.leave()
+        leaveSerializedGate()
         return submission
+    }
+
+    private func enterSerializedGate() {
+        if datasetScheduling == .serialized { commandGate.enter() }
+    }
+
+    private func leaveSerializedGate() {
+        if datasetScheduling == .serialized { commandGate.leave() }
     }
 
     private func acquireSearchResources() -> SearchResources {
@@ -784,8 +874,8 @@ public final class MetalAutolykosSolver {
         startIndex: Int,
         count: Int
     ) throws -> Double {
-        commandGate.enter(); defer { commandGate.leave() }
-        guard let command = commandQueue.makeCommandBuffer(),
+        enterSerializedGate(); defer { leaveSerializedGate() }
+        guard let command = buildCommandQueue.makeCommandBuffer(),
               let encoder = command.makeComputeCommandEncoder()
         else { throw MetalSolverError.commandEncoding }
         command.label = "buildDataset[\(startIndex)..<\(startIndex + count)]"
@@ -799,7 +889,7 @@ public final class MetalAutolykosSolver {
         encoder.setBytes(&tableSize, length: MemoryLayout<UInt32>.size, index: 2)
         encoder.setBytes(&start, length: MemoryLayout<UInt32>.size, index: 3)
         encoder.setBuffer(constantMBuffer, offset: 0, index: 4)
-        let width = min(buildPipeline.maxTotalThreadsPerThreadgroup, 256)
+        let width = min(buildPipeline.maxTotalThreadsPerThreadgroup, datasetThreadgroupSize)
         encoder.dispatchThreads(
             MTLSize(width: count, height: 1, depth: 1),
             threadsPerThreadgroup: MTLSize(width: width, height: 1, depth: 1))

@@ -1,4 +1,5 @@
 import Foundation
+import CryptoKit
 import MetalErgoCore
 
 @main
@@ -112,6 +113,8 @@ enum ErgoMetalCLI {
             valueOptions: ["duration", "height", "profile", "table-size", "batch-nonces",
                            "prebuild", "prebuild-batch-nonces", "threadgroup-size",
                            "build-chunk-elements", "prefetch-chunk-elements",
+                           "dataset-threadgroup-size",
+                           "dataset-kernel", "dataset-scheduling",
                            "api-bind", "stats-file",
                            "gpu-trace", "gpu-trace-phase"],
             flagOptions: ["json"])
@@ -139,6 +142,9 @@ enum ErgoMetalCLI {
             "prefetch-chunk-elements",
             default: MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
             in: 1...maximumBatchNonces)
+        let datasetKernel = try datasetKernel(from: args)
+        let datasetScheduling = try datasetScheduling(from: args)
+        let datasetThreadgroupSize = try datasetThreadgroupSize(from: args)
         let tracePath = args.string("gpu-trace")
         let tracePhaseValue = args.string("gpu-trace-phase", default: "search")!
         guard let tracePhase = GPUTracePhase(rawValue: tracePhaseValue) else {
@@ -149,14 +155,36 @@ enum ErgoMetalCLI {
         }
         let solver = try MetalAutolykosSolver(
             synchronousBuildChunkElements: buildChunkElements,
-            prefetchBuildChunkElements: prefetchChunkElements)
+            prefetchBuildChunkElements: prefetchChunkElements,
+            datasetThreadgroupSize: datasetThreadgroupSize,
+            datasetKernel: datasetKernel,
+            datasetScheduling: datasetScheduling)
         defer { solver.stopGPUCapture() }
         let stats = StatisticsStore(mode: .benchmark, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
         let server = StatisticsHTTPServer(store: stats)
         try server.start(bind: args.string("api-bind", default: "127.0.0.1:4078")!)
         defer { server.stop() }
-        writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "session_started"))
+        writer.write(MinerEvent(
+            sessionID: stats.snapshot().sessionID,
+            type: "session_started",
+            fields: runMetadataFields(
+                profile: profile,
+                prebuild: prebuildValue,
+                batchSize: batchSize,
+                prebuildBatchSize: prebuildBatchSize,
+                threadgroupSize: group,
+                buildChunkElements: buildChunkElements,
+                prefetchChunkElements: prefetchChunkElements,
+                datasetThreadgroupSize: datasetThreadgroupSize,
+                datasetKernel: datasetKernel,
+                datasetScheduling: datasetScheduling,
+                extra: [
+                    "mode": "benchmark",
+                    "duration_seconds": String(duration),
+                    "height": String(height),
+                    "table_size": tableOverride.map(String.init) ?? "consensus"
+                ])))
 
         stats.update { $0.state = .buildingDataset }
         if tracePhase == .build, let tracePath {
@@ -310,6 +338,8 @@ enum ErgoMetalCLI {
                                          "prebuild", "prebuild-batch-nonces",
                                          "batch-nonces", "threadgroup-size",
                                          "build-chunk-elements", "prefetch-chunk-elements",
+                                         "dataset-threadgroup-size",
+                                         "dataset-kernel", "dataset-scheduling",
                                          "api-bind", "stats-file", "stats-interval"])
         let pool = try args.require("pool")
         let wallet = try args.require("wallet")
@@ -342,10 +372,16 @@ enum ErgoMetalCLI {
             "prefetch-chunk-elements",
             default: MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
             in: 1...maximumBatchNonces)
+        let datasetKernel = try datasetKernel(from: args)
+        let datasetScheduling = try datasetScheduling(from: args)
+        let datasetThreadgroupSize = try datasetThreadgroupSize(from: args)
         let statsInterval = try args.int("stats-interval", default: 60, in: 1...3_600)
         let solver = try MetalAutolykosSolver(
             synchronousBuildChunkElements: buildChunkElements,
-            prefetchBuildChunkElements: prefetchChunkElements)
+            prefetchBuildChunkElements: prefetchChunkElements,
+            datasetThreadgroupSize: datasetThreadgroupSize,
+            datasetKernel: datasetKernel,
+            datasetScheduling: datasetScheduling)
         let stats = StatisticsStore(mode: .mining, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
         let server = StatisticsHTTPServer(store: stats)
@@ -360,7 +396,21 @@ enum ErgoMetalCLI {
         let client = try ErgoStratumClient(url: pool, user: "\(wallet).\(worker)", password: password) { event in coordinator.handle(event) }
         coordinator.client = client
         stats.update { $0.poolHost = client.redactedHost }
-        writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "session_started"))
+        writer.write(MinerEvent(
+            sessionID: stats.snapshot().sessionID,
+            type: "session_started",
+            fields: runMetadataFields(
+                profile: profile,
+                prebuild: prebuildValue,
+                batchSize: batchSize,
+                prebuildBatchSize: prebuildBatchSize,
+                threadgroupSize: group,
+                buildChunkElements: buildChunkElements,
+                prefetchChunkElements: prefetchChunkElements,
+                datasetThreadgroupSize: datasetThreadgroupSize,
+                datasetKernel: datasetKernel,
+                datasetScheduling: datasetScheduling,
+                extra: ["mode": "mining", "network": network.rawValue])))
 
         let statsTimer = DispatchSource.makeTimerSource(
             queue: DispatchQueue(label: "dev.ergometal.statistics"))
@@ -678,6 +728,102 @@ enum ErgoMetalCLI {
             "waited_for_prefetch": String(build.waitedForPrefetch),
             "source": build.source.rawValue
         ]
+    }
+
+    private static func datasetKernel(from args: Arguments) throws -> DatasetKernel {
+        let raw = args.string("dataset-kernel", default: DatasetKernel.u32Pair.rawValue)!
+        guard let value = DatasetKernel(rawValue: raw) else {
+            throw CLIError.invalidArgument(
+                "--dataset-kernel must be \(DatasetKernel.allCases.map(\.rawValue).joined(separator: "|"))")
+        }
+        return value
+    }
+
+    private static func datasetThreadgroupSize(from args: Arguments) throws -> Int {
+        let value = try args.int("dataset-threadgroup-size", default: 256, in: 128...256)
+        guard value == 128 || value == 256 else {
+            throw CLIError.invalidArgument("--dataset-threadgroup-size must be 128|256")
+        }
+        return value
+    }
+
+    private static func datasetScheduling(from args: Arguments) throws -> DatasetScheduling {
+        let raw = args.string(
+            "dataset-scheduling", default: DatasetScheduling.overlap.rawValue)!
+        guard let value = DatasetScheduling(rawValue: raw) else {
+            throw CLIError.invalidArgument(
+                "--dataset-scheduling must be \(DatasetScheduling.allCases.map(\.rawValue).joined(separator: "|"))")
+        }
+        return value
+    }
+
+    private static func runMetadataFields(
+        profile: String,
+        prebuild: String,
+        batchSize: Int,
+        prebuildBatchSize: Int,
+        threadgroupSize: Int,
+        buildChunkElements: Int,
+        prefetchChunkElements: Int,
+        datasetThreadgroupSize: Int,
+        datasetKernel: DatasetKernel,
+        datasetScheduling: DatasetScheduling,
+        extra: [String: String]
+    ) -> [String: String] {
+        var fields = extra
+        fields.merge([
+            "profile": profile,
+            "prebuild": prebuild,
+            "batch_nonces": String(batchSize),
+            "prebuild_batch_nonces": String(prebuildBatchSize),
+            "threadgroup_size": String(threadgroupSize),
+            "build_chunk_elements": String(buildChunkElements),
+            "prefetch_chunk_elements": String(prefetchChunkElements),
+            "dataset_threadgroup_size": String(datasetThreadgroupSize),
+            "dataset_kernel": datasetKernel.rawValue,
+            "dataset_scheduling": datasetScheduling.rawValue,
+            "architecture": "arm64",
+            "os_version": ProcessInfo.processInfo.operatingSystemVersionString
+        ]) { _, new in new }
+        if let digest = executableSHA256() {
+            fields["executable_sha256"] = digest
+        }
+        if let revision = gitOutput(["rev-parse", "HEAD"]) {
+            fields["worktree_revision"] = revision
+            fields["worktree_dirty"] = String(!(gitOutput([
+                "status", "--porcelain", "--untracked-files=no"
+            ]) ?? "").isEmpty)
+        }
+        return fields
+    }
+
+    private static func executableSHA256() -> String? {
+        guard let url = Bundle.main.executableURL,
+              let data = try? Data(contentsOf: url, options: .mappedIfSafe)
+        else { return nil }
+        return SHA256.hash(data: data).map { String(format: "%02x", $0) }.joined()
+    }
+
+    private static func gitOutput(_ arguments: [String]) -> String? {
+        let process = Process()
+        let output = Pipe()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/git")
+        process.arguments = arguments
+        process.currentDirectoryURL = URL(
+            fileURLWithPath: FileManager.default.currentDirectoryPath,
+            isDirectory: true)
+        process.standardOutput = output
+        process.standardError = FileHandle.nullDevice
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            return nil
+        }
+        guard process.terminationStatus == 0 else { return nil }
+        let data = output.fileHandleForReading.readDataToEndOfFile()
+        return String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private static func formatBytes(_ bytes: UInt64) -> String {

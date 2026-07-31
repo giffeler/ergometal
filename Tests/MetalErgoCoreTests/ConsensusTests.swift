@@ -94,6 +94,30 @@ final class ConsensusTests: XCTestCase {
         XCTAssertEqual(accepted.candidates, [42], "Metal and CPU must calculate the same 256-bit hit")
     }
 
+    func testDatasetKernelsMatchCPUElementsExactly() throws {
+        let height = 614_401
+        let tableSize = 257
+        let indices = [0, 1, 2, 7, 31, 63, 127, 128, 255, 256]
+
+        for kernel in DatasetKernel.allCases {
+            let solver = try MetalAutolykosSolver(datasetKernel: kernel)
+            _ = try solver.buildDataset(height: height, tableSize: tableSize)
+            let actual = try solver.datasetElements(at: indices)
+            let expected = try indices.map {
+                try AutolykosV2.datasetElement(index: $0, height: height)
+            }
+            XCTAssertEqual(actual, expected, "Dataset kernel \(kernel.rawValue) diverged")
+        }
+    }
+
+    func testDatasetElementReadbackRejectsInvalidIndices() throws {
+        let solver = try MetalAutolykosSolver()
+        _ = try solver.buildDataset(height: 614_400, tableSize: 32)
+        XCTAssertEqual(try solver.datasetElements(at: []), [])
+        XCTAssertThrowsError(try solver.datasetElements(at: [-1]))
+        XCTAssertThrowsError(try solver.datasetElements(at: [32]))
+    }
+
     func testMetalMatchesCPUForNontrivialNonceBytePatterns() throws {
         let solver = try MetalAutolykosSolver()
         let height = 614_401
@@ -160,6 +184,7 @@ final class ConsensusTests: XCTestCase {
         XCTAssertEqual(solver.datasetWorkMetrics().coldBuildsCompleted, 1)
         XCTAssertThrowsError(try MetalAutolykosSolver(synchronousBuildChunkElements: 0))
         XCTAssertThrowsError(try MetalAutolykosSolver(prefetchBuildChunkElements: 0))
+        XCTAssertThrowsError(try MetalAutolykosSolver(datasetThreadgroupSize: 0))
         let message = [UInt8](repeating: 0, count: 32)
         XCTAssertThrowsError(try solver.search(
             message: message, target: .max, baseNonce: 0, nonceCount: 0))
@@ -207,7 +232,7 @@ final class ConsensusTests: XCTestCase {
     }
 
     func testMetalPrefetchAndSearchBothMakeProgress() throws {
-        let solver = try MetalAutolykosSolver()
+        let solver = try MetalAutolykosSolver(datasetScheduling: .serialized)
         let tableSize = 262_144
         _ = try solver.buildDataset(height: 614_400, tableSize: tableSize)
         XCTAssertTrue(try solver.prefetchDataset(height: 614_401, tableSize: tableSize))
@@ -230,5 +255,35 @@ final class ConsensusTests: XCTestCase {
         XCTAssertEqual(
             try solver.buildDataset(height: 614_401, tableSize: tableSize).source,
             .prefetched)
+    }
+
+    func testOverlappedDatasetSchedulingPreservesConsensusAndProgress() throws {
+        let solver = try MetalAutolykosSolver(
+            prefetchBuildChunkElements: 16_384,
+            datasetKernel: .u32Pair,
+            datasetScheduling: .overlap)
+        let tableSize = 131_072
+        _ = try solver.buildDataset(height: 614_400, tableSize: tableSize)
+        XCTAssertTrue(try solver.prefetchDataset(height: 614_401, tableSize: tableSize))
+
+        let message = [UInt8](repeating: 0x5a, count: 32)
+        var nonces = 0
+        let deadline = Date(timeIntervalSinceNow: 5)
+        while solver.prefetchStatus()?.finished == false, Date() < deadline {
+            _ = try solver.search(
+                message: message, target: .zero,
+                baseNonce: UInt64(nonces), nonceCount: 64)
+            nonces += 64
+        }
+
+        XCTAssertGreaterThan(nonces, 0)
+        XCTAssertTrue(try XCTUnwrap(solver.prefetchStatus()).finished)
+        XCTAssertEqual(
+            try solver.buildDataset(height: 614_401, tableSize: tableSize).source,
+            .prefetched)
+        let indices = [0, 1, 65_535, 131_071]
+        XCTAssertEqual(
+            try solver.datasetElements(at: indices),
+            try indices.map { try AutolykosV2.datasetElement(index: $0, height: 614_401) })
     }
 }

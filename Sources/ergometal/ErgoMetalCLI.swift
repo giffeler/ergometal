@@ -111,6 +111,7 @@ enum ErgoMetalCLI {
         try args.validate(
             valueOptions: ["duration", "height", "profile", "table-size", "batch-nonces",
                            "prebuild", "prebuild-batch-nonces", "threadgroup-size",
+                           "build-chunk-elements", "prefetch-chunk-elements",
                            "api-bind", "stats-file",
                            "gpu-trace", "gpu-trace-phase"],
             flagOptions: ["json"])
@@ -130,6 +131,14 @@ enum ErgoMetalCLI {
             "prebuild-batch-nonces", default: defaultPrebuildBatchNonces,
             in: 1...maximumBatchNonces)
         let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
+        let buildChunkElements = try args.int(
+            "build-chunk-elements",
+            default: MetalAutolykosSolver.defaultSynchronousBuildChunkElements,
+            in: 1...maximumBatchNonces)
+        let prefetchChunkElements = try args.int(
+            "prefetch-chunk-elements",
+            default: MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
+            in: 1...maximumBatchNonces)
         let tracePath = args.string("gpu-trace")
         let tracePhaseValue = args.string("gpu-trace-phase", default: "search")!
         guard let tracePhase = GPUTracePhase(rawValue: tracePhaseValue) else {
@@ -138,7 +147,9 @@ enum ErgoMetalCLI {
         if tracePath == nil, args.string("gpu-trace-phase") != nil {
             throw CLIError.invalidArgument("--gpu-trace-phase requires --gpu-trace")
         }
-        let solver = try MetalAutolykosSolver()
+        let solver = try MetalAutolykosSolver(
+            synchronousBuildChunkElements: buildChunkElements,
+            prefetchBuildChunkElements: prefetchChunkElements)
         defer { solver.stopGPUCapture() }
         let stats = StatisticsStore(mode: .benchmark, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
@@ -155,17 +166,11 @@ enum ErgoMetalCLI {
         if tracePhase == .build, tracePath != nil {
             solver.stopGPUCapture()
         }
-        stats.update {
-            $0.datasetBytes = build.bytes
-            $0.datasetBuildSeconds = build.seconds
-            $0.datasetActivationSeconds = build.activationSeconds
-            $0.datasetSource = build.source
-            $0.state = .searching
-        }
+        stats.recordDatasetActivation(build)
+        stats.updateDatasetWork(solver.datasetWorkMetrics())
+        stats.update { $0.state = .searching }
         writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "dataset_completed",
-            fields: ["height": String(height), "table_size": String(build.tableSize),
-                     "seconds": String(build.seconds), "activation_seconds": String(build.activationSeconds),
-                     "source": build.source.rawValue]))
+            fields: datasetEventFields(build, height: height)))
         if prebuildValue == "on" {
             _ = try solver.prefetchDataset(height: height + 1, tableSize: tableOverride)
             writer.write(MinerEvent(
@@ -201,13 +206,7 @@ enum ErgoMetalCLI {
                 wallSeconds: sample.activeSearchSeconds)
             let now = Date()
             if now >= nextStatusAt {
-                let prefetch = solver.prefetchStatus()
-                stats.update {
-                    $0.prefetchHeight = prefetch?.height
-                    $0.prefetchProgress = prefetch?.progress ?? 0
-                    $0.prefetchBuildSeconds = prefetch?.seconds
-                    $0.prefetchError = prefetch?.errorDescription
-                }
+                _ = synchronizeDatasetStatistics(solver: solver, stats: stats)
                 if !args.has("json") {
                     printStatus(stats.snapshot(), suffix: "verified=\(verified)")
                 }
@@ -273,7 +272,8 @@ enum ErgoMetalCLI {
                 gpuSeconds: sample.gpuSeconds,
                 wallSeconds: sample.activeSearchSeconds)
         }
-        solver.cancelPrefetch()
+        solver.cancelPrefetch(waitUntilFinished: true)
+        stats.updateDatasetWork(solver.datasetWorkMetrics())
         stats.update { $0.state = .stopped }
         let finalSnapshot = stats.refresh()
         var finalFields = finalSnapshot.eventFields
@@ -309,6 +309,7 @@ enum ErgoMetalCLI {
         try args.validate(valueOptions: ["pool", "wallet", "worker", "network", "profile",
                                          "prebuild", "prebuild-batch-nonces",
                                          "batch-nonces", "threadgroup-size",
+                                         "build-chunk-elements", "prefetch-chunk-elements",
                                          "api-bind", "stats-file", "stats-interval"])
         let pool = try args.require("pool")
         let wallet = try args.require("wallet")
@@ -333,14 +334,28 @@ enum ErgoMetalCLI {
             "prebuild-batch-nonces", default: defaultPrebuildBatchNonces,
             in: 1...maximumBatchNonces)
         let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
+        let buildChunkElements = try args.int(
+            "build-chunk-elements",
+            default: MetalAutolykosSolver.defaultSynchronousBuildChunkElements,
+            in: 1...maximumBatchNonces)
+        let prefetchChunkElements = try args.int(
+            "prefetch-chunk-elements",
+            default: MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
+            in: 1...maximumBatchNonces)
         let statsInterval = try args.int("stats-interval", default: 60, in: 1...3_600)
-        let solver = try MetalAutolykosSolver()
+        let solver = try MetalAutolykosSolver(
+            synchronousBuildChunkElements: buildChunkElements,
+            prefetchBuildChunkElements: prefetchChunkElements)
         let stats = StatisticsStore(mode: .mining, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
         let server = StatisticsHTTPServer(store: stats)
         try server.start(bind: args.string("api-bind", default: "127.0.0.1:4078")!)
         defer { server.stop() }
         let coordinator = MiningCoordinator(stats: stats, writer: writer)
+        coordinator.beforeStop = {
+            solver.cancelPrefetch(waitUntilFinished: true)
+            stats.updateDatasetWork(solver.datasetWorkMetrics())
+        }
         let password = ProcessInfo.processInfo.environment["ERGOMETAL_POOL_PASSWORD"] ?? "x"
         let client = try ErgoStratumClient(url: pool, user: "\(wallet).\(worker)", password: password) { event in coordinator.handle(event) }
         coordinator.client = client
@@ -355,19 +370,12 @@ enum ErgoMetalCLI {
             leeway: .milliseconds(min(1_000, statsInterval * 50)))
         statsTimer.setEventHandler {
             guard !coordinator.isStopped else { return }
-            let prefetch = solver.prefetchStatus()
-            stats.update {
-                $0.prefetchHeight = prefetch?.height
-                $0.prefetchProgress = prefetch?.progress ?? 0
-                $0.prefetchBuildSeconds = prefetch?.seconds
-                $0.prefetchError = prefetch?.errorDescription
-            }
+            _ = synchronizeDatasetStatistics(solver: solver, stats: stats)
             coordinator.recordStatisticsSample()
         }
         statsTimer.resume()
         defer {
             statsTimer.cancel()
-            solver.cancelPrefetch()
             coordinator.stop()
         }
 
@@ -375,8 +383,8 @@ enum ErgoMetalCLI {
         signal(SIGINT, SIG_IGN); signal(SIGTERM, SIG_IGN)
         let sigint = DispatchSource.makeSignalSource(signal: SIGINT, queue: signalQueue)
         let sigterm = DispatchSource.makeSignalSource(signal: SIGTERM, queue: signalQueue)
-        sigint.setEventHandler { coordinator.stop(); solver.cancelPrefetch() }
-        sigterm.setEventHandler { coordinator.stop(); solver.cancelPrefetch() }
+        sigint.setEventHandler { coordinator.stop() }
+        sigterm.setEventHandler { coordinator.stop() }
         sigint.resume(); sigterm.resume(); client.connect()
 
         var nextStatusAt = Date.distantPast
@@ -417,18 +425,12 @@ enum ErgoMetalCLI {
                             coordinator.isEitherHeightCurrent(job.height, lookaheadHeight)
                         })
                     coldLookaheadHeight = lookaheadHeight
-                    stats.update {
-                        $0.datasetBytes = lookahead.bytes
-                        $0.datasetBuildSeconds = lookahead.seconds
-                        $0.datasetActivationSeconds = lookahead.activationSeconds
-                        $0.datasetSource = lookahead.source
-                    }
+                    stats.recordDatasetActivation(lookahead)
+                    stats.updateDatasetWork(solver.datasetWorkMetrics())
                     writer.write(MinerEvent(
                         sessionID: stats.snapshot().sessionID,
                         type: "dataset_lookahead_completed",
-                        fields: ["height": String(lookaheadHeight),
-                                 "seconds": String(lookahead.seconds),
-                                 "source": lookahead.source.rawValue]))
+                        fields: datasetEventFields(lookahead, height: lookaheadHeight)))
                 } catch MetalSolverError.cancelled {
                     continue
                 }
@@ -447,19 +449,18 @@ enum ErgoMetalCLI {
                     continue
                 }
                 coldBuildCancellations = 0
+                stats.recordDatasetActivation(build)
+                stats.updateDatasetWork(solver.datasetWorkMetrics())
                 if build.source == .prefetched, reportedPrefetchHeight != job.height {
                     reportedPrefetchHeight = job.height
                     writer.write(MinerEvent(
                         sessionID: stats.snapshot().sessionID,
                         type: "dataset_prefetch_completed",
                         fields: ["height": String(job.height),
-                                 "seconds": String(build.seconds)]))
+                                 "seconds": String(build.seconds),
+                                 "gpu_seconds": String(build.gpuSeconds)]))
                 }
                 stats.update {
-                    $0.datasetBytes = build.bytes
-                    $0.datasetBuildSeconds = build.seconds
-                    $0.datasetActivationSeconds = build.activationSeconds
-                    $0.datasetSource = build.source
                     $0.prefetchHeight = nil
                     $0.prefetchProgress = 0
                     $0.prefetchBuildSeconds = nil
@@ -468,10 +469,7 @@ enum ErgoMetalCLI {
                     $0.lastError = nil
                 }
                 writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "dataset_completed",
-                    fields: ["height": String(job.height), "table_size": String(build.tableSize),
-                             "seconds": String(build.seconds),
-                             "activation_seconds": String(build.activationSeconds),
-                             "source": build.source.rawValue]))
+                    fields: datasetEventFields(build, height: job.height)))
                 if prebuildEnabled, job.height < Int(UInt32.max) {
                     do {
                         if try solver.prefetchDataset(height: job.height + 1) {
@@ -562,13 +560,8 @@ enum ErgoMetalCLI {
                     }
                     let now = Date()
                     if statisticsSample != nil, now >= nextStatusAt {
-                        let prefetch = solver.prefetchStatus()
-                        stats.update {
-                            $0.prefetchHeight = prefetch?.height
-                            $0.prefetchProgress = prefetch?.progress ?? 0
-                            $0.prefetchBuildSeconds = prefetch?.seconds
-                            $0.prefetchError = prefetch?.errorDescription
-                        }
+                        let prefetch = synchronizeDatasetStatistics(
+                            solver: solver, stats: stats)
                         if let prefetch, prefetch.finished, reportedPrefetchHeight != prefetch.height {
                             reportedPrefetchHeight = prefetch.height
                             if let failure = prefetch.errorDescription {
@@ -583,7 +576,8 @@ enum ErgoMetalCLI {
                                     sessionID: stats.snapshot().sessionID,
                                     type: "dataset_prefetch_completed",
                                     fields: ["height": String(prefetch.height),
-                                             "seconds": String(prefetch.seconds ?? 0)]))
+                                             "seconds": String(prefetch.seconds ?? 0),
+                                             "gpu_seconds": String(prefetch.gpuSeconds ?? 0)]))
                             }
                         }
                         let snapshot = stats.snapshot()
@@ -633,15 +627,57 @@ enum ErgoMetalCLI {
         let prefetch = s.prefetchHeight == nil
             ? "prefetch=off"
             : String(format: "prefetch=%5.1f%%", min(1, max(0, s.prefetchProgress)) * 100)
+        let temperature = s.socTemperatureMaximumCelsius.map {
+            String(format: "temp=%4.1f/%4.1fC", $0, s.socTemperatureSessionPeakCelsius ?? $0)
+        } ?? "temp=n/a"
+        let luck = s.shareLuckRatio.map {
+            String(format: "luck=%5.1f%%", $0 * 100)
+        } ?? "luck=n/a"
         let text = String(
-            format: "\rcurrent=%6.2f  avg=%6.2f  effective=%6.2f MH/s  %@  nonces=%llu  %@    ",
+            format: "\rcurrent=%6.2f  avg=%6.2f  effective=%6.2f MH/s  duty=%5.1f%%  %@  %@  expected=%.2f  %@  nonces=%llu  %@    ",
             s.hashrate / 1_000_000,
             s.averageHashrate / 1_000_000,
             s.effectiveHashrate / 1_000_000,
+            s.searchDutyCycle * 100,
             prefetch,
+            temperature,
+            s.shares.expected,
+            luck,
             s.nonces,
             suffix)
         FileHandle.standardOutput.write(Data(text.utf8))
+    }
+
+    @discardableResult
+    private static func synchronizeDatasetStatistics(
+        solver: MetalAutolykosSolver,
+        stats: StatisticsStore
+    ) -> DatasetPrefetchStatus? {
+        let prefetch = solver.prefetchStatus()
+        stats.updateDatasetWork(solver.datasetWorkMetrics())
+        stats.update {
+            $0.prefetchHeight = prefetch?.height
+            $0.prefetchProgress = prefetch?.progress ?? 0
+            $0.prefetchBuildSeconds = prefetch?.seconds
+            $0.prefetchError = prefetch?.errorDescription
+        }
+        return prefetch
+    }
+
+    private static func datasetEventFields(
+        _ build: DatasetBuild,
+        height: Int
+    ) -> [String: String] {
+        [
+            "height": String(height),
+            "table_size": String(build.tableSize),
+            "seconds": String(build.seconds),
+            "gpu_seconds": String(build.gpuSeconds),
+            "activation_seconds": String(build.activationSeconds),
+            "prefetch_wait_seconds": String(build.prefetchWaitSeconds),
+            "waited_for_prefetch": String(build.waitedForPrefetch),
+            "source": build.source.rawValue
+        ]
     }
 
     private static func formatBytes(_ bytes: UInt64) -> String {

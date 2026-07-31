@@ -157,6 +157,9 @@ final class ConsensusTests: XCTestCase {
         let reusedBuild = try solver.buildDataset(height: 614_400, tableSize: 1_024)
         XCTAssertEqual(reusedBuild.seconds, initialBuild.seconds)
         XCTAssertEqual(reusedBuild.source, .cached)
+        XCTAssertEqual(solver.datasetWorkMetrics().coldBuildsCompleted, 1)
+        XCTAssertThrowsError(try MetalAutolykosSolver(synchronousBuildChunkElements: 0))
+        XCTAssertThrowsError(try MetalAutolykosSolver(prefetchBuildChunkElements: 0))
         let message = [UInt8](repeating: 0, count: 32)
         XCTAssertThrowsError(try solver.search(
             message: message, target: .max, baseNonce: 0, nonceCount: 0))
@@ -175,7 +178,13 @@ final class ConsensusTests: XCTestCase {
         let prefetched = try solver.buildDataset(height: 614_401, tableSize: 1_024)
         XCTAssertEqual(prefetched.source, .prefetched)
         XCTAssertEqual(prefetched.height, 614_401)
+        XCTAssertGreaterThanOrEqual(prefetched.gpuSeconds, 0)
         XCTAssertNil(solver.prefetchStatus())
+        let metrics = solver.datasetWorkMetrics()
+        XCTAssertEqual(metrics.coldBuildsCompleted, 1)
+        XCTAssertEqual(metrics.prefetchBuildsStarted, 1)
+        XCTAssertEqual(metrics.prefetchBuildsCompleted, 1)
+        XCTAssertEqual(metrics.prefetchBuildsDiscarded, 0)
 
         let message = try XCTUnwrap([UInt8](
             hex: "fb4ea208049836e0b879b90da0ab9b2173cd84f5889b85668378081f95e0bbf6"))

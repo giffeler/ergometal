@@ -12,6 +12,7 @@ final class MiningCoordinator: @unchecked Sendable {
     private var stopFinalized = false
     private var reconnectAttempt = 0
     weak var client: ErgoStratumClient?
+    var beforeStop: (() -> Void)?
 
     init(stats: StatisticsStore, writer: JSONLEventWriter) {
         self.stats = stats; self.writer = writer
@@ -114,6 +115,7 @@ final class MiningCoordinator: @unchecked Sendable {
         condition.broadcast()
         condition.unlock()
         client?.disconnect()
+        beforeStop?()
         stats.update {
             $0.state = .stopped
             $0.poolConnected = false

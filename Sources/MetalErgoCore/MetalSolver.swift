@@ -11,6 +11,7 @@ public enum MetalSolverError: Error, LocalizedError {
     case invalidNonceCount(Int)
     case invalidNonceRange(base: UInt64, count: Int)
     case invalidThreadgroupSize(Int)
+    case invalidDatasetChunkSize(Int)
     case resultOverflow(limit: Int, found: UInt32)
     case capture(String)
     case cancelled
@@ -28,6 +29,8 @@ public enum MetalSolverError: Error, LocalizedError {
         case .invalidNonceRange(let base, let count):
             return "Nonce range starting at \(base) with \(count) values exceeds UInt64"
         case .invalidThreadgroupSize(let size): return "Threadgroup size must be positive, got \(size)"
+        case .invalidDatasetChunkSize(let size):
+            return "Dataset chunk size must be positive, got \(size)"
         case .resultOverflow(let limit, let found):
             return "Metal candidate buffer can hold \(limit) nonces, but the batch found \(found)"
         case .capture(let message): return "Metal GPU capture failed: \(message)"
@@ -50,13 +53,38 @@ public enum DatasetBuildSource: String, Codable, Sendable {
     case cached
 }
 
+public struct DatasetWorkMetrics: Codable, Sendable, Equatable {
+    public var coldBuildsCompleted = 0
+    public var coldBuildsCancelled = 0
+    public var coldBuildsFailed = 0
+    public var coldBuildWallSeconds = 0.0
+    public var coldBuildGPUSeconds = 0.0
+    public var prefetchBuildsStarted = 0
+    public var prefetchBuildsCompleted = 0
+    public var prefetchBuildsCancelled = 0
+    public var prefetchBuildsFailed = 0
+    public var prefetchBuildsDiscarded = 0
+    public var prefetchBuildWallSeconds = 0.0
+    public var prefetchBuildGPUSeconds = 0.0
+    public var prefetchWastedWallSeconds = 0.0
+    public var prefetchWastedGPUSeconds = 0.0
+
+    public init() {}
+}
+
 public struct DatasetBuild: Sendable {
     public let height: Int
     public let tableSize: Int
     public let bytes: UInt64
     public let seconds: Double
+    public let gpuSeconds: Double
     public let activationSeconds: Double
+    public let prefetchWaitSeconds: Double
     public let source: DatasetBuildSource
+
+    public var waitedForPrefetch: Bool {
+        source == .prefetched && prefetchWaitSeconds > 0
+    }
 }
 
 public struct DatasetPrefetchStatus: Sendable {
@@ -65,6 +93,7 @@ public struct DatasetPrefetchStatus: Sendable {
     public let tableSize: Int
     public let finished: Bool
     public let seconds: Double?
+    public let gpuSeconds: Double?
     public let errorDescription: String?
 
     public var progress: Double {
@@ -158,6 +187,7 @@ private final class DatasetSlot {
     let spec: DatasetSpec
     let buffer: MTLBuffer
     var buildSeconds: Double = 0
+    var buildGPUSeconds: Double = 0
 
     init(spec: DatasetSpec, buffer: MTLBuffer) {
         self.spec = spec
@@ -171,6 +201,7 @@ private final class DatasetPrefetchTask {
     var completedElements = 0
     var finished = false
     var cancelled = false
+    var discarded = false
     var failure: Error?
 
     init(slot: DatasetSlot) {
@@ -192,8 +223,8 @@ private final class SearchResources {
 public final class MetalAutolykosSolver {
     private static let maximumResults = 256
     private static let searchPipelineDepth = 2
-    private static let synchronousBuildChunkElements = 1_048_576
-    private static let prefetchBuildChunkElements = 262_144
+    public static let defaultSynchronousBuildChunkElements = 2_097_152
+    public static let defaultPrefetchBuildChunkElements = 1_048_576
 
     public let device: MTLDevice
     public let info: MetalDeviceInfo
@@ -206,10 +237,23 @@ public final class MetalAutolykosSolver {
     private let commandGate = MetalCommandGate()
     private let state = NSCondition()
     private let prefetchWorker = DispatchQueue(label: "dev.ergometal.dataset-prefetch", qos: .userInitiated)
+    private let synchronousBuildChunkElements: Int
+    private let prefetchBuildChunkElements: Int
     private var activeDataset: DatasetSlot?
     private var prefetchTask: DatasetPrefetchTask?
+    private var workMetrics = DatasetWorkMetrics()
 
-    public init(device: MTLDevice? = MTLCreateSystemDefaultDevice()) throws {
+    public init(
+        device: MTLDevice? = MTLCreateSystemDefaultDevice(),
+        synchronousBuildChunkElements: Int = MetalAutolykosSolver.defaultSynchronousBuildChunkElements,
+        prefetchBuildChunkElements: Int = MetalAutolykosSolver.defaultPrefetchBuildChunkElements
+    ) throws {
+        guard synchronousBuildChunkElements > 0 else {
+            throw MetalSolverError.invalidDatasetChunkSize(synchronousBuildChunkElements)
+        }
+        guard prefetchBuildChunkElements > 0 else {
+            throw MetalSolverError.invalidDatasetChunkSize(prefetchBuildChunkElements)
+        }
         guard let device else { throw MetalSolverError.noDevice }
         guard let commandQueue = device.makeCommandQueue(),
               let constantMBuffer = device.makeBuffer(
@@ -232,6 +276,8 @@ public final class MetalAutolykosSolver {
         self.commandQueue = commandQueue
         self.constantMBuffer = constantMBuffer
         self.searchResources = searchResources
+        self.synchronousBuildChunkElements = synchronousBuildChunkElements
+        self.prefetchBuildChunkElements = prefetchBuildChunkElements
         self.info = MetalDeviceInfo(
             name: device.name,
             registryID: device.registryID,
@@ -318,15 +364,19 @@ public final class MetalAutolykosSolver {
             state.unlock()
             return DatasetBuild(
                 height: height, tableSize: spec.tableSize, bytes: spec.bytes, seconds: seconds,
-                activationSeconds: activationStarted.duration(to: .now).seconds, source: .cached)
+                gpuSeconds: activeDataset.buildGPUSeconds,
+                activationSeconds: activationStarted.duration(to: .now).seconds,
+                prefetchWaitSeconds: 0, source: .cached)
         }
         state.unlock()
 
         if let prefetched = try takePrefetchedDataset(spec: spec, shouldContinue: shouldContinue) {
             return DatasetBuild(
                 height: height, tableSize: spec.tableSize, bytes: spec.bytes,
-                seconds: prefetched.buildSeconds,
+                seconds: prefetched.slot.buildSeconds,
+                gpuSeconds: prefetched.slot.buildGPUSeconds,
                 activationSeconds: activationStarted.duration(to: .now).seconds,
+                prefetchWaitSeconds: prefetched.waitSeconds,
                 source: .prefetched)
         }
 
@@ -337,14 +387,17 @@ public final class MetalAutolykosSolver {
         guard let buffer = device.makeBuffer(length: Int(spec.bytes), options: .storageModePrivate)
         else { throw MetalSolverError.allocation(bytes: spec.bytes, available: info.recommendedWorkingSetBytes) }
         let slot = DatasetSlot(spec: spec, buffer: buffer)
-        slot.buildSeconds = try buildSynchronously(slot: slot, shouldContinue: shouldContinue)
+        let timing = try buildSynchronously(slot: slot, shouldContinue: shouldContinue)
+        slot.buildSeconds = timing.wallSeconds
+        slot.buildGPUSeconds = timing.gpuSeconds
         state.lock()
         activeDataset = slot
         state.unlock()
         return DatasetBuild(
             height: height, tableSize: spec.tableSize, bytes: spec.bytes,
-            seconds: slot.buildSeconds,
+            seconds: slot.buildSeconds, gpuSeconds: slot.buildGPUSeconds,
             activationSeconds: activationStarted.duration(to: .now).seconds,
+            prefetchWaitSeconds: 0,
             source: .built)
     }
 
@@ -370,6 +423,7 @@ public final class MetalAutolykosSolver {
                 state.unlock()
                 return false
             }
+            recordDiscardedPrefetchLocked(task)
             prefetchTask = nil
         }
         let activeBytes = activeDataset?.spec.bytes ?? 0
@@ -386,6 +440,7 @@ public final class MetalAutolykosSolver {
             return false
         }
         prefetchTask = task
+        workMetrics.prefetchBuildsStarted += 1
         state.unlock()
         prefetchWorker.async { [weak self, task] in self?.runPrefetch(task) }
         return true
@@ -400,14 +455,29 @@ public final class MetalAutolykosSolver {
             tableSize: task.slot.spec.tableSize,
             finished: task.finished,
             seconds: task.finished && task.failure == nil ? task.slot.buildSeconds : nil,
+            gpuSeconds: task.finished && task.failure == nil ? task.slot.buildGPUSeconds : nil,
             errorDescription: task.failure?.localizedDescription)
     }
 
-    public func cancelPrefetch() {
+    public func cancelPrefetch(waitUntilFinished: Bool = false) {
         state.lock()
-        prefetchTask?.cancelled = true
+        if let task = prefetchTask {
+            if task.finished {
+                recordDiscardedPrefetchLocked(task)
+            } else {
+                task.cancelled = true
+            }
+        }
         state.broadcast()
+        while waitUntilFinished, let task = prefetchTask, !task.finished {
+            state.wait(until: Date(timeIntervalSinceNow: 0.05))
+        }
         state.unlock()
+    }
+
+    public func datasetWorkMetrics() -> DatasetWorkMetrics {
+        state.lock(); defer { state.unlock() }
+        return workMetrics
     }
 
     public func search(
@@ -561,14 +631,18 @@ public final class MetalAutolykosSolver {
     private func takePrefetchedDataset(
         spec: DatasetSpec,
         shouldContinue: (() -> Bool)?
-    ) throws -> DatasetSlot? {
+    ) throws -> (slot: DatasetSlot, waitSeconds: Double)? {
         state.lock()
         guard let task = prefetchTask else {
             state.unlock()
             return nil
         }
         guard task.slot.spec.matches(height: spec.height, tableSize: spec.tableSize) else {
-            task.cancelled = true
+            if task.finished {
+                recordDiscardedPrefetchLocked(task)
+            } else {
+                task.cancelled = true
+            }
             state.broadcast()
             while !task.finished {
                 if shouldContinue?() == false {
@@ -581,6 +655,8 @@ public final class MetalAutolykosSolver {
             state.unlock()
             return nil
         }
+        let waitStarted = ContinuousClock.now
+        let hadToWait = !task.finished
         while !task.finished {
             if shouldContinue?() == false {
                 task.cancelled = true
@@ -598,22 +674,49 @@ public final class MetalAutolykosSolver {
         activeDataset = task.slot
         prefetchTask = nil
         state.unlock()
-        return task.slot
+        return (task.slot, hadToWait ? waitStarted.duration(to: .now).seconds : 0)
+    }
+
+    private struct DatasetBuildTiming {
+        let wallSeconds: Double
+        let gpuSeconds: Double
     }
 
     private func buildSynchronously(
         slot: DatasetSlot,
         shouldContinue: (() -> Bool)?
-    ) throws -> Double {
+    ) throws -> DatasetBuildTiming {
         let started = ContinuousClock.now
         var startIndex = 0
-        while startIndex < slot.spec.tableSize {
-            guard shouldContinue?() != false else { throw MetalSolverError.cancelled }
-            let count = min(Self.synchronousBuildChunkElements, slot.spec.tableSize - startIndex)
-            try encodeBuildChunk(slot: slot, startIndex: startIndex, count: count)
-            startIndex += count
+        var gpuSeconds = 0.0
+        do {
+            while startIndex < slot.spec.tableSize {
+                guard shouldContinue?() != false else { throw MetalSolverError.cancelled }
+                let count = min(synchronousBuildChunkElements, slot.spec.tableSize - startIndex)
+                gpuSeconds += try encodeBuildChunk(
+                    slot: slot, startIndex: startIndex, count: count)
+                startIndex += count
+            }
+        } catch {
+            let wallSeconds = started.duration(to: .now).seconds
+            state.lock()
+            if case MetalSolverError.cancelled = error {
+                workMetrics.coldBuildsCancelled += 1
+            } else {
+                workMetrics.coldBuildsFailed += 1
+            }
+            workMetrics.coldBuildWallSeconds += wallSeconds
+            workMetrics.coldBuildGPUSeconds += gpuSeconds
+            state.unlock()
+            throw error
         }
-        return started.duration(to: .now).seconds
+        let wallSeconds = started.duration(to: .now).seconds
+        state.lock()
+        workMetrics.coldBuildsCompleted += 1
+        workMetrics.coldBuildWallSeconds += wallSeconds
+        workMetrics.coldBuildGPUSeconds += gpuSeconds
+        state.unlock()
+        return DatasetBuildTiming(wallSeconds: wallSeconds, gpuSeconds: gpuSeconds)
     }
 
     private func runPrefetch(_ task: DatasetPrefetchTask) {
@@ -624,13 +727,14 @@ public final class MetalAutolykosSolver {
                 state.unlock()
                 guard !cancelled else { throw MetalSolverError.cancelled }
                 let count = min(
-                    Self.prefetchBuildChunkElements,
+                    prefetchBuildChunkElements,
                     task.slot.spec.tableSize - task.completedElements)
-                try encodeBuildChunk(
+                let gpuSeconds = try encodeBuildChunk(
                     slot: task.slot,
                     startIndex: task.completedElements,
                     count: count)
                 state.lock()
+                task.slot.buildGPUSeconds += gpuSeconds
                 task.completedElements += count
                 state.broadcast()
                 state.unlock()
@@ -642,12 +746,44 @@ public final class MetalAutolykosSolver {
             state.unlock()
         }
         state.lock()
+        let wallSeconds = task.started.duration(to: .now).seconds
+        let cancelledFailure: Bool
+        if let failure = task.failure as? MetalSolverError, case .cancelled = failure {
+            cancelledFailure = true
+        } else {
+            cancelledFailure = false
+        }
+        if task.cancelled || cancelledFailure {
+            workMetrics.prefetchBuildsCancelled += 1
+            workMetrics.prefetchWastedWallSeconds += wallSeconds
+            workMetrics.prefetchWastedGPUSeconds += task.slot.buildGPUSeconds
+        } else if task.failure != nil {
+            workMetrics.prefetchBuildsFailed += 1
+            workMetrics.prefetchWastedWallSeconds += wallSeconds
+            workMetrics.prefetchWastedGPUSeconds += task.slot.buildGPUSeconds
+        } else {
+            workMetrics.prefetchBuildsCompleted += 1
+            workMetrics.prefetchBuildWallSeconds += wallSeconds
+            workMetrics.prefetchBuildGPUSeconds += task.slot.buildGPUSeconds
+        }
         task.finished = true
         state.broadcast()
         state.unlock()
     }
 
-    private func encodeBuildChunk(slot: DatasetSlot, startIndex: Int, count: Int) throws {
+    private func recordDiscardedPrefetchLocked(_ task: DatasetPrefetchTask) {
+        guard task.finished, task.failure == nil, !task.discarded else { return }
+        task.discarded = true
+        workMetrics.prefetchBuildsDiscarded += 1
+        workMetrics.prefetchWastedWallSeconds += task.slot.buildSeconds
+        workMetrics.prefetchWastedGPUSeconds += task.slot.buildGPUSeconds
+    }
+
+    private func encodeBuildChunk(
+        slot: DatasetSlot,
+        startIndex: Int,
+        count: Int
+    ) throws -> Double {
         commandGate.enter(); defer { commandGate.leave() }
         guard let command = commandQueue.makeCommandBuffer(),
               let encoder = command.makeComputeCommandEncoder()
@@ -673,6 +809,7 @@ public final class MetalAutolykosSolver {
         if let error = command.error {
             throw MetalSolverError.pipeline(error.localizedDescription)
         }
+        return max(0, command.gpuEndTime - command.gpuStartTime)
     }
 
     deinit {

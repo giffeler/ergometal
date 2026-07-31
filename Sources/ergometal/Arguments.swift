@@ -98,6 +98,7 @@ Usage:
                       [--table-size N] [--prebuild on|off]
                       [--batch-nonces N] [--prebuild-batch-nonces N]
                       [--threadgroup-size N]
+                      [--build-chunk-elements N] [--prefetch-chunk-elements N]
                       [--gpu-trace path.gputrace] [--gpu-trace-phase build|search]
                       [--api-bind 127.0.0.1:4078] [--stats-file path] [--json]
   ergometal replay --fixture path
@@ -106,6 +107,7 @@ Usage:
                  [--prebuild auto|on|off]
                  [--batch-nonces N] [--prebuild-batch-nonces N]
                  [--threadgroup-size N]
+                 [--build-chunk-elements N] [--prefetch-chunk-elements N]
                  [--api-bind 127.0.0.1:4078] [--stats-file path]
                  [--stats-interval 60]
 

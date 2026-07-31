@@ -167,8 +167,17 @@ public struct MinerSnapshot: Codable, Sendable {
     public var effectiveHashrate: Double
     public var datasetBytes: UInt64
     public var datasetBuildSeconds: Double
+    public var datasetBuildGPUSeconds: Double
     public var datasetActivationSeconds: Double
     public var datasetSource: DatasetBuildSource?
+    public var datasetActivations: Int
+    public var datasetBuiltActivations: Int
+    public var datasetPrefetchedActivations: Int
+    public var datasetCachedActivations: Int
+    public var datasetActivationSecondsTotal: Double
+    public var datasetPrefetchWaits: Int
+    public var datasetPrefetchWaitSecondsTotal: Double
+    public var datasetWork: DatasetWorkMetrics
     public var prefetchHeight: Int?
     public var prefetchProgress: Double
     public var prefetchBuildSeconds: Double?
@@ -180,6 +189,7 @@ public struct MinerSnapshot: Codable, Sendable {
     public var thermalState: String
     public var socTemperatureAverageCelsius: Double?
     public var socTemperatureMaximumCelsius: Double?
+    public var socTemperatureSessionPeakCelsius: Double?
     public var socTemperatureSensorCount: Int
     public var temperatureSource: String
     public var shares: ShareStatistics
@@ -187,9 +197,18 @@ public struct MinerSnapshot: Codable, Sendable {
 }
 
 public extension MinerSnapshot {
+    var searchDutyCycle: Double {
+        let elapsed = max(0, sampledAt.timeIntervalSince(startedAt))
+        return elapsed > 0 ? min(1, max(0, searchSeconds / elapsed)) : 0
+    }
+
+    var shareLuckRatio: Double? {
+        shares.expected > 0 ? Double(shares.accepted) / shares.expected : nil
+    }
+
     /// A credential-free, flat representation for append-only event logs.
     var eventFields: [String: String] {
-        var fields = [
+        var fields: [String: String] = [
             "elapsed_seconds": String(max(0, sampledAt.timeIntervalSince(startedAt))),
             "state": state.rawValue,
             "profile": profile,
@@ -199,10 +218,38 @@ public extension MinerSnapshot {
             "effective_hashrate": String(effectiveHashrate),
             "gpu_seconds": String(gpuSeconds),
             "search_seconds": String(searchSeconds),
+            "search_duty_cycle": String(searchDutyCycle),
             "dataset_bytes": String(datasetBytes),
             "dataset_build_seconds": String(datasetBuildSeconds),
+            "dataset_build_gpu_seconds": String(datasetBuildGPUSeconds),
             "dataset_activation_seconds": String(datasetActivationSeconds),
-            "prefetch_progress": String(prefetchProgress),
+            "dataset_activations_total": String(datasetActivations),
+            "dataset_built_activations_total": String(datasetBuiltActivations),
+            "dataset_prefetched_activations_total": String(datasetPrefetchedActivations),
+            "dataset_cached_activations_total": String(datasetCachedActivations),
+            "dataset_activation_seconds_total": String(datasetActivationSecondsTotal),
+            "dataset_prefetch_waits_total": String(datasetPrefetchWaits),
+            "dataset_prefetch_wait_seconds_total": String(datasetPrefetchWaitSecondsTotal),
+            "prefetch_progress": String(prefetchProgress)
+        ]
+        let workFields: [String: String] = [
+            "dataset_cold_builds_completed_total": String(datasetWork.coldBuildsCompleted),
+            "dataset_cold_builds_cancelled_total": String(datasetWork.coldBuildsCancelled),
+            "dataset_cold_builds_failed_total": String(datasetWork.coldBuildsFailed),
+            "dataset_cold_build_wall_seconds_total": String(datasetWork.coldBuildWallSeconds),
+            "dataset_cold_build_gpu_seconds_total": String(datasetWork.coldBuildGPUSeconds),
+            "dataset_prefetch_builds_started_total": String(datasetWork.prefetchBuildsStarted),
+            "dataset_prefetch_builds_completed_total": String(datasetWork.prefetchBuildsCompleted),
+            "dataset_prefetch_builds_cancelled_total": String(datasetWork.prefetchBuildsCancelled),
+            "dataset_prefetch_builds_failed_total": String(datasetWork.prefetchBuildsFailed),
+            "dataset_prefetch_builds_discarded_total": String(datasetWork.prefetchBuildsDiscarded),
+            "dataset_prefetch_build_wall_seconds_total": String(datasetWork.prefetchBuildWallSeconds),
+            "dataset_prefetch_build_gpu_seconds_total": String(datasetWork.prefetchBuildGPUSeconds),
+            "dataset_prefetch_wasted_wall_seconds_total": String(datasetWork.prefetchWastedWallSeconds),
+            "dataset_prefetch_wasted_gpu_seconds_total": String(datasetWork.prefetchWastedGPUSeconds)
+        ]
+        fields.merge(workFields) { _, new in new }
+        let runtimeFields: [String: String] = [
             "pool_connected": String(poolConnected),
             "reconnects": String(reconnects),
             "protocol_errors": String(protocolErrors),
@@ -216,6 +263,7 @@ public extension MinerSnapshot {
             "shares_rejected": String(shares.rejected),
             "shares_stale": String(shares.stale)
         ]
+        fields.merge(runtimeFields) { _, new in new }
         if let id = job.id { fields["job_id"] = id }
         if let height = job.height { fields["height"] = String(height) }
         if let difficulty = job.difficulty { fields["difficulty"] = String(difficulty) }
@@ -229,6 +277,12 @@ public extension MinerSnapshot {
         }
         if let temperature = socTemperatureMaximumCelsius {
             fields["soc_temperature_maximum_celsius"] = String(temperature)
+        }
+        if let temperature = socTemperatureSessionPeakCelsius {
+            fields["soc_temperature_session_peak_celsius"] = String(temperature)
+        }
+        if let luck = shareLuckRatio {
+            fields["share_luck_ratio"] = String(luck)
         }
         return fields
     }
@@ -248,13 +302,19 @@ public final class StatisticsStore: @unchecked Sendable {
             mode: mode, state: .starting, device: device, profile: profile, poolHost: nil,
             poolConnected: false, job: JobStatistics(), nonces: 0, hashrate: 0,
             averageHashrate: 0, effectiveHashrate: 0, datasetBytes: 0,
-            datasetBuildSeconds: 0, datasetActivationSeconds: 0, datasetSource: nil,
+            datasetBuildSeconds: 0, datasetBuildGPUSeconds: 0,
+            datasetActivationSeconds: 0, datasetSource: nil,
+            datasetActivations: 0, datasetBuiltActivations: 0,
+            datasetPrefetchedActivations: 0, datasetCachedActivations: 0,
+            datasetActivationSecondsTotal: 0, datasetPrefetchWaits: 0,
+            datasetPrefetchWaitSecondsTotal: 0, datasetWork: DatasetWorkMetrics(),
             prefetchHeight: nil, prefetchProgress: 0, prefetchBuildSeconds: nil,
             prefetchError: nil,
             gpuSeconds: 0, searchSeconds: 0,
             reconnects: 0, protocolErrors: 0, thermalState: Self.thermalName,
             socTemperatureAverageCelsius: temperature?.averageCelsius,
             socTemperatureMaximumCelsius: temperature?.maximumCelsius,
+            socTemperatureSessionPeakCelsius: temperature?.maximumCelsius,
             socTemperatureSensorCount: temperature?.sensorCount ?? 0,
             temperatureSource: temperature == nil ? "unavailable" : "iohid_soc_die",
             shares: ShareStatistics(), lastError: nil)
@@ -263,8 +323,40 @@ public final class StatisticsStore: @unchecked Sendable {
     public func update(_ body: (inout MinerSnapshot) -> Void) {
         lock.lock(); defer { lock.unlock() }
         body(&value)
+        if let temperature = value.socTemperatureMaximumCelsius {
+            value.socTemperatureSessionPeakCelsius = max(
+                value.socTemperatureSessionPeakCelsius ?? temperature,
+                temperature)
+        }
         value.sampledAt = Date()
         value.thermalState = Self.thermalName
+    }
+
+    public func recordDatasetActivation(_ build: DatasetBuild) {
+        lock.lock(); defer { lock.unlock() }
+        value.datasetBytes = build.bytes
+        value.datasetBuildSeconds = build.seconds
+        value.datasetBuildGPUSeconds = build.gpuSeconds
+        value.datasetActivationSeconds = build.activationSeconds
+        value.datasetSource = build.source
+        value.datasetActivations += 1
+        value.datasetActivationSecondsTotal += build.activationSeconds
+        switch build.source {
+        case .built: value.datasetBuiltActivations += 1
+        case .prefetched: value.datasetPrefetchedActivations += 1
+        case .cached: value.datasetCachedActivations += 1
+        }
+        if build.waitedForPrefetch {
+            value.datasetPrefetchWaits += 1
+            value.datasetPrefetchWaitSecondsTotal += build.prefetchWaitSeconds
+        }
+        value.sampledAt = Date()
+    }
+
+    public func updateDatasetWork(_ metrics: DatasetWorkMetrics) {
+        lock.lock(); defer { lock.unlock() }
+        value.datasetWork = metrics
+        value.sampledAt = Date()
     }
 
     public func recordBatch(
@@ -300,6 +392,11 @@ public final class StatisticsStore: @unchecked Sendable {
         let temperature = temperatureReader.sample()
         value.socTemperatureAverageCelsius = temperature?.averageCelsius
         value.socTemperatureMaximumCelsius = temperature?.maximumCelsius
+        if let maximum = temperature?.maximumCelsius {
+            value.socTemperatureSessionPeakCelsius = max(
+                value.socTemperatureSessionPeakCelsius ?? maximum,
+                maximum)
+        }
         value.socTemperatureSensorCount = temperature?.sensorCount ?? 0
         value.temperatureSource = temperature == nil ? "unavailable" : "iohid_soc_die"
         value.sampledAt = now
@@ -328,10 +425,57 @@ public final class StatisticsStore: @unchecked Sendable {
         ergometal_gpu_seconds_total{\(labels)} \(s.gpuSeconds)
         # TYPE ergometal_search_seconds_total counter
         ergometal_search_seconds_total{\(labels)} \(s.searchSeconds)
+        # HELP ergometal_search_duty_cycle Fraction of session wall time spent actively searching.
+        # TYPE ergometal_search_duty_cycle gauge
+        ergometal_search_duty_cycle{\(labels)} \(s.searchDutyCycle)
         # TYPE ergometal_dataset_build_seconds gauge
         ergometal_dataset_build_seconds{\(labels)} \(s.datasetBuildSeconds)
+        # TYPE ergometal_dataset_build_gpu_seconds gauge
+        ergometal_dataset_build_gpu_seconds{\(labels)} \(s.datasetBuildGPUSeconds)
         # TYPE ergometal_dataset_activation_seconds gauge
         ergometal_dataset_activation_seconds{\(labels)} \(s.datasetActivationSeconds)
+        # TYPE ergometal_dataset_activations_total counter
+        ergometal_dataset_activations_total{\(labels)} \(s.datasetActivations)
+        # TYPE ergometal_dataset_built_activations_total counter
+        ergometal_dataset_built_activations_total{\(labels)} \(s.datasetBuiltActivations)
+        # TYPE ergometal_dataset_prefetched_activations_total counter
+        ergometal_dataset_prefetched_activations_total{\(labels)} \(s.datasetPrefetchedActivations)
+        # TYPE ergometal_dataset_cached_activations_total counter
+        ergometal_dataset_cached_activations_total{\(labels)} \(s.datasetCachedActivations)
+        # TYPE ergometal_dataset_activation_seconds_total counter
+        ergometal_dataset_activation_seconds_total{\(labels)} \(s.datasetActivationSecondsTotal)
+        # TYPE ergometal_dataset_prefetch_waits_total counter
+        ergometal_dataset_prefetch_waits_total{\(labels)} \(s.datasetPrefetchWaits)
+        # TYPE ergometal_dataset_prefetch_wait_seconds_total counter
+        ergometal_dataset_prefetch_wait_seconds_total{\(labels)} \(s.datasetPrefetchWaitSecondsTotal)
+        # TYPE ergometal_dataset_cold_builds_completed_total counter
+        ergometal_dataset_cold_builds_completed_total{\(labels)} \(s.datasetWork.coldBuildsCompleted)
+        # TYPE ergometal_dataset_cold_builds_cancelled_total counter
+        ergometal_dataset_cold_builds_cancelled_total{\(labels)} \(s.datasetWork.coldBuildsCancelled)
+        # TYPE ergometal_dataset_cold_builds_failed_total counter
+        ergometal_dataset_cold_builds_failed_total{\(labels)} \(s.datasetWork.coldBuildsFailed)
+        # TYPE ergometal_dataset_cold_build_wall_seconds_total counter
+        ergometal_dataset_cold_build_wall_seconds_total{\(labels)} \(s.datasetWork.coldBuildWallSeconds)
+        # TYPE ergometal_dataset_cold_build_gpu_seconds_total counter
+        ergometal_dataset_cold_build_gpu_seconds_total{\(labels)} \(s.datasetWork.coldBuildGPUSeconds)
+        # TYPE ergometal_dataset_prefetch_builds_started_total counter
+        ergometal_dataset_prefetch_builds_started_total{\(labels)} \(s.datasetWork.prefetchBuildsStarted)
+        # TYPE ergometal_dataset_prefetch_builds_completed_total counter
+        ergometal_dataset_prefetch_builds_completed_total{\(labels)} \(s.datasetWork.prefetchBuildsCompleted)
+        # TYPE ergometal_dataset_prefetch_builds_cancelled_total counter
+        ergometal_dataset_prefetch_builds_cancelled_total{\(labels)} \(s.datasetWork.prefetchBuildsCancelled)
+        # TYPE ergometal_dataset_prefetch_builds_failed_total counter
+        ergometal_dataset_prefetch_builds_failed_total{\(labels)} \(s.datasetWork.prefetchBuildsFailed)
+        # TYPE ergometal_dataset_prefetch_builds_discarded_total counter
+        ergometal_dataset_prefetch_builds_discarded_total{\(labels)} \(s.datasetWork.prefetchBuildsDiscarded)
+        # TYPE ergometal_dataset_prefetch_build_wall_seconds_total counter
+        ergometal_dataset_prefetch_build_wall_seconds_total{\(labels)} \(s.datasetWork.prefetchBuildWallSeconds)
+        # TYPE ergometal_dataset_prefetch_build_gpu_seconds_total counter
+        ergometal_dataset_prefetch_build_gpu_seconds_total{\(labels)} \(s.datasetWork.prefetchBuildGPUSeconds)
+        # TYPE ergometal_dataset_prefetch_wasted_wall_seconds_total counter
+        ergometal_dataset_prefetch_wasted_wall_seconds_total{\(labels)} \(s.datasetWork.prefetchWastedWallSeconds)
+        # TYPE ergometal_dataset_prefetch_wasted_gpu_seconds_total counter
+        ergometal_dataset_prefetch_wasted_gpu_seconds_total{\(labels)} \(s.datasetWork.prefetchWastedGPUSeconds)
         # TYPE ergometal_dataset_bytes gauge
         ergometal_dataset_bytes{\(labels)} \(s.datasetBytes)
         # TYPE ergometal_dataset_prefetch_progress gauge
@@ -370,6 +514,22 @@ public final class StatisticsStore: @unchecked Sendable {
             # HELP ergometal_soc_temperature_maximum_celsius Maximum available SoC die temperature in degrees Celsius.
             # TYPE ergometal_soc_temperature_maximum_celsius gauge
             ergometal_soc_temperature_maximum_celsius{\(labels)} \(temperature)
+            """
+        }
+        if let temperature = s.socTemperatureSessionPeakCelsius {
+            output += """
+
+            # HELP ergometal_soc_temperature_session_peak_celsius Highest observed SoC die temperature in this session.
+            # TYPE ergometal_soc_temperature_session_peak_celsius gauge
+            ergometal_soc_temperature_session_peak_celsius{\(labels)} \(temperature)
+            """
+        }
+        if let luck = s.shareLuckRatio {
+            output += """
+
+            # HELP ergometal_share_luck_ratio Accepted shares divided by statistically expected shares.
+            # TYPE ergometal_share_luck_ratio gauge
+            ergometal_share_luck_ratio{\(labels)} \(luck)
             """
         }
         return output + "\n"

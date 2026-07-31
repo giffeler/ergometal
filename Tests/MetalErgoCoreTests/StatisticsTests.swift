@@ -7,6 +7,7 @@ final class StatisticsTests: XCTestCase {
         stats.update { snapshot in
             snapshot.poolHost = "pool.example:1234"
             snapshot.state = .searching
+            snapshot.shares.expected = 2.5
             snapshot.shares.accepted = 2
             snapshot.socTemperatureAverageCelsius = 61.25
             snapshot.socTemperatureMaximumCelsius = 67.5
@@ -15,11 +16,16 @@ final class StatisticsTests: XCTestCase {
         let output = stats.prometheus()
         XCTAssertTrue(output.contains("ergometal_nonces_total"))
         XCTAssertTrue(output.contains("ergometal_effective_hashrate"))
+        XCTAssertTrue(output.contains("ergometal_search_duty_cycle"))
         XCTAssertTrue(output.contains("ergometal_dataset_prefetch_progress"))
+        XCTAssertTrue(output.contains("ergometal_dataset_activations_total"))
+        XCTAssertTrue(output.contains("ergometal_dataset_prefetch_builds_completed_total"))
         XCTAssertTrue(output.contains("ergometal_shares_accepted_total"))
         XCTAssertTrue(output.contains("ergometal_shares_expected_total"))
+        XCTAssertTrue(output.contains("ergometal_share_luck_ratio"))
         XCTAssertTrue(output.contains("ergometal_soc_temperature_average_celsius"))
         XCTAssertTrue(output.contains("ergometal_soc_temperature_maximum_celsius"))
+        XCTAssertTrue(output.contains("ergometal_soc_temperature_session_peak_celsius"))
         XCTAssertFalse(output.contains("pool.example"))
     }
 
@@ -57,6 +63,7 @@ final class StatisticsTests: XCTestCase {
         var snapshot = StatisticsStore().snapshot()
         snapshot.socTemperatureAverageCelsius = 61.25
         snapshot.socTemperatureMaximumCelsius = 67.5
+        snapshot.socTemperatureSessionPeakCelsius = 72.25
         snapshot.socTemperatureSensorCount = 12
         snapshot.temperatureSource = "iohid_soc_die"
 
@@ -64,6 +71,7 @@ final class StatisticsTests: XCTestCase {
 
         XCTAssertEqual(fields["soc_temperature_average_celsius"], "61.25")
         XCTAssertEqual(fields["soc_temperature_maximum_celsius"], "67.5")
+        XCTAssertEqual(fields["soc_temperature_session_peak_celsius"], "72.25")
         XCTAssertEqual(fields["soc_temperature_sensor_count"], "12")
         XCTAssertEqual(fields["temperature_source"], "iohid_soc_die")
     }
@@ -80,6 +88,49 @@ final class StatisticsTests: XCTestCase {
             shareTarget: halfRangeTarget)
 
         XCTAssertEqual(stats.snapshot().shares.expected, 500, accuracy: 1e-12)
+    }
+
+    func testDatasetAndPrefetchMetricsRemainCumulative() {
+        let stats = StatisticsStore(mode: .mining)
+        let build = DatasetBuild(
+            height: 1_840_500,
+            tableSize: 1_024,
+            bytes: 32_768,
+            seconds: 1.5,
+            gpuSeconds: 1.25,
+            activationSeconds: 0.4,
+            prefetchWaitSeconds: 0.35,
+            source: .prefetched)
+        stats.recordDatasetActivation(build)
+        var work = DatasetWorkMetrics()
+        work.coldBuildsCompleted = 2
+        work.coldBuildGPUSeconds = 2.5
+        work.prefetchBuildsStarted = 3
+        work.prefetchBuildsCompleted = 2
+        work.prefetchBuildsCancelled = 1
+        work.prefetchBuildsDiscarded = 1
+        work.prefetchBuildGPUSeconds = 4.5
+        work.prefetchWastedGPUSeconds = 0.75
+        stats.updateDatasetWork(work)
+        stats.update {
+            $0.shares.expected = 4
+            $0.shares.accepted = 3
+        }
+
+        let snapshot = stats.refresh()
+        let fields = snapshot.eventFields
+
+        XCTAssertEqual(snapshot.datasetActivations, 1)
+        XCTAssertEqual(snapshot.datasetPrefetchedActivations, 1)
+        XCTAssertEqual(snapshot.datasetPrefetchWaits, 1)
+        XCTAssertEqual(snapshot.datasetActivationSecondsTotal, 0.4, accuracy: 1e-12)
+        XCTAssertEqual(snapshot.datasetPrefetchWaitSecondsTotal, 0.35, accuracy: 1e-12)
+        XCTAssertEqual(fields["dataset_build_gpu_seconds"], "1.25")
+        XCTAssertEqual(fields["dataset_prefetch_builds_completed_total"], "2")
+        XCTAssertEqual(fields["dataset_prefetch_builds_cancelled_total"], "1")
+        XCTAssertEqual(fields["dataset_prefetch_wasted_gpu_seconds_total"], "0.75")
+        XCTAssertEqual(Double(fields["share_luck_ratio"] ?? ""), 0.75)
+        XCTAssertGreaterThanOrEqual(Double(fields["search_duty_cycle"] ?? "") ?? -1, 0)
     }
 
     func testEventWriterAppendsValidJSONLines() throws {

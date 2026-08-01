@@ -20,6 +20,8 @@ final class StatisticsTests: XCTestCase {
         XCTAssertTrue(output.contains("ergometal_dataset_prefetch_progress"))
         XCTAssertTrue(output.contains("ergometal_dataset_activations_total"))
         XCTAssertTrue(output.contains("ergometal_dataset_prefetch_builds_completed_total"))
+        XCTAssertTrue(output.contains("ergometal_gpu_build_commands_completed_total"))
+        XCTAssertTrue(output.contains("ergometal_gpu_search_commands_completed_total"))
         XCTAssertTrue(output.contains("ergometal_shares_accepted_total"))
         XCTAssertTrue(output.contains("ergometal_shares_expected_total"))
         XCTAssertTrue(output.contains("ergometal_share_luck_ratio"))
@@ -111,6 +113,12 @@ final class StatisticsTests: XCTestCase {
         work.prefetchBuildsDiscarded = 1
         work.prefetchBuildGPUSeconds = 4.5
         work.prefetchWastedGPUSeconds = 0.75
+        work.buildCommandsCompleted = 12
+        work.buildCommandWallSeconds = 5.25
+        work.buildCommandGPUSeconds = 5
+        work.searchCommandsCompleted = 24
+        work.searchCommandWallSeconds = 3.5
+        work.searchCommandGPUSeconds = 3.25
         stats.updateDatasetWork(work)
         stats.update {
             $0.shares.expected = 4
@@ -129,6 +137,10 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(fields["dataset_prefetch_builds_completed_total"], "2")
         XCTAssertEqual(fields["dataset_prefetch_builds_cancelled_total"], "1")
         XCTAssertEqual(fields["dataset_prefetch_wasted_gpu_seconds_total"], "0.75")
+        XCTAssertEqual(fields["gpu_build_commands_completed_total"], "12")
+        XCTAssertEqual(fields["gpu_build_command_non_gpu_seconds_total"], "0.25")
+        XCTAssertEqual(fields["gpu_search_commands_completed_total"], "24")
+        XCTAssertEqual(fields["gpu_search_command_non_gpu_seconds_total"], "0.25")
         XCTAssertEqual(Double(fields["share_luck_ratio"] ?? ""), 0.75)
         XCTAssertGreaterThanOrEqual(Double(fields["search_duty_cycle"] ?? "") ?? -1, 0)
     }

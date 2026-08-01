@@ -112,6 +112,7 @@ enum ErgoMetalCLI {
     private static func benchmark(_ args: Arguments) throws {
         try args.validate(
             valueOptions: ["duration", "height", "profile", "table-size", "batch-nonces",
+                           "height-interval",
                            "prebuild", "prebuild-batch-nonces", "threadgroup-size",
                            "build-chunk-elements", "prefetch-chunk-elements",
                            "dataset-threadgroup-size",
@@ -121,12 +122,27 @@ enum ErgoMetalCLI {
             flagOptions: ["json"])
         let duration = try args.int("duration", default: 60, in: 1...Int.max)
         let height = try args.int("height", default: 614_399, in: 0...Int(UInt32.max))
+        let heightInterval = try args.int(
+            "height-interval", default: 0, in: 0...Int.max)
         let tableOverride = try args.optionalInt("table-size", in: 1...Int(UInt32.max))
         let profile = args.string("profile", default: "efficiency")!
         guard ["efficiency", "peak"].contains(profile) else { throw CLIError.invalidArgument(profile) }
         let prebuildValue = args.string("prebuild", default: "off")!
         guard prebuildValue == "on" || prebuildValue == "off" else {
             throw CLIError.invalidArgument("--prebuild \(prebuildValue)")
+        }
+        if heightInterval > 0, prebuildValue != "on" {
+            throw CLIError.invalidArgument("--height-interval requires --prebuild on")
+        }
+        if prebuildValue == "on" {
+            let heightTransitions = heightInterval > 0
+                ? (duration - 1) / heightInterval
+                : 0
+            let lastPrefetchHeight = UInt64(height) + UInt64(heightTransitions) + 1
+            if lastPrefetchHeight > UInt64(UInt32.max) {
+                throw CLIError.invalidArgument(
+                    "benchmark height range including prefetch must fit UInt32")
+            }
         }
         let batchSize = try args.int(
             "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
@@ -184,6 +200,7 @@ enum ErgoMetalCLI {
                     "mode": "benchmark",
                     "duration_seconds": String(duration),
                     "height": String(height),
+                    "height_interval_seconds": String(heightInterval),
                     "table_size": tableOverride.map(String.init) ?? "consensus"
                 ])))
 
@@ -191,27 +208,32 @@ enum ErgoMetalCLI {
         if tracePhase == .build, let tracePath {
             try solver.startGPUCapture(path: tracePath)
         }
-        let build = try solver.buildDataset(height: height, tableSize: tableOverride)
+        var activeHeight = height
+        var activeBuild = try solver.buildDataset(
+            height: activeHeight, tableSize: tableOverride)
         if tracePhase == .build, tracePath != nil {
             solver.stopGPUCapture()
         }
-        stats.recordDatasetActivation(build)
+        stats.recordDatasetActivation(activeBuild)
         stats.updateDatasetWork(solver.datasetWorkMetrics())
         stats.update { $0.state = .searching }
         writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "dataset_completed",
-            fields: datasetEventFields(build, height: height)))
+            fields: datasetEventFields(activeBuild, height: activeHeight)))
         if prebuildValue == "on" {
-            _ = try solver.prefetchDataset(height: height + 1, tableSize: tableOverride)
+            _ = try solver.prefetchDataset(height: activeHeight + 1, tableSize: tableOverride)
             writer.write(MinerEvent(
                 sessionID: stats.snapshot().sessionID,
                 type: "dataset_prefetch_started",
-                fields: ["height": String(height + 1)]))
+                fields: ["height": String(activeHeight + 1)]))
         }
 
         let message = Blake2b256.hash(Array("ergometal-autolykos-v2-benchmark".utf8))
         let target = UInt256(limbs: [0x0000ffff] + [UInt32](repeating: .max, count: 7))
         var nonce: UInt64 = 0
         let end = Date(timeIntervalSinceNow: Double(duration))
+        var nextHeightAt = heightInterval > 0
+            ? Date(timeIntervalSinceNow: Double(heightInterval))
+            : Date.distantFuture
         var nextStatusAt = Date.distantPast
         var verified = 0
         var searchTracePending = tracePhase == .search && tracePath != nil
@@ -222,8 +244,8 @@ enum ErgoMetalCLI {
             for candidate in batch.candidates {
                 let bytes = nonceBytes(candidate)
                 if try AutolykosV2.hit(
-                    message: message, nonce: bytes, height: height,
-                    tableSize: build.tableSize) < target
+                    message: message, nonce: bytes, height: activeHeight,
+                    tableSize: activeBuild.tableSize) < target
                 {
                     verified += 1
                 }
@@ -236,8 +258,13 @@ enum ErgoMetalCLI {
             let now = Date()
             if now >= nextStatusAt {
                 _ = synchronizeDatasetStatistics(solver: solver, stats: stats)
+                let snapshot = stats.refresh()
+                writer.write(MinerEvent(
+                    sessionID: snapshot.sessionID,
+                    type: "statistics_sample",
+                    fields: snapshot.eventFields))
                 if !args.has("json") {
-                    printStatus(stats.snapshot(), suffix: "verified=\(verified)")
+                    printStatus(snapshot, suffix: "verified=\(verified)")
                 }
                 nextStatusAt = now.addingTimeInterval(1)
             }
@@ -262,7 +289,8 @@ enum ErgoMetalCLI {
 
         var pending: [SearchSubmission] = []
         while Date() < end || !pending.isEmpty {
-            while pending.count < searchPipelineDepth, Date() < end {
+            let searchDeadline = min(end, nextHeightAt)
+            while pending.count < searchPipelineDepth, Date() < searchDeadline {
                 thermalPauseIfNeeded(profile: profile)
                 let activeBatchSize = solver.prefetchStatus()?.finished == false
                     ? min(batchSize, prebuildBatchSize)
@@ -275,12 +303,37 @@ enum ErgoMetalCLI {
                     threadgroupSize: group))
                 nonce &+= UInt64(activeBatchSize)
             }
-            guard !pending.isEmpty else { break }
+            if pending.isEmpty {
+                guard heightInterval > 0, Date() >= nextHeightAt, Date() < end else {
+                    break
+                }
+                stats.update { $0.state = .buildingDataset }
+                activeHeight += 1
+                activeBuild = try solver.buildDataset(
+                    height: activeHeight, tableSize: tableOverride)
+                stats.recordDatasetActivation(activeBuild)
+                stats.updateDatasetWork(solver.datasetWorkMetrics())
+                stats.update { $0.state = .searching }
+                writer.write(MinerEvent(
+                    sessionID: stats.snapshot().sessionID,
+                    type: "dataset_completed",
+                    fields: datasetEventFields(activeBuild, height: activeHeight)))
+                if activeHeight < Int(UInt32.max) {
+                    _ = try solver.prefetchDataset(
+                        height: activeHeight + 1, tableSize: tableOverride)
+                    writer.write(MinerEvent(
+                        sessionID: stats.snapshot().sessionID,
+                        type: "dataset_prefetch_started",
+                        fields: ["height": String(activeHeight + 1)]))
+                }
+                nextHeightAt = nextHeightAt.addingTimeInterval(Double(heightInterval))
+                continue
+            }
 
             let batch = try pending.removeFirst().wait()
 
             // Refill before CPU verification so the GPU and CPU stages overlap.
-            while pending.count < searchPipelineDepth, Date() < end {
+            while pending.count < searchPipelineDepth, Date() < searchDeadline {
                 thermalPauseIfNeeded(profile: profile)
                 let activeBatchSize = solver.prefetchStatus()?.finished == false
                     ? min(batchSize, prebuildBatchSize)

@@ -172,6 +172,13 @@ final class ConsensusTests: XCTestCase {
         XCTAssertEqual(secondBatch.nonceCount, 64)
         XCTAssertGreaterThanOrEqual(firstBatch.gpuSeconds, 0)
         XCTAssertGreaterThanOrEqual(secondBatch.wallSeconds, 0)
+        let metrics = solver.datasetWorkMetrics()
+        XCTAssertGreaterThanOrEqual(metrics.buildCommandsCompleted, 1)
+        XCTAssertEqual(metrics.searchCommandsCompleted, 2)
+        XCTAssertGreaterThanOrEqual(
+            metrics.buildCommandWallSeconds, metrics.buildCommandGPUSeconds)
+        XCTAssertGreaterThanOrEqual(
+            metrics.searchCommandWallSeconds, metrics.searchCommandGPUSeconds)
     }
 
     func testQueuedSearchKeepsUnretainedCommandResourcesAlive() throws {

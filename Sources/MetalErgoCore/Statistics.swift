@@ -246,7 +246,17 @@ public extension MinerSnapshot {
             "dataset_prefetch_build_wall_seconds_total": String(datasetWork.prefetchBuildWallSeconds),
             "dataset_prefetch_build_gpu_seconds_total": String(datasetWork.prefetchBuildGPUSeconds),
             "dataset_prefetch_wasted_wall_seconds_total": String(datasetWork.prefetchWastedWallSeconds),
-            "dataset_prefetch_wasted_gpu_seconds_total": String(datasetWork.prefetchWastedGPUSeconds)
+            "dataset_prefetch_wasted_gpu_seconds_total": String(datasetWork.prefetchWastedGPUSeconds),
+            "gpu_build_commands_completed_total": String(datasetWork.buildCommandsCompleted),
+            "gpu_build_command_wall_seconds_total": String(datasetWork.buildCommandWallSeconds),
+            "gpu_build_command_gpu_seconds_total": String(datasetWork.buildCommandGPUSeconds),
+            "gpu_build_command_non_gpu_seconds_total": String(max(
+                0, datasetWork.buildCommandWallSeconds - datasetWork.buildCommandGPUSeconds)),
+            "gpu_search_commands_completed_total": String(datasetWork.searchCommandsCompleted),
+            "gpu_search_command_wall_seconds_total": String(datasetWork.searchCommandWallSeconds),
+            "gpu_search_command_gpu_seconds_total": String(datasetWork.searchCommandGPUSeconds),
+            "gpu_search_command_non_gpu_seconds_total": String(max(
+                0, datasetWork.searchCommandWallSeconds - datasetWork.searchCommandGPUSeconds))
         ]
         fields.merge(workFields) { _, new in new }
         let runtimeFields: [String: String] = [
@@ -476,6 +486,18 @@ public final class StatisticsStore: @unchecked Sendable {
         ergometal_dataset_prefetch_wasted_wall_seconds_total{\(labels)} \(s.datasetWork.prefetchWastedWallSeconds)
         # TYPE ergometal_dataset_prefetch_wasted_gpu_seconds_total counter
         ergometal_dataset_prefetch_wasted_gpu_seconds_total{\(labels)} \(s.datasetWork.prefetchWastedGPUSeconds)
+        # TYPE ergometal_gpu_build_commands_completed_total counter
+        ergometal_gpu_build_commands_completed_total{\(labels)} \(s.datasetWork.buildCommandsCompleted)
+        # TYPE ergometal_gpu_build_command_wall_seconds_total counter
+        ergometal_gpu_build_command_wall_seconds_total{\(labels)} \(s.datasetWork.buildCommandWallSeconds)
+        # TYPE ergometal_gpu_build_command_gpu_seconds_total counter
+        ergometal_gpu_build_command_gpu_seconds_total{\(labels)} \(s.datasetWork.buildCommandGPUSeconds)
+        # TYPE ergometal_gpu_search_commands_completed_total counter
+        ergometal_gpu_search_commands_completed_total{\(labels)} \(s.datasetWork.searchCommandsCompleted)
+        # TYPE ergometal_gpu_search_command_wall_seconds_total counter
+        ergometal_gpu_search_command_wall_seconds_total{\(labels)} \(s.datasetWork.searchCommandWallSeconds)
+        # TYPE ergometal_gpu_search_command_gpu_seconds_total counter
+        ergometal_gpu_search_command_gpu_seconds_total{\(labels)} \(s.datasetWork.searchCommandGPUSeconds)
         # TYPE ergometal_dataset_bytes gauge
         ergometal_dataset_bytes{\(labels)} \(s.datasetBytes)
         # TYPE ergometal_dataset_prefetch_progress gauge

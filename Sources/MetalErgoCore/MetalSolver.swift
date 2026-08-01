@@ -85,6 +85,12 @@ public struct DatasetWorkMetrics: Codable, Sendable, Equatable {
     public var prefetchBuildGPUSeconds = 0.0
     public var prefetchWastedWallSeconds = 0.0
     public var prefetchWastedGPUSeconds = 0.0
+    public var buildCommandsCompleted = 0
+    public var buildCommandWallSeconds = 0.0
+    public var buildCommandGPUSeconds = 0.0
+    public var searchCommandsCompleted = 0
+    public var searchCommandWallSeconds = 0.0
+    public var searchCommandGPUSeconds = 0.0
 
     public init() {}
 }
@@ -659,6 +665,11 @@ public final class MetalAutolykosSolver {
                         wallSeconds: max(0, wallEndTime - wallStartTime)))
                 }
             }
+            if case .success(let batch) = result {
+                self?.recordSearchCommand(
+                    wallSeconds: batch.wallSeconds,
+                    gpuSeconds: batch.gpuSeconds)
+            }
             self?.releaseSearchResources(resources)
             submission.resolve(result)
         }
@@ -874,11 +885,20 @@ public final class MetalAutolykosSolver {
         workMetrics.prefetchWastedGPUSeconds += task.slot.buildGPUSeconds
     }
 
+    private func recordSearchCommand(wallSeconds: Double, gpuSeconds: Double) {
+        state.lock()
+        workMetrics.searchCommandsCompleted += 1
+        workMetrics.searchCommandWallSeconds += wallSeconds
+        workMetrics.searchCommandGPUSeconds += gpuSeconds
+        state.unlock()
+    }
+
     private func encodeBuildChunk(
         slot: DatasetSlot,
         startIndex: Int,
         count: Int
     ) throws -> Double {
+        let wallStarted = ProcessInfo.processInfo.systemUptime
         enterSerializedGate(); defer { leaveSerializedGate() }
         guard let command = buildCommandQueue.makeCommandBufferWithUnretainedReferences(),
               let encoder = command.makeComputeCommandEncoder()
@@ -901,10 +921,17 @@ public final class MetalAutolykosSolver {
         encoder.endEncoding()
         command.commit()
         command.waitUntilCompleted()
+        let wallSeconds = max(0, ProcessInfo.processInfo.systemUptime - wallStarted)
+        let gpuSeconds = max(0, command.gpuEndTime - command.gpuStartTime)
+        state.lock()
+        workMetrics.buildCommandsCompleted += 1
+        workMetrics.buildCommandWallSeconds += wallSeconds
+        workMetrics.buildCommandGPUSeconds += gpuSeconds
+        state.unlock()
         if let error = command.error {
             throw MetalSolverError.pipeline(error.localizedDescription)
         }
-        return max(0, command.gpuEndTime - command.gpuStartTime)
+        return gpuSeconds
     }
 
     deinit {

@@ -52,6 +52,26 @@ The miner builds datasets in cancellable chunks, discards stale work when the po
 
 After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short; afterwards, the selected profile's larger batch size is restored. Measured defaults are 2,097,152 elements per cold-build slice and 1,048,576 per prefetch slice; `--build-chunk-elements` and `--prefetch-chunk-elements` remain available for reproducible hardware-specific A/B tests. The default prebuild search cap is 65,536 nonces and can be tuned with `--prebuild-batch-nonces`. `--dataset-threadgroup-size 128|256`, `--dataset-kernel u32pair|baseline`, and `--dataset-scheduling overlap|serialized` expose the validated build choices for controlled comparisons. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
 
+For balanced multi-run comparisons, the repository includes a campaign driver that reverses variant order every round and preserves the raw snapshot and JSONL event history of every run:
+
+```sh
+DURATION=30 TABLE_SIZE=33554432 Scripts/benchmark-ab.zsh /tmp/ergometal-ab 3 \
+  'overlap:--dataset-scheduling overlap' \
+  'serialized:--dataset-scheduling serialized'
+```
+
+Omit `TABLE_SIZE` for consensus-sized datasets. `BINARY` selects a non-canonical executable, `HEIGHT` defaults to 1,841,500, and `COOLDOWN_SECONDS` inserts an optional pause between runs. The generated `summary.json` reports medians; performance changes should be judged from several thermally comparable runs rather than a single best result.
+
+`benchmark --height-interval SECONDS` simulates consecutive pool heights locally. It drains the old search pipeline, promotes the prefetched dataset, starts the following prefetch, and resumes search without contacting a pool. This is the preferred deterministic thermal and scheduler test:
+
+```sh
+ergometal benchmark --duration 1800 --height 1841500 --height-interval 120 \
+  --table-size 216430305 --profile peak --prebuild on \
+  --stats-file ergometal-cycle.jsonl
+```
+
+The same option can be enabled in an A/B campaign with `HEIGHT_INTERVAL=120`.
+
 ## Observability
 
 Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
@@ -63,7 +83,7 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 
 The terminal shows current, active-average, and effective wall-clock hashrate together with search duty, prebuild progress, current/session-peak temperature, expected shares, and accepted-share luck. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file.
 
-Long-term fields include `search_duty_cycle`, total dataset activations and activation time, cold-build and prefetch completed/cancelled/failed counts, prefetch wait time, GPU build time, and explicitly discarded/wasted prefetch work. Numeric thermal telemetry is stored as `soc_temperature_average_celsius`, `soc_temperature_maximum_celsius`, `soc_temperature_session_peak_celsius`, `soc_temperature_sensor_count`, and `temperature_source`; unsupported systems report `temperature_source=unavailable` without failing the run. Every received job records its full 256-bit pool target as `job_target_hex`. The cumulative `shares_expected` counter adds `nonces × target / 2^256` for each completed search batch; `share_luck_ratio` is accepted shares divided by that expectation. The initial `session_started` record captures the performance parameters, architecture, OS, and executable SHA-256. When launched from a Git worktree it also records the launch-time worktree revision and dirty state; the executable hash remains the authoritative binary identity. A history write failure is reported but never stops mining.
+Long-term fields include `search_duty_cycle`, total dataset activations and activation time, cold-build and prefetch completed/cancelled/failed counts, prefetch wait time, GPU build time, and explicitly discarded/wasted prefetch work. Command-level cumulative counters separately record build/search command counts, admission-to-completion wall time, GPU time, and their non-GPU difference. These fields make queueing and driver overhead visible without emitting one JSONL record per command buffer. Because queued search commands can overlap, their cumulative wall/GPU difference is a latency diagnostic rather than additive session downtime or CPU time. Numeric thermal telemetry is stored as `soc_temperature_average_celsius`, `soc_temperature_maximum_celsius`, `soc_temperature_session_peak_celsius`, `soc_temperature_sensor_count`, and `temperature_source`; unsupported systems report `temperature_source=unavailable` without failing the run. Every received job records its full 256-bit pool target as `job_target_hex`. The cumulative `shares_expected` counter adds `nonces × target / 2^256` for each completed search batch; `share_luck_ratio` is accepted shares divided by that expectation. The initial `session_started` record captures the performance parameters, architecture, OS, and executable SHA-256. When launched from a Git worktree it also records the launch-time worktree revision and dirty state; the executable hash remains the authoritative binary identity. A history write failure is reported but never stops mining.
 
 ## Independent implementation and provenance
 

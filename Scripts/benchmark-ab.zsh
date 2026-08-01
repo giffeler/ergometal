@@ -71,7 +71,6 @@ common=(
   --build-chunk-elements 2097152
   --prefetch-chunk-elements 1048576
   --dataset-threadgroup-size 256
-  --dataset-kernel u32pair
   --api-bind 127.0.0.1:0
   --json
 )

@@ -17,6 +17,19 @@ inline ulong bswap64(ulong x) {
     return (ulong(bswap32(uint(x))) << 32) | ulong(bswap32(uint(x >> 32)));
 }
 
+// M[w] is the in-memory representation of UInt64(w).bigEndian for w < 1024.
+// Apple GPUs read that byte sequence as bswap64(w); its low 32-bit half is
+// therefore always zero and its high half contains only the low ten bits of w.
+inline uint autolykosMHigh(uint w) {
+    return ((w & 0xffU) << 24) | ((w >> 8) << 16);
+}
+inline ulong autolykosM64(uint w) {
+    return ulong(autolykosMHigh(w)) << 32;
+}
+inline uint2 autolykosM32x32(uint w) {
+    return uint2(0U, autolykosMHigh(w));
+}
+
 inline void mix(thread ulong v[16], uint a, uint b, uint c, uint d, ulong x, ulong y) {
     v[a] = v[a] + v[b] + x; v[d] = rotr64(v[d] ^ v[a], 32);
     v[c] += v[d]; v[b] = rotr64(v[b] ^ v[c], 24);
@@ -61,27 +74,37 @@ inline uint digestLimb(thread const ulong h[8], uint limb) {
     return bswap32(little);
 }
 
+inline void storeDatasetElement(
+    device uint *dataset,
+    uint index,
+    thread const uint value[8])
+{
+    device uint4 *destination =
+        reinterpret_cast<device uint4 *>(dataset + index * 8);
+    destination[0] = uint4(value[0], value[1], value[2], value[3]);
+    destination[1] = uint4(value[4], value[5], value[6], value[7]);
+}
+
 inline void datasetHash(
     uint index,
     uint height,
-    constant const ulong *autolykosM,
     thread uint out[8])
 {
     ulong h[8]; initHash(h);
     ulong m[16];
     // First eight input bytes are big-endian index and height.
     m[0] = ulong(bswap32(index)) | (ulong(bswap32(height)) << 32);
-    for (uint i = 1; i < 16; ++i) m[i] = autolykosM[i - 1];
+    for (uint i = 1; i < 16; ++i) m[i] = autolykosM64(i - 1);
     compress(h, m, 128, false);
 
     // Remaining full blocks contain consecutive big-endian UInt64 values from M.
     for (uint block = 1; block < 64; ++block) {
         uint first = 15 + (block - 1) * 16;
-        for (uint i = 0; i < 16; ++i) m[i] = autolykosM[first + i];
+        for (uint i = 0; i < 16; ++i) m[i] = autolykosM64(first + i);
         compress(h, m, ulong((block + 1) * 128), false);
     }
     for (uint i = 0; i < 16; ++i) m[i] = 0;
-    m[0] = autolykosM[1023];
+    m[0] = autolykosM64(1023);
     compress(h, m, 8200, true);
     for (uint i = 0; i < 8; ++i) out[i] = digestLimb(h, i);
     out[0] &= 0x00ffffffU; // drop the first digest byte
@@ -97,8 +120,8 @@ kernel void buildDataset(
 {
     uint id = startIndex + localID;
     if (id >= tableSize) return;
-    uint value[8]; datasetHash(id, height, autolykosM, value);
-    for (uint i = 0; i < 8; ++i) dataset[id * 8 + i] = value[i];
+    uint value[8]; datasetHash(id, height, value);
+    storeDatasetElement(dataset, id, value);
 }
 
 // Exact BLAKE2b arithmetic represented as two 32-bit halves. Apple GPUs are
@@ -139,11 +162,33 @@ inline void mix32x32(
     v[c] = add64x32(v[c], v[d]); v[b] = rotr63x32(v[b] ^ v[c]);
 }
 
+// Message words in every dataset block after the first have a statically zero
+// low half. Fold the redundant low-word add and its carry into the one addition
+// that remains necessary for v[a] + v[b].
+inline void mix32x32HiOnly(
+    thread uint2 v[16], uint a, uint b, uint c, uint d, uint xHi, uint yHi)
+{
+    uint low = v[a].x + v[b].x;
+    v[a] = uint2(low, v[a].y + v[b].y + uint(low < v[a].x) + xHi);
+    v[d] = rotr32x32(v[d] ^ v[a]);
+    v[c] = add64x32(v[c], v[d]); v[b] = rotr24x32(v[b] ^ v[c]);
+    low = v[a].x + v[b].x;
+    v[a] = uint2(low, v[a].y + v[b].y + uint(low < v[a].x) + yHi);
+    v[d] = rotr16x32(v[d] ^ v[a]);
+    v[c] = add64x32(v[c], v[d]); v[b] = rotr63x32(v[b] ^ v[c]);
+}
+
 #define B2B32_ROUND(v, m, s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15) \
     mix32x32(v,0,4,8,12,m[s0],m[s1]); mix32x32(v,1,5,9,13,m[s2],m[s3]); \
     mix32x32(v,2,6,10,14,m[s4],m[s5]); mix32x32(v,3,7,11,15,m[s6],m[s7]); \
     mix32x32(v,0,5,10,15,m[s8],m[s9]); mix32x32(v,1,6,11,12,m[s10],m[s11]); \
     mix32x32(v,2,7,8,13,m[s12],m[s13]); mix32x32(v,3,4,9,14,m[s14],m[s15])
+
+#define B2B32_ROUND_HI(v, m, s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15) \
+    mix32x32HiOnly(v,0,4,8,12,m[s0].y,m[s1].y); mix32x32HiOnly(v,1,5,9,13,m[s2].y,m[s3].y); \
+    mix32x32HiOnly(v,2,6,10,14,m[s4].y,m[s5].y); mix32x32HiOnly(v,3,7,11,15,m[s6].y,m[s7].y); \
+    mix32x32HiOnly(v,0,5,10,15,m[s8].y,m[s9].y); mix32x32HiOnly(v,1,6,11,12,m[s10].y,m[s11].y); \
+    mix32x32HiOnly(v,2,7,8,13,m[s12].y,m[s13].y); mix32x32HiOnly(v,3,4,9,14,m[s14].y,m[s15].y)
 
 inline void compress32x32(
     thread uint2 h[8], thread const uint2 m[16], uint count, bool finalBlock)
@@ -164,6 +209,28 @@ inline void compress32x32(
     B2B32_ROUND(v,m, 10,2,8,4,7,6,1,5,15,11,9,14,3,12,13,0);
     B2B32_ROUND(v,m, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
     B2B32_ROUND(v,m, 14,10,4,8,9,15,13,6,1,12,0,2,11,7,5,3);
+    for (uint i = 0; i < 8; ++i) h[i] ^= v[i] ^ v[i + 8];
+}
+
+inline void compress32x32HiOnly(
+    thread uint2 h[8], thread const uint2 m[16], uint count, bool finalBlock)
+{
+    uint2 v[16];
+    for (uint i = 0; i < 8; ++i) { v[i] = h[i]; v[i + 8] = B2B_IV32[i]; }
+    v[12].x ^= count;
+    if (finalBlock) v[14] = ~v[14];
+    B2B32_ROUND_HI(v,m, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+    B2B32_ROUND_HI(v,m, 14,10,4,8,9,15,13,6,1,12,0,2,11,7,5,3);
+    B2B32_ROUND_HI(v,m, 11,8,12,0,5,2,15,13,10,14,3,6,7,1,9,4);
+    B2B32_ROUND_HI(v,m, 7,9,3,1,13,12,11,14,2,6,5,10,4,0,15,8);
+    B2B32_ROUND_HI(v,m, 9,0,5,7,2,4,10,15,14,1,11,12,6,8,3,13);
+    B2B32_ROUND_HI(v,m, 2,12,6,10,0,11,8,3,4,13,7,5,15,14,1,9);
+    B2B32_ROUND_HI(v,m, 12,5,1,15,14,13,4,10,0,7,6,3,9,2,8,11);
+    B2B32_ROUND_HI(v,m, 13,11,7,14,12,1,3,9,5,0,15,4,8,6,2,10);
+    B2B32_ROUND_HI(v,m, 6,15,14,9,11,3,0,8,12,2,13,7,1,4,10,5);
+    B2B32_ROUND_HI(v,m, 10,2,8,4,7,6,1,5,15,11,9,14,3,12,13,0);
+    B2B32_ROUND_HI(v,m, 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15);
+    B2B32_ROUND_HI(v,m, 14,10,4,8,9,15,13,6,1,12,0,2,11,7,5,3);
     for (uint i = 0; i < 8; ++i) h[i] ^= v[i] ^ v[i + 8];
 }
 
@@ -206,10 +273,52 @@ kernel void buildDatasetU32Pair(
     uint id = startIndex + localID;
     if (id >= tableSize) return;
     uint value[8]; datasetHashU32Pair(id, height, autolykosM, value);
-    for (uint i = 0; i < 8; ++i) dataset[id * 8 + i] = value[i];
+    storeDatasetElement(dataset, id, value);
+}
+
+inline void datasetHashU32PairInlineM(
+    uint index,
+    uint height,
+    thread uint out[8])
+{
+    uint2 h[8];
+    for (uint i = 0; i < 8; ++i) h[i] = B2B_IV32[i];
+    h[0].x ^= 0x01010020U;
+    uint2 m[16];
+    m[0] = uint2(bswap32(index), bswap32(height));
+    for (uint i = 1; i < 16; ++i) m[i] = autolykosM32x32(i - 1);
+    compress32x32(h, m, 128U, false);
+    for (uint block = 1; block < 64; ++block) {
+        uint first = 15 + (block - 1) * 16;
+        for (uint i = 0; i < 16; ++i) m[i] = autolykosM32x32(first + i);
+        compress32x32HiOnly(h, m, (block + 1) * 128, false);
+    }
+    for (uint i = 0; i < 16; ++i) m[i] = uint2(0U);
+    m[0] = autolykosM32x32(1023);
+    compress32x32HiOnly(h, m, 8200U, true);
+    for (uint i = 0; i < 8; ++i) {
+        uint2 word = h[i >> 1];
+        out[i] = bswap32((i & 1) == 0 ? word.x : word.y);
+    }
+    out[0] &= 0x00ffffffU;
+}
+
+kernel void buildDatasetU32PairInlineM(
+    device uint *dataset [[buffer(0)]],
+    constant uint &height [[buffer(1)]],
+    constant uint &tableSize [[buffer(2)]],
+    constant uint &startIndex [[buffer(3)]],
+    constant const ulong *autolykosM [[buffer(4)]],
+    uint localID [[thread_position_in_grid]])
+{
+    uint id = startIndex + localID;
+    if (id >= tableSize) return;
+    uint value[8]; datasetHashU32PairInlineM(id, height, value);
+    storeDatasetElement(dataset, id, value);
 }
 
 #undef B2B32_ROUND
+#undef B2B32_ROUND_HI
 
 // The search path hashes three fixed, single-block messages for every nonce.
 // Keep their BLAKE2b state in named scalars so the compiler does not have to

@@ -780,7 +780,8 @@ enum ErgoMetalCLI {
     }
 
     private static func datasetKernel(from args: Arguments) throws -> DatasetKernel {
-        let raw = args.string("dataset-kernel", default: DatasetKernel.u32Pair.rawValue)!
+        let raw = args.string(
+            "dataset-kernel", default: DatasetKernel.u32PairInlineM.rawValue)!
         guard let value = DatasetKernel(rawValue: raw) else {
             throw CLIError.invalidArgument(
                 "--dataset-kernel must be \(DatasetKernel.allCases.map(\.rawValue).joined(separator: "|"))")

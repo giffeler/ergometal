@@ -95,12 +95,33 @@ for (( round = 1; round <= runs; round++ )); do
     name=${specification%%:*}
     arguments=${specification#*:}
     variant_arguments=(${(z)arguments})
+    # An option named by the variant replaces the campaign default instead of
+    # being appended to it; the miner rejects a repeated option outright.
+    typeset -A overridden=()
+    for token in "${variant_arguments[@]}"; do
+      if [[ $token == --* ]]; then overridden[${token#--}]=1; fi
+    done
+    effective=()
+    position=1
+    while (( position <= ${#common} )); do
+      token=${common[$position]}
+      if [[ $token == --* ]] && (( ${+overridden[${token#--}]} )); then
+        if (( position < ${#common} )) && [[ ${common[$position + 1]} != --* ]]; then
+          (( position += 2 ))
+        else
+          (( position += 1 ))
+        fi
+        continue
+      fi
+      effective+=("$token")
+      (( position += 1 ))
+    done
     (( order += 1 ))
     stem=$(printf '%02d-r%02d-%s' "$order" "$round" "$name")
     json="$output_dir/$stem.json"
     events="$output_dir/$stem.jsonl"
     print -u2 "[$order] round=$round variant=$name"
-    "$binary" "${common[@]}" "${variant_arguments[@]}" \
+    "$binary" "${effective[@]}" "${variant_arguments[@]}" \
       --stats-file "$events" > "$json"
     jq -c \
       --arg variant "$name" \

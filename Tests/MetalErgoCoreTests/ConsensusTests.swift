@@ -121,7 +121,8 @@ final class ConsensusTests: XCTestCase {
     func testMetalMatchesCPUForNontrivialNonceBytePatterns() throws {
         let solver = try MetalAutolykosSolver()
         let height = 614_401
-        let tableSize = 2_048
+        // A non-power-of-two table exercises both reciprocal-modulo paths.
+        let tableSize = 257
         _ = try solver.buildDataset(height: height, tableSize: tableSize)
         let message = try XCTUnwrap([UInt8](
             hex: "00112233445566778899aabbccddeeffffeeddccbbaa99887766554433221100"))

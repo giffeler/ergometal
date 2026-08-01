@@ -397,22 +397,25 @@ inline SearchDigest searchIndexSeed(
     ulong nonce)
 {
     // seed = dataset[firstIndex].dropFirst() || message || nonce (71 bytes).
-    device const uint *element = dataset + firstIndex * 8;
+    device const uint4 *element = reinterpret_cast<device const uint4 *>(
+        dataset + firstIndex * 8);
+    uint4 element0 = element[0];
+    uint4 element1 = element[1];
     SearchDigest digest;
     SEARCH_COMPRESS(
         digest, 71UL,
         packBigEndianWords(
-            (element[0] << 8) | (element[1] >> 24),
-            (element[1] << 8) | (element[2] >> 24)),
+            (element0.x << 8) | (element0.y >> 24),
+            (element0.y << 8) | (element0.z >> 24)),
         packBigEndianWords(
-            (element[2] << 8) | (element[3] >> 24),
-            (element[3] << 8) | (element[4] >> 24)),
+            (element0.z << 8) | (element0.w >> 24),
+            (element0.w << 8) | (element1.x >> 24)),
         packBigEndianWords(
-            (element[4] << 8) | (element[5] >> 24),
-            (element[5] << 8) | (element[6] >> 24)),
+            (element1.x << 8) | (element1.y >> 24),
+            (element1.y << 8) | (element1.z >> 24)),
         packBigEndianWords(
-            (element[6] << 8) | (element[7] >> 24),
-            (element[7] << 8) | (message[0] >> 24)),
+            (element1.z << 8) | (element1.w >> 24),
+            (element1.w << 8) | (message[0] >> 24)),
         packBigEndianWords(
             (message[0] << 8) | (message[1] >> 24),
             (message[1] << 8) | (message[2] >> 24)),
@@ -475,6 +478,26 @@ inline bool searchDigestBelowTarget(SearchDigest digest, constant const uint *ta
 #undef SEARCH_ROUND
 #undef SEARCH_MIX
 
+struct SearchModuloParameters {
+    ulong reciprocal64;
+    uint reciprocal32;
+    uint padding;
+};
+
+inline uint reciprocalModulo32(uint value, uint divisor, uint reciprocal) {
+    if (divisor == 1) return 0;
+    uint quotient = mulhi(value, reciprocal);
+    uint remainder = value - quotient * divisor;
+    return remainder >= divisor ? remainder - divisor : remainder;
+}
+
+inline ulong reciprocalModulo64(ulong value, uint divisor, ulong reciprocal) {
+    if (divisor == 1) return 0;
+    ulong quotient = mulhi(value, reciprocal);
+    ulong remainder = value - quotient * ulong(divisor);
+    return remainder >= ulong(divisor) ? remainder - ulong(divisor) : remainder;
+}
+
 kernel void searchNonces(
     device const uint *dataset [[buffer(0)]],
     constant const uint *message [[buffer(1)]],
@@ -483,18 +506,29 @@ kernel void searchNonces(
     device atomic_uint *resultCount [[buffer(4)]],
     constant ulong &baseNonce [[buffer(5)]],
     constant uint &tableSize [[buffer(6)]],
+    constant SearchModuloParameters &modulo [[buffer(7)]],
     uint id [[thread_position_in_grid]])
 {
     ulong nonce = baseNonce + ulong(id);
     SearchDigest firstHash = searchMessageNonce(message, nonce);
     ulong tail = bswap64(firstHash.h3);
-    uint firstIndex = uint(tail % ulong(tableSize));
+    uint firstIndex = uint(reciprocalModulo64(
+        tail, tableSize, modulo.reciprocal64));
 
     SearchDigest indexHash = searchIndexSeed(dataset, firstIndex, message, nonce);
     uint indexWords[8];
     searchDigestWords(indexHash, indexWords);
 
-    uint sum[8]; for (uint i = 0; i < 8; ++i) sum[i] = 0;
+    // Add each big-endian limb independently. Thirty-two 32-bit summands fit
+    // in 37 bits, so carries only need to be propagated once after the gather.
+    ulong sum0 = 0;
+    ulong sum1 = 0;
+    ulong sum2 = 0;
+    ulong sum3 = 0;
+    ulong sum4 = 0;
+    ulong sum5 = 0;
+    ulong sum6 = 0;
+    ulong sum7 = 0;
     for (uint k = 0; k < 32; ++k) {
         uint wordIndex = k >> 2;
         uint shift = (k & 3) * 8;
@@ -502,13 +536,30 @@ kernel void searchNonces(
             ? indexWords[wordIndex]
             : (indexWords[wordIndex] << shift) |
               (indexWords[(wordIndex + 1) & 7] >> (32 - shift));
-        uint j = raw % tableSize;
-        ulong carry = 0;
-        for (int limb = 7; limb >= 0; --limb) {
-            ulong total = ulong(sum[limb]) + ulong(dataset[j * 8 + uint(limb)]) + carry;
-            sum[limb] = uint(total); carry = total >> 32;
-        }
+        uint j = reciprocalModulo32(raw, tableSize, modulo.reciprocal32);
+        device const uint4 *element = reinterpret_cast<device const uint4 *>(
+            dataset + j * 8);
+        uint4 element0 = element[0];
+        uint4 element1 = element[1];
+        sum0 += ulong(element0.x);
+        sum1 += ulong(element0.y);
+        sum2 += ulong(element0.z);
+        sum3 += ulong(element0.w);
+        sum4 += ulong(element1.x);
+        sum5 += ulong(element1.y);
+        sum6 += ulong(element1.z);
+        sum7 += ulong(element1.w);
     }
+
+    uint sum[8];
+    sum[7] = uint(sum7); sum6 += sum7 >> 32;
+    sum[6] = uint(sum6); sum5 += sum6 >> 32;
+    sum[5] = uint(sum5); sum4 += sum5 >> 32;
+    sum[4] = uint(sum4); sum3 += sum4 >> 32;
+    sum[3] = uint(sum3); sum2 += sum3 >> 32;
+    sum[2] = uint(sum2); sum1 += sum2 >> 32;
+    sum[1] = uint(sum1); sum0 += sum1 >> 32;
+    sum[0] = uint(sum0); // Discard the carry out of limb zero, as before.
 
     SearchDigest hitHash = searchSum(sum);
     if (searchDigestBelowTarget(hitHash, target)) {

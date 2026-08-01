@@ -198,10 +198,31 @@ private final class MetalCommandGate {
     }
 }
 
+private struct SearchModuloParameters {
+    let reciprocal64: UInt64
+    let reciprocal32: UInt32
+    let padding: UInt32 = 0
+
+    init(tableSize: UInt32) {
+        guard tableSize > 1 else {
+            reciprocal64 = 0
+            reciprocal32 = 0
+            return
+        }
+        let divisor = UInt64(tableSize)
+        let quotient = UInt64.max / divisor
+        let remainder = UInt64.max % divisor
+        // floor(2^64 / divisor), expressed without constructing 2^64.
+        reciprocal64 = quotient + (remainder == divisor - 1 ? 1 : 0)
+        reciprocal32 = UInt32((UInt64(1) << 32) / divisor)
+    }
+}
+
 private struct DatasetSpec {
     let height: Int
     let tableSize: Int
     let bytes: UInt64
+    let searchModulo: SearchModuloParameters
 
     func matches(height: Int, tableSize: Int) -> Bool {
         self.height == height && self.tableSize == tableSize
@@ -617,6 +638,7 @@ public final class MetalAutolykosSolver {
 
         var base = baseNonce
         var n = UInt32(dataset.spec.tableSize)
+        var modulo = dataset.spec.searchModulo
         let pipeline = searchPipeline
         encoder.setComputePipelineState(pipeline)
         encoder.setBuffer(dataset.buffer, offset: 0, index: 0)
@@ -630,6 +652,8 @@ public final class MetalAutolykosSolver {
         encoder.setBuffer(resources.resultCountBuffer, offset: 0, index: 4)
         encoder.setBytes(&base, length: MemoryLayout<UInt64>.size, index: 5)
         encoder.setBytes(&n, length: MemoryLayout<UInt32>.size, index: 6)
+        encoder.setBytes(
+            &modulo, length: MemoryLayout<SearchModuloParameters>.stride, index: 7)
         let width = min(requested ?? 128, searchPipeline.maxTotalThreadsPerThreadgroup)
         encoder.dispatchThreads(MTLSize(width: nonceCount, height: 1, depth: 1),
             threadsPerThreadgroup: MTLSize(width: width, height: 1, depth: 1))
@@ -717,7 +741,11 @@ public final class MetalAutolykosSolver {
         guard !overflow, bytes <= UInt64(device.maxBufferLength), Int(exactly: bytes) != nil else {
             throw MetalSolverError.allocation(bytes: bytes, available: info.recommendedWorkingSetBytes)
         }
-        return DatasetSpec(height: height, tableSize: tableSize, bytes: bytes)
+        return DatasetSpec(
+            height: height,
+            tableSize: tableSize,
+            bytes: bytes,
+            searchModulo: SearchModuloParameters(tableSize: UInt32(tableSize)))
     }
 
     private func validateWorkingSet(bytes values: [UInt64]) throws {

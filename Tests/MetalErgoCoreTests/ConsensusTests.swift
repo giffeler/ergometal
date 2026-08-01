@@ -221,6 +221,89 @@ final class ConsensusTests: XCTestCase {
             message: message, target: .max, baseNonce: 0, nonceCount: 257))
     }
 
+    func testDatasetBuildPipelinesChunksAndPreservesMetrics() throws {
+        let solver = try MetalAutolykosSolver(
+            synchronousBuildChunkElements: 64,
+            prefetchBuildChunkElements: 64)
+        let tableSize = 257
+        let cold = try solver.buildDataset(height: 614_400, tableSize: tableSize)
+        let coldMetrics = solver.datasetWorkMetrics()
+
+        XCTAssertEqual(coldMetrics.buildCommandsCompleted, 5)
+        XCTAssertEqual(
+            coldMetrics.coldBuildGPUSeconds,
+            cold.gpuSeconds,
+            accuracy: 1e-9)
+        XCTAssertGreaterThanOrEqual(
+            coldMetrics.buildCommandWallSeconds,
+            coldMetrics.buildCommandGPUSeconds)
+        XCTAssertLessThanOrEqual(coldMetrics.buildCommandWallSeconds, cold.seconds)
+        let indices = [0, 63, 64, 127, 128, 255, 256]
+        XCTAssertEqual(
+            try solver.datasetElements(at: indices),
+            try indices.map { try AutolykosV2.datasetElement(index: $0, height: 614_400) })
+
+        XCTAssertTrue(try solver.prefetchDataset(height: 614_401, tableSize: tableSize))
+        let prefetched = try solver.buildDataset(height: 614_401, tableSize: tableSize)
+        let metrics = solver.datasetWorkMetrics()
+        XCTAssertEqual(prefetched.source, .prefetched)
+        XCTAssertEqual(metrics.buildCommandsCompleted, 10)
+        XCTAssertEqual(metrics.coldBuildsCompleted, 1)
+        XCTAssertEqual(metrics.prefetchBuildsCompleted, 1)
+        XCTAssertEqual(metrics.prefetchBuildGPUSeconds, prefetched.gpuSeconds, accuracy: 1e-9)
+        XCTAssertLessThanOrEqual(
+            metrics.buildCommandWallSeconds,
+            cold.seconds + prefetched.seconds)
+    }
+
+    func testPipelinedBuildCancellationDrainsSubmittedCommands() throws {
+        let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 32_768)
+        var continuationChecks = 0
+
+        XCTAssertThrowsError(try solver.buildDataset(
+            height: 614_400,
+            tableSize: 262_144,
+            shouldContinue: {
+                continuationChecks += 1
+                return continuationChecks <= 2
+            }
+        )) { error in
+            guard case MetalSolverError.cancelled = error else {
+                return XCTFail("Expected cancellation, got \(error)")
+            }
+        }
+
+        let metrics = solver.datasetWorkMetrics()
+        XCTAssertEqual(continuationChecks, 3)
+        XCTAssertEqual(metrics.buildCommandsCompleted, 2)
+        XCTAssertEqual(metrics.coldBuildsCancelled, 1)
+        XCTAssertEqual(
+            metrics.coldBuildGPUSeconds,
+            metrics.buildCommandGPUSeconds,
+            accuracy: 1e-9)
+    }
+
+    func testPipelinedPrefetchCancellationDrainsSubmittedCommands() throws {
+        let solver = try MetalAutolykosSolver(prefetchBuildChunkElements: 32_768)
+        XCTAssertTrue(try solver.prefetchDataset(height: 614_400, tableSize: 2_097_152))
+
+        let deadline = Date(timeIntervalSinceNow: 2)
+        while solver.prefetchStatus()?.completedElements == 0, Date() < deadline {
+            Thread.sleep(forTimeInterval: 0.001)
+        }
+        XCTAssertGreaterThan(solver.prefetchStatus()?.completedElements ?? 0, 0)
+        solver.cancelPrefetch(waitUntilFinished: true)
+
+        let metrics = solver.datasetWorkMetrics()
+        XCTAssertEqual(metrics.prefetchBuildsCancelled, 1)
+        XCTAssertEqual(metrics.prefetchBuildsCompleted, 0)
+        XCTAssertGreaterThan(metrics.buildCommandsCompleted, 0)
+        XCTAssertEqual(
+            metrics.prefetchWastedGPUSeconds,
+            metrics.buildCommandGPUSeconds,
+            accuracy: 1e-9)
+    }
+
     func testMetalPrefetchPromotesNextHeightAndCanCancelBuild() throws {
         let solver = try MetalAutolykosSolver()
         _ = try solver.buildDataset(height: 614_400, tableSize: 1_024)

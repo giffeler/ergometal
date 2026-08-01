@@ -173,6 +173,82 @@ public final class SearchSubmission: @unchecked Sendable {
     }
 }
 
+private final class DatasetBuildSubmission: @unchecked Sendable {
+    private let condition = NSCondition()
+    private var result: Result<Double, Error>?
+
+    func resolve(_ result: Result<Double, Error>) {
+        condition.lock()
+        guard self.result == nil else {
+            condition.unlock()
+            return
+        }
+        self.result = result
+        condition.broadcast()
+        condition.unlock()
+    }
+
+    func result(until deadline: Date) -> Result<Double, Error>? {
+        condition.lock()
+        if result == nil { condition.wait(until: deadline) }
+        let result = self.result
+        condition.unlock()
+        return result
+    }
+
+    func wait() throws -> Double {
+        condition.lock()
+        while result == nil { condition.wait() }
+        let result = self.result!
+        condition.unlock()
+        return try result.get()
+    }
+}
+
+private struct PendingDatasetBuild {
+    let submission: DatasetBuildSubmission
+    let elementCount: Int
+}
+
+/// Tracks the union of submission-to-completion intervals. Summing individual
+/// command latencies would double-count the two pipelined commands and corrupt
+/// the existing wall-minus-GPU overhead metric.
+private final class DatasetBuildWallAccumulator: @unchecked Sendable {
+    private struct Interval {
+        var start: TimeInterval
+        var end: TimeInterval
+    }
+
+    private let lock = NSLock()
+    private var intervals: [Interval] = []
+
+    func record(start: TimeInterval, end: TimeInterval) -> Double {
+        let lowerBound = min(start, end)
+        let upperBound = max(start, end)
+        lock.lock(); defer { lock.unlock() }
+
+        var mergedStart = lowerBound
+        var mergedEnd = upperBound
+        var overlap = 0.0
+        var retained: [Interval] = []
+        retained.reserveCapacity(intervals.count + 1)
+        for interval in intervals {
+            if interval.end < mergedStart || interval.start > mergedEnd {
+                retained.append(interval)
+            } else {
+                overlap += max(
+                    0,
+                    min(upperBound, interval.end) - max(lowerBound, interval.start))
+                mergedStart = min(mergedStart, interval.start)
+                mergedEnd = max(mergedEnd, interval.end)
+            }
+        }
+        retained.append(Interval(start: mergedStart, end: mergedEnd))
+        intervals = retained
+        return max(0, upperBound - lowerBound - overlap)
+    }
+}
+
 private final class MetalBundleToken {}
 
 /// FIFO admission prevents either the dataset worker or the search loop from
@@ -269,6 +345,7 @@ private final class SearchResources {
 public final class MetalAutolykosSolver {
     private static let maximumResults = 256
     private static let searchPipelineDepth = 2
+    private static let buildPipelineDepth = 2
     public static let defaultSynchronousBuildChunkElements = 2_097_152
     public static let defaultPrefetchBuildChunkElements = 1_048_576
 
@@ -283,6 +360,7 @@ public final class MetalAutolykosSolver {
     private let constantMBuffer: MTLBuffer
     private let searchResources: [SearchResources]
     private let searchResourceState = NSCondition()
+    private let buildCommandSlots = DispatchSemaphore(value: buildPipelineDepth)
     private let commandGate = MetalCommandGate()
     private let state = NSCondition()
     private let prefetchWorker = DispatchQueue(label: "dev.ergometal.dataset-prefetch", qos: .userInitiated)
@@ -823,20 +901,66 @@ public final class MetalAutolykosSolver {
         shouldContinue: (() -> Bool)?
     ) throws -> DatasetBuildTiming {
         let started = ContinuousClock.now
-        var startIndex = 0
+        var nextIndex = 0
         var gpuSeconds = 0.0
-        do {
-            while startIndex < slot.spec.tableSize {
-                guard shouldContinue?() != false else { throw MetalSolverError.cancelled }
-                let count = min(synchronousBuildChunkElements, slot.spec.tableSize - startIndex)
-                gpuSeconds += try encodeBuildChunk(
-                    slot: slot, startIndex: startIndex, count: count)
-                startIndex += count
+        var pending: [PendingDatasetBuild] = []
+        var failure: Error?
+        let wallAccumulator = DatasetBuildWallAccumulator()
+
+        while nextIndex < slot.spec.tableSize, failure == nil {
+            guard shouldContinue?() != false else {
+                failure = MetalSolverError.cancelled
+                break
             }
-        } catch {
+            if pending.count == Self.buildPipelineDepth {
+                do {
+                    gpuSeconds += try waitForBuildSubmission(
+                        pending[0].submission, shouldContinue: shouldContinue)
+                    pending.removeFirst()
+                } catch {
+                    failure = error
+                }
+                continue
+            }
+            let count = min(synchronousBuildChunkElements, slot.spec.tableSize - nextIndex)
+            do {
+                pending.append(PendingDatasetBuild(
+                    submission: try enqueueBuildChunk(
+                        slot: slot,
+                        startIndex: nextIndex,
+                        count: count,
+                        wallAccumulator: wallAccumulator),
+                    elementCount: count))
+                nextIndex += count
+            } catch {
+                failure = error
+            }
+        }
+
+        while !pending.isEmpty, failure == nil {
+            do {
+                gpuSeconds += try waitForBuildSubmission(
+                    pending[0].submission, shouldContinue: shouldContinue)
+                pending.removeFirst()
+            } catch {
+                failure = error
+            }
+        }
+        // Submitted Metal work cannot be cancelled. Drain it before releasing
+        // the dataset slot so timing, counters, and unretained resources remain valid.
+        while !pending.isEmpty {
+            let chunk = pending.removeFirst()
+            do {
+                gpuSeconds += try chunk.submission.wait()
+            } catch {
+                if failure == nil { failure = error }
+            }
+        }
+
+        if let failure {
             let wallSeconds = started.duration(to: .now).seconds
             state.lock()
-            if case MetalSolverError.cancelled = error {
+            if case MetalSolverError.cancelled = failure {
                 workMetrics.coldBuildsCancelled += 1
             } else {
                 workMetrics.coldBuildsFailed += 1
@@ -844,7 +968,7 @@ public final class MetalAutolykosSolver {
             workMetrics.coldBuildWallSeconds += wallSeconds
             workMetrics.coldBuildGPUSeconds += gpuSeconds
             state.unlock()
-            throw error
+            throw failure
         }
         let wallSeconds = started.duration(to: .now).seconds
         state.lock()
@@ -856,30 +980,78 @@ public final class MetalAutolykosSolver {
     }
 
     private func runPrefetch(_ task: DatasetPrefetchTask) {
-        do {
-            while task.completedElements < task.slot.spec.tableSize {
-                state.lock()
-                let cancelled = task.cancelled
-                state.unlock()
-                guard !cancelled else { throw MetalSolverError.cancelled }
-                let count = min(
-                    prefetchBuildChunkElements,
-                    task.slot.spec.tableSize - task.completedElements)
-                let gpuSeconds = try encodeBuildChunk(
-                    slot: task.slot,
-                    startIndex: task.completedElements,
-                    count: count)
-                state.lock()
-                task.slot.buildGPUSeconds += gpuSeconds
-                task.completedElements += count
-                state.broadcast()
-                state.unlock()
+        var nextIndex = 0
+        var pending: [PendingDatasetBuild] = []
+        var failure: Error?
+        let wallAccumulator = DatasetBuildWallAccumulator()
+
+        while nextIndex < task.slot.spec.tableSize, failure == nil {
+            guard prefetchShouldContinue(task) else {
+                failure = MetalSolverError.cancelled
+                break
             }
-            task.slot.buildSeconds = task.started.duration(to: .now).seconds
-        } catch {
+            if pending.count == Self.buildPipelineDepth {
+                do {
+                    let chunk = pending[0]
+                    let gpuSeconds = try waitForBuildSubmission(
+                        chunk.submission,
+                        shouldContinue: { [weak self, task] in
+                            self?.prefetchShouldContinue(task) ?? false
+                        })
+                    pending.removeFirst()
+                    recordCompletedPrefetchChunk(task, chunk: chunk, gpuSeconds: gpuSeconds)
+                } catch {
+                    failure = error
+                }
+                continue
+            }
+            let count = min(
+                prefetchBuildChunkElements,
+                task.slot.spec.tableSize - nextIndex)
+            do {
+                pending.append(PendingDatasetBuild(
+                    submission: try enqueueBuildChunk(
+                        slot: task.slot,
+                        startIndex: nextIndex,
+                        count: count,
+                        wallAccumulator: wallAccumulator),
+                    elementCount: count))
+                nextIndex += count
+            } catch {
+                failure = error
+            }
+        }
+
+        while !pending.isEmpty, failure == nil {
+            do {
+                let chunk = pending[0]
+                let gpuSeconds = try waitForBuildSubmission(
+                    chunk.submission,
+                    shouldContinue: { [weak self, task] in
+                        self?.prefetchShouldContinue(task) ?? false
+                    })
+                pending.removeFirst()
+                recordCompletedPrefetchChunk(task, chunk: chunk, gpuSeconds: gpuSeconds)
+            } catch {
+                failure = error
+            }
+        }
+        while !pending.isEmpty {
+            let chunk = pending.removeFirst()
+            do {
+                let gpuSeconds = try chunk.submission.wait()
+                recordCompletedPrefetchChunk(task, chunk: chunk, gpuSeconds: gpuSeconds)
+            } catch {
+                if failure == nil { failure = error }
+            }
+        }
+
+        if let failure {
             state.lock()
-            task.failure = error
+            task.failure = failure
             state.unlock()
+        } else {
+            task.slot.buildSeconds = task.started.duration(to: .now).seconds
         }
         state.lock()
         let wallSeconds = task.started.duration(to: .now).seconds
@@ -907,6 +1079,23 @@ public final class MetalAutolykosSolver {
         state.unlock()
     }
 
+    private func prefetchShouldContinue(_ task: DatasetPrefetchTask) -> Bool {
+        state.lock(); defer { state.unlock() }
+        return !task.cancelled
+    }
+
+    private func recordCompletedPrefetchChunk(
+        _ task: DatasetPrefetchTask,
+        chunk: PendingDatasetBuild,
+        gpuSeconds: Double
+    ) {
+        state.lock()
+        task.slot.buildGPUSeconds += gpuSeconds
+        task.completedElements += chunk.elementCount
+        state.broadcast()
+        state.unlock()
+    }
+
     private func recordDiscardedPrefetchLocked(_ task: DatasetPrefetchTask) {
         guard task.finished, task.failure == nil, !task.discarded else { return }
         task.discarded = true
@@ -923,16 +1112,41 @@ public final class MetalAutolykosSolver {
         state.unlock()
     }
 
-    private func encodeBuildChunk(
+    private func recordBuildCommand(wallSeconds: Double, gpuSeconds: Double) {
+        state.lock()
+        workMetrics.buildCommandsCompleted += 1
+        workMetrics.buildCommandWallSeconds += wallSeconds
+        workMetrics.buildCommandGPUSeconds += gpuSeconds
+        state.unlock()
+    }
+
+    private func waitForBuildSubmission(
+        _ submission: DatasetBuildSubmission,
+        shouldContinue: (() -> Bool)?
+    ) throws -> Double {
+        while true {
+            if let result = submission.result(until: Date(timeIntervalSinceNow: 0.05)) {
+                return try result.get()
+            }
+            guard shouldContinue?() != false else { throw MetalSolverError.cancelled }
+        }
+    }
+
+    private func enqueueBuildChunk(
         slot: DatasetSlot,
         startIndex: Int,
-        count: Int
-    ) throws -> Double {
+        count: Int,
+        wallAccumulator: DatasetBuildWallAccumulator
+    ) throws -> DatasetBuildSubmission {
+        buildCommandSlots.wait()
         let wallStarted = ProcessInfo.processInfo.systemUptime
         enterSerializedGate(); defer { leaveSerializedGate() }
         guard let command = buildCommandQueue.makeCommandBufferWithUnretainedReferences(),
               let encoder = command.makeComputeCommandEncoder()
-        else { throw MetalSolverError.commandEncoding }
+        else {
+            buildCommandSlots.signal()
+            throw MetalSolverError.commandEncoding
+        }
         command.label = "buildDataset[\(startIndex)..<\(startIndex + count)]"
         encoder.label = "buildDataset"
         var height = UInt32(slot.spec.height)
@@ -949,19 +1163,33 @@ public final class MetalAutolykosSolver {
             MTLSize(width: count, height: 1, depth: 1),
             threadsPerThreadgroup: MTLSize(width: width, height: 1, depth: 1))
         encoder.endEncoding()
-        command.commit()
-        command.waitUntilCompleted()
-        let wallSeconds = max(0, ProcessInfo.processInfo.systemUptime - wallStarted)
-        let gpuSeconds = max(0, command.gpuEndTime - command.gpuStartTime)
-        state.lock()
-        workMetrics.buildCommandsCompleted += 1
-        workMetrics.buildCommandWallSeconds += wallSeconds
-        workMetrics.buildCommandGPUSeconds += gpuSeconds
-        state.unlock()
-        if let error = command.error {
-            throw MetalSolverError.pipeline(error.localizedDescription)
+
+        let submission = DatasetBuildSubmission()
+        let pipeline = buildPipeline
+        let constantM = constantMBuffer
+        let commandSlots = buildCommandSlots
+        command.addCompletedHandler {
+            [weak self, slot, submission, pipeline, constantM, commandSlots] command in
+            // The command buffer uses unretained references; keep all encoded
+            // resources alive until Metal has finished with this chunk.
+            _ = slot
+            _ = pipeline
+            _ = constantM
+            let wallSeconds = wallAccumulator.record(
+                start: wallStarted,
+                end: ProcessInfo.processInfo.systemUptime)
+            let gpuSeconds = max(0, command.gpuEndTime - command.gpuStartTime)
+            self?.recordBuildCommand(wallSeconds: wallSeconds, gpuSeconds: gpuSeconds)
+            if let error = command.error {
+                submission.resolve(.failure(
+                    MetalSolverError.pipeline(error.localizedDescription)))
+            } else {
+                submission.resolve(.success(gpuSeconds))
+            }
+            commandSlots.signal()
         }
-        return gpuSeconds
+        command.commit()
+        return submission
     }
 
     deinit {

@@ -538,7 +538,7 @@ public final class MetalAutolykosSolver {
             available: info.recommendedWorkingSetBytes) }
 
         enterSerializedGate(); defer { leaveSerializedGate() }
-        guard let command = searchCommandQueue.makeCommandBuffer(),
+        guard let command = searchCommandQueue.makeCommandBufferWithUnretainedReferences(),
               let encoder = command.makeBlitCommandEncoder()
         else { throw MetalSolverError.commandEncoding }
         for (destination, index) in indices.enumerated() {
@@ -596,7 +596,7 @@ public final class MetalAutolykosSolver {
         let resources = acquireSearchResources()
 
         enterSerializedGate()
-        guard let command = searchCommandQueue.makeCommandBuffer(),
+        guard let command = searchCommandQueue.makeCommandBufferWithUnretainedReferences(),
               let encoder = command.makeComputeCommandEncoder()
         else {
             leaveSerializedGate()
@@ -609,7 +609,8 @@ public final class MetalAutolykosSolver {
 
         var base = baseNonce
         var n = UInt32(dataset.spec.tableSize)
-        encoder.setComputePipelineState(searchPipeline)
+        let pipeline = searchPipeline
+        encoder.setComputePipelineState(pipeline)
         encoder.setBuffer(dataset.buffer, offset: 0, index: 0)
         messageWords.withUnsafeBytes {
             encoder.setBytes($0.baseAddress!, length: $0.count, index: 1)
@@ -628,8 +629,12 @@ public final class MetalAutolykosSolver {
 
         let submission = SearchSubmission(baseNonce: baseNonce, nonceCount: nonceCount)
         let wallStartTime = ProcessInfo.processInfo.systemUptime
-        command.addCompletedHandler { [weak self, dataset, resources, submission] command in
+        command.addCompletedHandler {
+            [weak self, dataset, resources, submission, pipeline] command in
+            // Unretained command buffers avoid per-batch driver retain traffic;
+            // keep every referenced Metal object alive until completion here.
             _ = dataset
+            _ = pipeline
             let result: Result<SearchBatch, Error>
             if let error = command.error {
                 result = .failure(MetalSolverError.pipeline(error.localizedDescription))
@@ -875,7 +880,7 @@ public final class MetalAutolykosSolver {
         count: Int
     ) throws -> Double {
         enterSerializedGate(); defer { leaveSerializedGate() }
-        guard let command = buildCommandQueue.makeCommandBuffer(),
+        guard let command = buildCommandQueue.makeCommandBufferWithUnretainedReferences(),
               let encoder = command.makeComputeCommandEncoder()
         else { throw MetalSolverError.commandEncoding }
         command.label = "buildDataset[\(startIndex)..<\(startIndex + count)]"

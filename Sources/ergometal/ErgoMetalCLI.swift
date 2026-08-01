@@ -1,5 +1,6 @@
 import Foundation
 import CryptoKit
+import Darwin
 import MetalErgoCore
 
 @main
@@ -674,28 +675,23 @@ enum ErgoMetalCLI {
     }
 
     private static func printStatus(_ s: MinerSnapshot, suffix: String) {
-        let prefetch = s.prefetchHeight == nil
-            ? "prefetch=off"
-            : String(format: "prefetch=%5.1f%%", min(1, max(0, s.prefetchProgress)) * 100)
-        let temperature = s.socTemperatureMaximumCelsius.map {
-            String(format: "temp=%4.1f/%4.1fC", $0, s.socTemperatureSessionPeakCelsius ?? $0)
-        } ?? "temp=n/a"
-        let luck = s.shareLuckRatio.map {
-            String(format: "luck=%5.1f%%", $0 * 100)
-        } ?? "luck=n/a"
-        let text = String(
-            format: "\rcurrent=%6.2f  avg=%6.2f  effective=%6.2f MH/s  duty=%5.1f%%  %@  %@  expected=%.2f  %@  nonces=%llu  %@    ",
-            s.hashrate / 1_000_000,
-            s.averageHashrate / 1_000_000,
-            s.effectiveHashrate / 1_000_000,
-            s.searchDutyCycle * 100,
-            prefetch,
-            temperature,
-            s.shares.expected,
-            luck,
-            s.nonces,
-            suffix)
-        FileHandle.standardOutput.write(Data(text.utf8))
+        let terminal = isatty(STDOUT_FILENO) == 1
+        let maximumColumns = terminal
+            ? max(1, (terminalColumnCount() ?? 80) - 1)
+            : nil
+        let line = MinerStatusLineFormatter.format(
+            s, suffix: suffix, maximumColumns: maximumColumns)
+        let control = terminal ? "\r\u{001B}[2K" : "\r"
+        FileHandle.standardOutput.write(Data((control + line).utf8))
+    }
+
+    private static func terminalColumnCount() -> Int? {
+        guard isatty(STDOUT_FILENO) == 1 else { return nil }
+        var size = winsize()
+        guard ioctl(STDOUT_FILENO, TIOCGWINSZ, &size) == 0, size.ws_col > 0 else {
+            return nil
+        }
+        return Int(size.ws_col)
     }
 
     @discardableResult

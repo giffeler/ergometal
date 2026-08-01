@@ -174,6 +174,23 @@ final class ConsensusTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(secondBatch.wallSeconds, 0)
     }
 
+    func testQueuedSearchKeepsUnretainedCommandResourcesAlive() throws {
+        var solver: MetalAutolykosSolver? = try MetalAutolykosSolver()
+        _ = try solver?.buildDataset(height: 614_400, tableSize: 2_048)
+        let submission = try XCTUnwrap(solver).enqueueSearch(
+            message: [UInt8](repeating: 0x5a, count: 32),
+            target: .zero,
+            baseNonce: 7_000,
+            nonceCount: 262_144)
+
+        solver = nil
+        let batch = try submission.wait()
+        XCTAssertEqual(batch.baseNonce, 7_000)
+        XCTAssertEqual(batch.nonceCount, 262_144)
+        XCTAssertEqual(batch.candidates, [])
+        XCTAssertGreaterThanOrEqual(batch.gpuSeconds, 0)
+    }
+
     func testMetalRejectsUnsafeInputsAndCandidateOverflow() throws {
         let solver = try MetalAutolykosSolver()
         XCTAssertThrowsError(try solver.buildDataset(height: -1, tableSize: 1_024))

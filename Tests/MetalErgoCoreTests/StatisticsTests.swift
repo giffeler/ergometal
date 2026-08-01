@@ -145,4 +145,60 @@ final class StatisticsTests: XCTestCase {
         let object = try JSONSerialization.jsonObject(with: Data(lines[0].utf8)) as? [String: Any]
         XCTAssertEqual(object?["type"] as? String, "test")
     }
+
+    func testMinerStatusLineSelectsARepresentationThatFitsTheTerminal() {
+        var snapshot = StatisticsStore(mode: .mining).snapshot()
+        snapshot.hashrate = 15_660_000
+        snapshot.averageHashrate = 15_680_000
+        snapshot.effectiveHashrate = 10_810_000
+        snapshot.searchSeconds = 68.9
+        snapshot.sampledAt = snapshot.startedAt.addingTimeInterval(100)
+        snapshot.prefetchHeight = 1_841_493
+        snapshot.prefetchProgress = 1
+        snapshot.socTemperatureMaximumCelsius = 72.1
+        snapshot.socTemperatureSessionPeakCelsius = 83.7
+        snapshot.nonces = 198_739_886_080
+        snapshot.shares.expected = 11.39
+        snapshot.shares.accepted = 15
+
+        for width in [200, 120, 80, 50, 20, 8, 1] {
+            let line = MinerStatusLineFormatter.format(
+                snapshot, suffix: "shares=15/0", maximumColumns: width)
+            XCTAssertLessThanOrEqual(line.count, width, "line for width \(width): \(line)")
+            XCTAssertFalse(line.contains("\n"))
+            XCTAssertFalse(line.contains("\r"))
+        }
+        XCTAssertTrue(MinerStatusLineFormatter.format(
+            snapshot, suffix: "shares=15/0", maximumColumns: 20).contains("sh=15/0"))
+    }
+
+    func testMinerStatusLinePreservesFullTelemetryWhenSpaceAllows() {
+        var snapshot = StatisticsStore(mode: .mining).snapshot()
+        snapshot.hashrate = 15_660_000
+        snapshot.averageHashrate = 15_680_000
+        snapshot.effectiveHashrate = 10_810_000
+        snapshot.searchSeconds = 68.9
+        snapshot.sampledAt = snapshot.startedAt.addingTimeInterval(100)
+        snapshot.prefetchHeight = 1_841_493
+        snapshot.prefetchProgress = 1
+        snapshot.socTemperatureMaximumCelsius = 72.1
+        snapshot.socTemperatureSessionPeakCelsius = 83.7
+        snapshot.nonces = 198_739_886_080
+        snapshot.shares.expected = 11.39
+        snapshot.shares.accepted = 15
+
+        let line = MinerStatusLineFormatter.format(
+            snapshot, suffix: "shares=15/0", maximumColumns: 200)
+
+        XCTAssertTrue(line.contains("current="))
+        XCTAssertTrue(line.contains("avg="))
+        XCTAssertTrue(line.contains("effective="))
+        XCTAssertTrue(line.contains("duty="))
+        XCTAssertTrue(line.contains("prefetch="))
+        XCTAssertTrue(line.contains("temp="))
+        XCTAssertTrue(line.contains("expected="))
+        XCTAssertTrue(line.contains("luck="))
+        XCTAssertTrue(line.contains("nonces="))
+        XCTAssertTrue(line.contains("shares=15/0"))
+    }
 }

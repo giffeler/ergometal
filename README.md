@@ -68,6 +68,15 @@ DURATION=60 Scripts/benchmark-ab.zsh /tmp/ergometal-kernel-ab 3 \
   'alt:--dataset-kernel u32pair'
 ```
 
+Variant options replace same-named campaign defaults, so parameters such as `--threadgroup-size`, `--batch-nonces`, and `--build-chunk-elements` can be compared without duplicate-option failures. For example, this full-table campaign measures search occupancy across threadgroup sizes:
+
+```sh
+DURATION=60 Scripts/benchmark-ab.zsh /tmp/ergometal-occupancy-ab 3 \
+  'tg64:--threadgroup-size 64' \
+  'tg128:--threadgroup-size 128' \
+  'tg256:--threadgroup-size 256'
+```
+
 Omit `TABLE_SIZE` for consensus-sized datasets. `BINARY` selects a non-canonical executable, `HEIGHT` defaults to 1,841,500, and `COOLDOWN_SECONDS` inserts an optional pause between runs. The generated `summary.json` reports medians; performance changes should be judged from several thermally comparable runs rather than a single best result.
 
 `benchmark --height-interval SECONDS` simulates consecutive pool heights locally. It drains the old search pipeline, promotes the prefetched dataset, starts the following prefetch, and resumes search without contacting a pool. This is the preferred deterministic thermal and scheduler test:

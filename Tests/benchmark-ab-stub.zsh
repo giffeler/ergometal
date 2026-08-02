@@ -3,6 +3,15 @@ set -euo pipefail
 
 : ${BENCHMARK_ARGV_LOG:?BENCHMARK_ARGV_LOG must name the argv log}
 
+if [[ ${1:-} == temperature ]]; then
+  if [[ -n ${BENCHMARK_TEMPERATURE_LOG:-} ]]; then
+    print temperature >> "$BENCHMARK_TEMPERATURE_LOG"
+  fi
+  jq -cn --argjson maximum "${BENCHMARK_STUB_TEMPERATURE_CELSIUS:-40}" \
+    '{averageCelsius:$maximum, maximumCelsius:$maximum, sensorCount:1}'
+  exit 0
+fi
+
 typeset -A seen_options=()
 for token in "$@"; do
   if [[ $token == --* ]]; then

@@ -94,6 +94,7 @@ MetalErgoMiner research CLI
 
 Usage:
   ergometal devices [--json]
+  ergometal temperature [--json]
   ergometal benchmark [--duration 60] [--height 614399] [--profile efficiency|peak]
                       [--height-interval SECONDS]
                       [--table-size N] [--prebuild on|off]

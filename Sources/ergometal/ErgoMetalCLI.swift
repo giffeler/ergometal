@@ -82,6 +82,7 @@ enum ErgoMetalCLI {
             let args = try Arguments(Array(CommandLine.arguments.dropFirst()))
             switch args.command {
             case "devices": try devices(args)
+            case "temperature": try temperature(args)
             case "benchmark": try benchmark(args)
             case "replay": try replay(args)
             case "mine": try mine(args)
@@ -106,6 +107,23 @@ enum ErgoMetalCLI {
             for d in devices {
                 print("\(d.name)  unified=\(d.unifiedMemory)  working-set=\(formatBytes(d.recommendedWorkingSetBytes))  max-buffer=\(formatBytes(d.maxBufferBytes))")
             }
+        }
+    }
+
+    private static func temperature(_ args: Arguments) throws {
+        try args.validate(flagOptions: ["json"])
+        let sample = SoCTemperatureTelemetry.sample()
+        if args.has("json") {
+            if let sample {
+                let encoder = JSONEncoder(); encoder.outputFormatting = [.sortedKeys]
+                FileHandle.standardOutput.write(try encoder.encode(sample)); print()
+            } else {
+                print("null")
+            }
+        } else if let sample {
+            print(String(format: "%.1f C", sample.maximumCelsius))
+        } else {
+            print("SoC temperature unavailable")
         }
     }
 

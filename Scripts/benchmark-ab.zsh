@@ -4,7 +4,8 @@ set -euo pipefail
 usage() {
   print -u2 'Usage: benchmark-ab.zsh OUTPUT_DIR RUNS NAME:ARGUMENTS [NAME:ARGUMENTS ...]'
   print -u2 "Example: $0 /tmp/ergometal-ab 3 'overlap:--dataset-scheduling overlap' 'serialized:--dataset-scheduling serialized'"
-  print -u2 'Environment: BINARY, DURATION, HEIGHT, HEIGHT_INTERVAL, TABLE_SIZE, COOLDOWN_SECONDS'
+  print -u2 'Environment: BINARY, DURATION, HEIGHT, HEIGHT_INTERVAL, TABLE_SIZE, COOLDOWN_SECONDS,'
+  print -u2 '             START_TEMPERATURE_CELSIUS, GATE_TIMEOUT_SECONDS, WARMUP_RUNS'
 }
 
 if (( $# < 4 )); then
@@ -28,6 +29,23 @@ height=${HEIGHT:-1841500}
 height_interval=${HEIGHT_INTERVAL:-0}
 table_size=${TABLE_SIZE:-}
 cooldown=${COOLDOWN_SECONDS:-0}
+start_temperature=${START_TEMPERATURE_CELSIUS:-}
+gate_timeout=${GATE_TIMEOUT_SECONDS:-300}
+warmup_runs=${WARMUP_RUNS:-0}
+
+if [[ $warmup_runs != <-> ]]; then
+  print -u2 'WARMUP_RUNS must be a non-negative integer'
+  exit 2
+fi
+if [[ $gate_timeout != <-> ]]; then
+  print -u2 'GATE_TIMEOUT_SECONDS must be a non-negative integer'
+  exit 2
+fi
+if [[ -n $start_temperature ]] && ! jq -en --arg value "$start_temperature" \
+    '$value | tonumber | isfinite' >/dev/null 2>&1; then
+  print -u2 'START_TEMPERATURE_CELSIUS must be a finite number'
+  exit 2
+fi
 
 typeset -A variant_names
 for specification in "${variants[@]}"; do
@@ -81,55 +99,110 @@ if [[ -n $table_size ]]; then
   common+=(--table-size "$table_size")
 fi
 
-order=0
-for (( round = 1; round <= runs; round++ )); do
-  indices=()
-  if (( round % 2 == 1 )); then
-    for (( index = 1; index <= ${#variants}; index++ )); do indices+=("$index"); done
-  else
-    for (( index = ${#variants}; index >= 1; index-- )); do indices+=("$index"); done
-  fi
+wait_for_start_temperature() {
+  [[ -z $start_temperature ]] && return
+  local started=$SECONDS
+  local sample temperature elapsed
+  while true; do
+    sample=$("$binary" temperature --json)
+    temperature=$(jq -r '.maximumCelsius // empty' <<< "$sample")
+    if [[ -z $temperature ]]; then
+      print -u2 'warning: SoC temperature is unavailable; continuing without temperature gate'
+      return
+    fi
+    if jq -en --argjson temperature "$temperature" --argjson threshold "$start_temperature" \
+        '$temperature <= $threshold' >/dev/null; then
+      print -u2 "temperature gate passed: ${temperature} C <= ${start_temperature} C"
+      return
+    fi
+    elapsed=$(( SECONDS - started ))
+    if (( elapsed >= gate_timeout )); then
+      print -u2 "warning: temperature gate timed out after ${elapsed}s at ${temperature} C; continuing"
+      return
+    fi
+    sleep 5
+  done
+}
 
-  for index in "${indices[@]}"; do
-    specification=${variants[$index]}
-    name=${specification%%:*}
-    arguments=${specification#*:}
-    variant_arguments=(${(z)arguments})
-    # An option named by the variant replaces the campaign default instead of
-    # being appended to it; the miner rejects a repeated option outright.
-    typeset -A overridden=()
-    for token in "${variant_arguments[@]}"; do
-      if [[ $token == --* ]]; then overridden[${token#--}]=1; fi
-    done
-    effective=()
-    position=1
-    while (( position <= ${#common} )); do
-      token=${common[$position]}
-      if [[ $token == --* ]] && (( ${+overridden[${token#--}]} )); then
-        if (( position < ${#common} )) && [[ ${common[$position + 1]} != --* ]]; then
-          (( position += 2 ))
-        else
-          (( position += 1 ))
-        fi
-        continue
+run_variant() {
+  local specification=$1
+  local stem=$2
+  local round=${3:-}
+  local order=${4:-}
+  local name=${specification%%:*}
+  local arguments=${specification#*:}
+  local -a variant_arguments effective
+  variant_arguments=(${(z)arguments})
+  # An option named by the variant replaces the campaign default instead of
+  # being appended to it; the miner rejects a repeated option outright.
+  typeset -A overridden=()
+  local token position
+  for token in "${variant_arguments[@]}"; do
+    if [[ $token == --* ]]; then overridden[${token#--}]=1; fi
+  done
+  effective=()
+  position=1
+  while (( position <= ${#common} )); do
+    token=${common[$position]}
+    if [[ $token == --* ]] && (( ${+overridden[${token#--}]} )); then
+      if (( position < ${#common} )) && [[ ${common[$position + 1]} != --* ]]; then
+        (( position += 2 ))
+      else
+        (( position += 1 ))
       fi
-      effective+=("$token")
-      (( position += 1 ))
-    done
-    (( order += 1 ))
-    stem=$(printf '%02d-r%02d-%s' "$order" "$round" "$name")
-    json="$output_dir/$stem.json"
-    events="$output_dir/$stem.jsonl"
-    print -u2 "[$order] round=$round variant=$name"
-    "$binary" "${effective[@]}" "${variant_arguments[@]}" \
-      --stats-file "$events" > "$json"
+      continue
+    fi
+    effective+=("$token")
+    (( position += 1 ))
+  done
+
+  local json="$output_dir/$stem.json"
+  local events="$output_dir/$stem.jsonl"
+  wait_for_start_temperature
+  "$binary" "${effective[@]}" "${variant_arguments[@]}" \
+    --stats-file "$events" > "$json"
+  if [[ -n $round && -n $order ]]; then
     jq -c \
       --arg variant "$name" \
       --argjson round "$round" \
       --argjson order "$order" \
       '. + {campaign_variant:$variant, campaign_round:$round, campaign_order:$order}' \
       "$json" >> "$results"
-    if (( cooldown > 0 )); then sleep "$cooldown"; fi
+  fi
+  if (( cooldown > 0 )); then sleep "$cooldown"; fi
+}
+
+for (( warmup = 1; warmup <= warmup_runs; warmup++ )); do
+  specification=${variants[1]}
+  name=${specification%%:*}
+  stem=$(printf 'warmup-%02d-%s' "$warmup" "$name")
+  print -u2 "[warmup $warmup/$warmup_runs] variant=$name"
+  run_variant "$specification" "$stem"
+done
+
+order=0
+for (( round = 1; round <= runs; round++ )); do
+  indices=()
+  pair=$(( (round - 1) / 2 ))
+  rotation=$(( pair % ${#variants} ))
+  for (( offset = 0; offset < ${#variants}; offset++ )); do
+    indices+=("$(( (rotation + offset) % ${#variants} + 1 ))")
+  done
+  if (( round % 2 == 0 )); then
+    reversed=()
+    for (( position = ${#indices}; position >= 1; position-- )); do
+      reversed+=("${indices[$position]}")
+    done
+    indices=("${reversed[@]}")
+  fi
+
+  for index in "${indices[@]}"; do
+    specification=${variants[$index]}
+    name=${specification%%:*}
+    (( order += 1 ))
+    stem=$(printf '%02d-r%02d-%s' "$order" "$round" "$name")
+    print -u2 "[$order] round=$round variant=$name"
+    run_variant "$specification" "$stem" "$round" "$order"
   done
 done
 
@@ -141,28 +214,31 @@ jq -s '
       else
         (.[length / 2 - 1] + .[length / 2]) / 2
       end;
+  def measures($name; $values):
+    {
+      ($name + "_minimum"): ($values | min),
+      ($name + "_median"): ($values | median),
+      ($name + "_maximum"): ($values | max)
+    };
   group_by(.campaign_variant)
-  | map({
+  | map(({
       variant: .[0].campaign_variant,
-      runs: length,
-      dataset_wall_median: (map(.datasetBuildSeconds) | median),
-      dataset_gpu_median: (map(.datasetBuildGPUSeconds) | median),
-      prefetch_wall_median: (map(.datasetWork.prefetchBuildWallSeconds) | median),
-      prefetch_gpu_median: (map(.datasetWork.prefetchBuildGPUSeconds) | median),
-      effective_hashrate_median: (map(.effectiveHashrate) | median),
-      active_hashrate_median: (map(.averageHashrate) | median),
-      search_duty_median: (
-        map(.searchSeconds / ((.sampledAt | fromdateiso8601) - (.startedAt | fromdateiso8601)))
-        | median),
-      nonces_median: (map(.nonces) | median),
-      peak_temperature_median: (map(.socTemperatureSessionPeakCelsius) | median),
-      dataset_activations_median: (map(.datasetActivations) | median),
-      prefetch_waits_median: (map(.datasetPrefetchWaits) | median),
-      build_non_gpu_seconds_median: (
-        map(.datasetWork.buildCommandWallSeconds - .datasetWork.buildCommandGPUSeconds)
-        | median),
-      search_non_gpu_seconds_median: (
-        map(.datasetWork.searchCommandWallSeconds - .datasetWork.searchCommandGPUSeconds)
-        | median)
-    })
+      runs: length
+    }
+    + measures("dataset_wall"; map(.datasetBuildSeconds))
+    + measures("dataset_gpu"; map(.datasetBuildGPUSeconds))
+    + measures("prefetch_wall"; map(.datasetWork.prefetchBuildWallSeconds))
+    + measures("prefetch_gpu"; map(.datasetWork.prefetchBuildGPUSeconds))
+    + measures("effective_hashrate"; map(.effectiveHashrate))
+    + measures("active_hashrate"; map(.averageHashrate))
+    + measures("search_duty";
+        map(.searchSeconds / ((.sampledAt | fromdateiso8601) - (.startedAt | fromdateiso8601))))
+    + measures("nonces"; map(.nonces))
+    + measures("peak_temperature"; map(.socTemperatureSessionPeakCelsius))
+    + measures("dataset_activations"; map(.datasetActivations))
+    + measures("prefetch_waits"; map(.datasetPrefetchWaits))
+    + measures("build_non_gpu_seconds";
+        map(.datasetWork.buildCommandWallSeconds - .datasetWork.buildCommandGPUSeconds))
+    + measures("search_non_gpu_seconds";
+        map(.datasetWork.searchCommandWallSeconds - .datasetWork.searchCommandGPUSeconds))))
 ' "$results" | tee "$output_dir/summary.json"

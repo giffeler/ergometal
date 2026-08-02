@@ -2,10 +2,22 @@ import Foundation
 import IOKit.hidsystem
 import Darwin
 
-private struct SoCTemperatureSample {
-    let averageCelsius: Double
-    let maximumCelsius: Double
-    let sensorCount: Int
+public struct SoCTemperatureSample: Codable, Sendable {
+    public let averageCelsius: Double
+    public let maximumCelsius: Double
+    public let sensorCount: Int
+
+    fileprivate init(averageCelsius: Double, maximumCelsius: Double, sensorCount: Int) {
+        self.averageCelsius = averageCelsius
+        self.maximumCelsius = maximumCelsius
+        self.sensorCount = sensorCount
+    }
+}
+
+public enum SoCTemperatureTelemetry {
+    public static func sample() -> SoCTemperatureSample? {
+        SoCTemperatureReader().sample()
+    }
 }
 
 /// Best-effort Apple Silicon temperature telemetry. macOS has no public API

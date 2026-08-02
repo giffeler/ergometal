@@ -52,7 +52,7 @@ The miner builds datasets in cancellable chunks, discards stale work when the po
 
 After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short; afterwards, the selected profile's larger batch size is restored. Measured defaults are 2,097,152 elements per cold-build slice and 1,048,576 per prefetch slice; `--build-chunk-elements` and `--prefetch-chunk-elements` remain available for reproducible hardware-specific A/B tests. The default prebuild search cap is 65,536 nonces and can be tuned with `--prebuild-batch-nonces`. `--dataset-threadgroup-size 128|256`, `--dataset-kernel u32pair-inline-m|u32pair|baseline`, and `--dataset-scheduling overlap|serialized` expose the validated build choices for controlled comparisons. `u32pair-inline-m` is the default: it derives the fixed Autolykos M words arithmetically and uses two aligned `uint4` stores per element. `u32pair` retains the buffer-loaded implementation as an A/B reference, while `baseline` uses native 64-bit BLAKE2b arithmetic. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
 
-For balanced multi-run comparisons, the repository includes a campaign driver that reverses variant order every round and preserves the raw snapshot and JSONL event history of every run:
+For balanced multi-run comparisons, the repository includes a campaign driver that uses rotating forward/reverse (ABBA) round pairs and preserves the raw snapshot and JSONL event history of every run:
 
 ```sh
 DURATION=30 TABLE_SIZE=33554432 Scripts/benchmark-ab.zsh /tmp/ergometal-ab 3 \
@@ -77,7 +77,7 @@ DURATION=60 Scripts/benchmark-ab.zsh /tmp/ergometal-occupancy-ab 3 \
   'tg256:--threadgroup-size 256'
 ```
 
-Omit `TABLE_SIZE` for consensus-sized datasets. `BINARY` selects a non-canonical executable, `HEIGHT` defaults to 1,841,500, and `COOLDOWN_SECONDS` inserts an optional pause between runs. The generated `summary.json` reports medians; performance changes should be judged from several thermally comparable runs rather than a single best result.
+Omit `TABLE_SIZE` for consensus-sized datasets. `BINARY` selects a non-canonical executable, `HEIGHT` defaults to 1,841,500, and `COOLDOWN_SECONDS` inserts an optional pause between runs. `WARMUP_RUNS` runs the first variant without including it in `results.jsonl`; `START_TEMPERATURE_CELSIUS` gates each run on the miner's own SoC telemetry, with `GATE_TIMEOUT_SECONDS` defaulting to 300 seconds. The generated `summary.json` reports minimum, median, and maximum values; performance changes should be judged from several thermally comparable runs rather than a single best result.
 
 `benchmark --height-interval SECONDS` simulates consecutive pool heights locally. It drains the old search pipeline, promotes the prefetched dataset, starts the following prefetch, and resumes search without contacting a pool. This is the preferred deterministic thermal and scheduler test:
 

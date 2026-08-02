@@ -317,8 +317,134 @@ kernel void buildDatasetU32PairInlineM(
     storeDatasetElement(dataset, id, value);
 }
 
+// Keep the state and the fixed-message words of the 63 dominant full blocks in
+// named values. The array-based helper above makes the Metal front end
+// materialize both arrays in AIR, even though every subscript is statically
+// known. This representation gives the backend an explicit scalar dataflow.
+struct DatasetHashState32 {
+    uint2 h0; uint2 h1; uint2 h2; uint2 h3;
+    uint2 h4; uint2 h5; uint2 h6; uint2 h7;
+};
+
+#define B2B32_MIX_HI_SCALAR(a, b, c, d, xHi, yHi) do { \
+    uint scalarLow = (a).x + (b).x; \
+    uint scalarHigh = (a).y + (b).y + uint(scalarLow < (a).x) + (xHi); \
+    (a) = uint2(scalarLow, scalarHigh); (d) = rotr32x32((d) ^ (a)); \
+    (c) = add64x32((c), (d)); (b) = rotr24x32((b) ^ (c)); \
+    scalarLow = (a).x + (b).x; \
+    scalarHigh = (a).y + (b).y + uint(scalarLow < (a).x) + (yHi); \
+    (a) = uint2(scalarLow, scalarHigh); (d) = rotr16x32((d) ^ (a)); \
+    (c) = add64x32((c), (d)); (b) = rotr63x32((b) ^ (c)); \
+} while (false)
+
+#define B2B32_ROUND_HI_SCALAR(m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11, m12, m13, m14, m15) \
+    B2B32_MIX_HI_SCALAR(v0,v4,v8,v12,m0,m1); B2B32_MIX_HI_SCALAR(v1,v5,v9,v13,m2,m3); \
+    B2B32_MIX_HI_SCALAR(v2,v6,v10,v14,m4,m5); B2B32_MIX_HI_SCALAR(v3,v7,v11,v15,m6,m7); \
+    B2B32_MIX_HI_SCALAR(v0,v5,v10,v15,m8,m9); B2B32_MIX_HI_SCALAR(v1,v6,v11,v12,m10,m11); \
+    B2B32_MIX_HI_SCALAR(v2,v7,v8,v13,m12,m13); B2B32_MIX_HI_SCALAR(v3,v4,v9,v14,m14,m15)
+
+inline __attribute__((always_inline)) DatasetHashState32 compress32x32HiOnlyScalar(
+    DatasetHashState32 state,
+    uint count,
+    bool finalBlock,
+    uint m0, uint m1, uint m2, uint m3,
+    uint m4, uint m5, uint m6, uint m7,
+    uint m8, uint m9, uint m10, uint m11,
+    uint m12, uint m13, uint m14, uint m15)
+{
+    uint2 v0 = state.h0; uint2 v1 = state.h1;
+    uint2 v2 = state.h2; uint2 v3 = state.h3;
+    uint2 v4 = state.h4; uint2 v5 = state.h5;
+    uint2 v6 = state.h6; uint2 v7 = state.h7;
+    uint2 v8 = B2B_IV32[0]; uint2 v9 = B2B_IV32[1];
+    uint2 v10 = B2B_IV32[2]; uint2 v11 = B2B_IV32[3];
+    uint2 v12 = B2B_IV32[4]; uint2 v13 = B2B_IV32[5];
+    uint2 v14 = B2B_IV32[6]; uint2 v15 = B2B_IV32[7];
+    v12.x ^= count;
+    if (finalBlock) v14 = ~v14;
+    B2B32_ROUND_HI_SCALAR(m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15);
+    B2B32_ROUND_HI_SCALAR(m14,m10,m4,m8,m9,m15,m13,m6,m1,m12,m0,m2,m11,m7,m5,m3);
+    B2B32_ROUND_HI_SCALAR(m11,m8,m12,m0,m5,m2,m15,m13,m10,m14,m3,m6,m7,m1,m9,m4);
+    B2B32_ROUND_HI_SCALAR(m7,m9,m3,m1,m13,m12,m11,m14,m2,m6,m5,m10,m4,m0,m15,m8);
+    B2B32_ROUND_HI_SCALAR(m9,m0,m5,m7,m2,m4,m10,m15,m14,m1,m11,m12,m6,m8,m3,m13);
+    B2B32_ROUND_HI_SCALAR(m2,m12,m6,m10,m0,m11,m8,m3,m4,m13,m7,m5,m15,m14,m1,m9);
+    B2B32_ROUND_HI_SCALAR(m12,m5,m1,m15,m14,m13,m4,m10,m0,m7,m6,m3,m9,m2,m8,m11);
+    B2B32_ROUND_HI_SCALAR(m13,m11,m7,m14,m12,m1,m3,m9,m5,m0,m15,m4,m8,m6,m2,m10);
+    B2B32_ROUND_HI_SCALAR(m6,m15,m14,m9,m11,m3,m0,m8,m12,m2,m13,m7,m1,m4,m10,m5);
+    B2B32_ROUND_HI_SCALAR(m10,m2,m8,m4,m7,m6,m1,m5,m15,m11,m9,m14,m3,m12,m13,m0);
+    B2B32_ROUND_HI_SCALAR(m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,m10,m11,m12,m13,m14,m15);
+    B2B32_ROUND_HI_SCALAR(m14,m10,m4,m8,m9,m15,m13,m6,m1,m12,m0,m2,m11,m7,m5,m3);
+    state.h0 = state.h0 ^ v0 ^ v8; state.h1 = state.h1 ^ v1 ^ v9;
+    state.h2 = state.h2 ^ v2 ^ v10; state.h3 = state.h3 ^ v3 ^ v11;
+    state.h4 = state.h4 ^ v4 ^ v12; state.h5 = state.h5 ^ v5 ^ v13;
+    state.h6 = state.h6 ^ v6 ^ v14; state.h7 = state.h7 ^ v7 ^ v15;
+    return state;
+}
+
+inline __attribute__((always_inline)) DatasetHashState32 datasetHashU32PairScalarM(
+    uint index,
+    uint height)
+{
+    // The first block contains the varying index and height in both 32-bit
+    // halves. It is only one of 65 compressions, so retain the proven generic
+    // implementation here and scalarize the fixed-message remainder.
+    uint2 h[8];
+    for (uint i = 0; i < 8; ++i) h[i] = B2B_IV32[i];
+    h[0].x ^= 0x01010020U;
+    uint2 m[16];
+    m[0] = uint2(bswap32(index), bswap32(height));
+    for (uint i = 1; i < 16; ++i) m[i] = autolykosM32x32(i - 1);
+    compress32x32(h, m, 128U, false);
+
+    DatasetHashState32 state;
+    state.h0 = h[0]; state.h1 = h[1]; state.h2 = h[2]; state.h3 = h[3];
+    state.h4 = h[4]; state.h5 = h[5]; state.h6 = h[6]; state.h7 = h[7];
+    for (uint block = 1; block < 64; ++block) {
+        uint first = 15 + (block - 1) * 16;
+        uint m0 = autolykosMHigh(first);      uint m1 = autolykosMHigh(first + 1);
+        uint m2 = autolykosMHigh(first + 2);  uint m3 = autolykosMHigh(first + 3);
+        uint m4 = autolykosMHigh(first + 4);  uint m5 = autolykosMHigh(first + 5);
+        uint m6 = autolykosMHigh(first + 6);  uint m7 = autolykosMHigh(first + 7);
+        uint m8 = autolykosMHigh(first + 8);  uint m9 = autolykosMHigh(first + 9);
+        uint m10 = autolykosMHigh(first + 10); uint m11 = autolykosMHigh(first + 11);
+        uint m12 = autolykosMHigh(first + 12); uint m13 = autolykosMHigh(first + 13);
+        uint m14 = autolykosMHigh(first + 14); uint m15 = autolykosMHigh(first + 15);
+        state = compress32x32HiOnlyScalar(
+            state, (block + 1) * 128, false,
+            m0, m1, m2, m3, m4, m5, m6, m7,
+            m8, m9, m10, m11, m12, m13, m14, m15);
+    }
+    return compress32x32HiOnlyScalar(
+        state, 8200U, true,
+        autolykosMHigh(1023), 0U, 0U, 0U, 0U, 0U, 0U, 0U,
+        0U, 0U, 0U, 0U, 0U, 0U, 0U, 0U);
+}
+
+kernel void buildDatasetU32PairScalarM(
+    device uint *dataset [[buffer(0)]],
+    constant uint &height [[buffer(1)]],
+    constant uint &tableSize [[buffer(2)]],
+    constant uint &startIndex [[buffer(3)]],
+    constant const ulong *autolykosM [[buffer(4)]],
+    uint localID [[thread_position_in_grid]])
+{
+    uint id = startIndex + localID;
+    if (id >= tableSize) return;
+    DatasetHashState32 state = datasetHashU32PairScalarM(id, height);
+    device uint4 *destination =
+        reinterpret_cast<device uint4 *>(dataset + id * 8);
+    destination[0] = uint4(
+        bswap32(state.h0.x) & 0x00ffffffU, bswap32(state.h0.y),
+        bswap32(state.h1.x), bswap32(state.h1.y));
+    destination[1] = uint4(
+        bswap32(state.h2.x), bswap32(state.h2.y),
+        bswap32(state.h3.x), bswap32(state.h3.y));
+}
+
 #undef B2B32_ROUND
 #undef B2B32_ROUND_HI
+#undef B2B32_MIX_HI_SCALAR
+#undef B2B32_ROUND_HI_SCALAR
 
 // The search path hashes three fixed, single-block messages for every nonce.
 // Keep their BLAKE2b state in named scalars so the compiler does not have to

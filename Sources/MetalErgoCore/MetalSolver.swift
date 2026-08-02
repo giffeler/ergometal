@@ -57,12 +57,14 @@ public enum DatasetKernel: String, CaseIterable, Codable, Sendable {
     case baseline
     case u32Pair = "u32pair"
     case u32PairInlineM = "u32pair-inline-m"
+    case u32PairScalarM = "u32pair-scalar-m"
 
     fileprivate var functionName: String {
         switch self {
         case .baseline: return "buildDataset"
         case .u32Pair: return "buildDatasetU32Pair"
         case .u32PairInlineM: return "buildDatasetU32PairInlineM"
+        case .u32PairScalarM: return "buildDatasetU32PairScalarM"
         }
     }
 }

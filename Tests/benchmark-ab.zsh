@@ -76,8 +76,9 @@ jq -e '
     and .prefetch_waits_median == 3
     and .build_non_gpu_seconds_median == 1
     and .search_gpu_seconds_median == 32
-    and .search_gpu_busy_ratio_median == (16 / 15)
-    and .search_non_gpu_seconds_median == 8
+    and .search_gpu_busy_ratio_median == 0.8
+    and .search_gpu_concurrency_median == (4 / 3)
+    and .search_non_gpu_seconds_median == 4
     and ([to_entries[]
       | select(.key | endswith("_median"))
       | .key | sub("_median$"; "")] as $bases

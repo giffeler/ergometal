@@ -241,7 +241,12 @@ jq -s '
         map(.datasetWork.buildCommandWallSeconds - .datasetWork.buildCommandGPUSeconds))
     + measures("search_gpu_seconds"; map(.datasetWork.searchCommandGPUSeconds))
     + measures("search_gpu_busy_ratio";
-        map(.datasetWork.searchCommandGPUSeconds / .searchSeconds))
+        map(.datasetWork.searchCommandGPUBusySeconds / .searchSeconds))
+    + measures("search_gpu_concurrency";
+        map(if .datasetWork.searchCommandGPUBusySeconds > 0
+            then .datasetWork.searchCommandGPUSeconds / .datasetWork.searchCommandGPUBusySeconds
+            else 0 end))
     + measures("search_non_gpu_seconds";
-        map(.datasetWork.searchCommandWallSeconds - .datasetWork.searchCommandGPUSeconds))))
+        map(.datasetWork.searchCommandWallBusySeconds
+            - .datasetWork.searchCommandGPUBusySeconds))))
 ' "$results" | tee "$output_dir/summary.json"

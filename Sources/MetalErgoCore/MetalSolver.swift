@@ -105,6 +105,12 @@ public struct DatasetWorkMetrics: Codable, Sendable, Equatable {
     public var searchCommandsCompleted = 0
     public var searchCommandWallSeconds = 0.0
     public var searchCommandGPUSeconds = 0.0
+    /// Unions of the overlapping search intervals. The summed fields above count
+    /// each concurrently executing command separately, so at a pipeline depth
+    /// above one they exceed the elapsed search window and cannot be read as
+    /// utilization. Only these unions are comparable with wall time.
+    public var searchCommandWallBusySeconds = 0.0
+    public var searchCommandGPUBusySeconds = 0.0
 
     public init() {}
 }
@@ -261,6 +267,51 @@ private final class DatasetBuildWallAccumulator: @unchecked Sendable {
     }
 }
 
+private final class CommandIntervalUnion: @unchecked Sendable {
+    private struct Interval {
+        var start: TimeInterval
+        var end: TimeInterval
+    }
+
+    private static let maximumLiveIntervals = 8
+
+    private let lock = NSLock()
+    private var live: [Interval] = []
+
+    func record(start: TimeInterval, end: TimeInterval) -> Double {
+        let lowerBound = min(start, end)
+        let upperBound = max(start, end)
+        lock.lock(); defer { lock.unlock() }
+
+        var mergedStart = lowerBound
+        var mergedEnd = upperBound
+        var overlap = 0.0
+        var retained: [Interval] = []
+        retained.reserveCapacity(live.count + 1)
+        for interval in live {
+            if interval.end < mergedStart || interval.start > mergedEnd {
+                retained.append(interval)
+            } else {
+                overlap += max(
+                    0,
+                    min(upperBound, interval.end) - max(lowerBound, interval.start))
+                mergedStart = min(mergedStart, interval.start)
+                mergedEnd = max(mergedEnd, interval.end)
+            }
+        }
+        retained.append(Interval(start: mergedStart, end: mergedEnd))
+        // Only intervals that can still overlap a future submission need to stay
+        // live; pipeline depth is small, so this stays at a few entries across
+        // millions of commands instead of growing O(n) per run.
+        if retained.count > Self.maximumLiveIntervals {
+            retained.sort { $0.start < $1.start }
+            retained.removeFirst(retained.count - Self.maximumLiveIntervals)
+        }
+        live = retained
+        return max(0, upperBound - lowerBound - overlap)
+    }
+}
+
 private final class MetalBundleToken {}
 
 /// FIFO admission prevents either the dataset worker or the search loop from
@@ -373,6 +424,8 @@ public final class MetalAutolykosSolver {
     private let constantMBuffer: MTLBuffer
     private let searchResources: [SearchResources]
     private let searchResourceState = NSCondition()
+    private let searchWallUnion = CommandIntervalUnion()
+    private let searchGPUUnion = CommandIntervalUnion()
     private let buildCommandSlots = DispatchSemaphore(value: buildPipelineDepth)
     private let commandGate = MetalCommandGate()
     private let state = NSCondition()
@@ -787,7 +840,11 @@ public final class MetalAutolykosSolver {
             if case .success(let batch) = result {
                 self?.recordSearchCommand(
                     wallSeconds: batch.wallSeconds,
-                    gpuSeconds: batch.gpuSeconds)
+                    gpuSeconds: batch.gpuSeconds,
+                    wallStart: batch.wallStartTime,
+                    wallEnd: batch.wallEndTime,
+                    gpuStart: command.gpuStartTime,
+                    gpuEnd: command.gpuEndTime)
             }
             self?.releaseSearchResources(resources)
             submission.resolve(result)
@@ -1119,11 +1176,25 @@ public final class MetalAutolykosSolver {
         workMetrics.prefetchWastedGPUSeconds += task.slot.buildGPUSeconds
     }
 
-    private func recordSearchCommand(wallSeconds: Double, gpuSeconds: Double) {
+    private func recordSearchCommand(
+        wallSeconds: Double,
+        gpuSeconds: Double,
+        wallStart: TimeInterval,
+        wallEnd: TimeInterval,
+        gpuStart: TimeInterval,
+        gpuEnd: TimeInterval
+    ) {
+        // Unions use their own lock; completion handlers can run concurrently.
+        let wallBusy = searchWallUnion.record(start: wallStart, end: wallEnd)
+        let gpuBusy = gpuEnd > gpuStart
+            ? searchGPUUnion.record(start: gpuStart, end: gpuEnd)
+            : 0
         state.lock()
         workMetrics.searchCommandsCompleted += 1
         workMetrics.searchCommandWallSeconds += wallSeconds
         workMetrics.searchCommandGPUSeconds += gpuSeconds
+        workMetrics.searchCommandWallBusySeconds += wallBusy
+        workMetrics.searchCommandGPUBusySeconds += gpuBusy
         state.unlock()
     }
 

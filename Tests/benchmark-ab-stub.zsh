@@ -52,7 +52,9 @@ print -r -- '{
     "buildCommandWallSeconds": 7,
     "buildCommandGPUSeconds": 6,
     "searchCommandWallSeconds": 40,
-    "searchCommandGPUSeconds": 32
+    "searchCommandGPUSeconds": 32,
+    "searchCommandWallBusySeconds": 28,
+    "searchCommandGPUBusySeconds": 24
   },
   "effectiveHashrate": 90,
   "averageHashrate": 100,

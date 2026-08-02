@@ -239,6 +239,9 @@ jq -s '
     + measures("prefetch_waits"; map(.datasetPrefetchWaits))
     + measures("build_non_gpu_seconds";
         map(.datasetWork.buildCommandWallSeconds - .datasetWork.buildCommandGPUSeconds))
+    + measures("search_gpu_seconds"; map(.datasetWork.searchCommandGPUSeconds))
+    + measures("search_gpu_busy_ratio";
+        map(.datasetWork.searchCommandGPUSeconds / .searchSeconds))
     + measures("search_non_gpu_seconds";
         map(.datasetWork.searchCommandWallSeconds - .datasetWork.searchCommandGPUSeconds))))
 ' "$results" | tee "$output_dir/summary.json"

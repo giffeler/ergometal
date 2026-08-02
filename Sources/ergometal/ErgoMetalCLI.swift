@@ -134,7 +134,7 @@ enum ErgoMetalCLI {
                            "prebuild", "prebuild-batch-nonces", "threadgroup-size",
                            "build-chunk-elements", "prefetch-chunk-elements",
                            "dataset-threadgroup-size",
-                           "dataset-kernel", "dataset-scheduling",
+                           "dataset-kernel", "dataset-scheduling", "search-kernel",
                            "api-bind", "stats-file",
                            "gpu-trace", "gpu-trace-phase"],
             flagOptions: ["json"])
@@ -180,6 +180,7 @@ enum ErgoMetalCLI {
         let datasetKernel = try datasetKernel(from: args)
         let datasetScheduling = try datasetScheduling(from: args)
         let datasetThreadgroupSize = try datasetThreadgroupSize(from: args)
+        let searchKernel = try searchKernel(from: args)
         let tracePath = args.string("gpu-trace")
         let tracePhaseValue = args.string("gpu-trace-phase", default: "search")!
         guard let tracePhase = GPUTracePhase(rawValue: tracePhaseValue) else {
@@ -193,7 +194,8 @@ enum ErgoMetalCLI {
             prefetchBuildChunkElements: prefetchChunkElements,
             datasetThreadgroupSize: datasetThreadgroupSize,
             datasetKernel: datasetKernel,
-            datasetScheduling: datasetScheduling)
+            datasetScheduling: datasetScheduling,
+            searchKernel: searchKernel)
         defer { solver.stopGPUCapture() }
         let stats = StatisticsStore(mode: .benchmark, profile: profile, device: solver.info)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
@@ -219,7 +221,8 @@ enum ErgoMetalCLI {
                     "duration_seconds": String(duration),
                     "height": String(height),
                     "height_interval_seconds": String(heightInterval),
-                    "table_size": tableOverride.map(String.init) ?? "consensus"
+                    "table_size": tableOverride.map(String.init) ?? "consensus",
+                    "search_kernel": searchKernel.rawValue
                 ])))
 
         stats.update { $0.state = .buildingDataset }
@@ -811,6 +814,15 @@ enum ErgoMetalCLI {
         let value = try args.int("dataset-threadgroup-size", default: 256, in: 128...256)
         guard value == 128 || value == 256 else {
             throw CLIError.invalidArgument("--dataset-threadgroup-size must be 128|256")
+        }
+        return value
+    }
+
+    private static func searchKernel(from args: Arguments) throws -> SearchKernel {
+        let raw = args.string("search-kernel", default: SearchKernel.search.rawValue)!
+        guard let value = SearchKernel(rawValue: raw) else {
+            throw CLIError.invalidArgument(
+                "--search-kernel must be \(SearchKernel.allCases.map(\.rawValue).joined(separator: "|"))")
         }
         return value
     }

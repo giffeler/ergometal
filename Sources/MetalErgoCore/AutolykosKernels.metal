@@ -498,18 +498,14 @@ inline ulong reciprocalModulo64(ulong value, uint divisor, ulong reciprocal) {
     return remainder >= ulong(divisor) ? remainder - ulong(divisor) : remainder;
 }
 
-kernel void searchNonces(
-    device const uint *dataset [[buffer(0)]],
-    constant const uint *message [[buffer(1)]],
-    constant const uint *target [[buffer(2)]],
-    device ulong *results [[buffer(3)]],
-    device atomic_uint *resultCount [[buffer(4)]],
-    constant ulong &baseNonce [[buffer(5)]],
-    constant uint &tableSize [[buffer(6)]],
-    constant SearchModuloParameters &modulo [[buffer(7)]],
-    uint id [[thread_position_in_grid]])
+inline void gatherSearchSum(
+    device const uint *dataset,
+    constant const uint *message,
+    ulong nonce,
+    uint tableSize,
+    constant SearchModuloParameters &modulo,
+    thread uint sum[8])
 {
-    ulong nonce = baseNonce + ulong(id);
     SearchDigest firstHash = searchMessageNonce(message, nonce);
     ulong tail = bswap64(firstHash.h3);
     uint firstIndex = uint(reciprocalModulo64(
@@ -551,7 +547,6 @@ kernel void searchNonces(
         sum7 += ulong(element1.w);
     }
 
-    uint sum[8];
     sum[7] = uint(sum7); sum6 += sum7 >> 32;
     sum[6] = uint(sum6); sum5 += sum6 >> 32;
     sum[5] = uint(sum5); sum4 += sum5 >> 32;
@@ -560,9 +555,50 @@ kernel void searchNonces(
     sum[2] = uint(sum2); sum1 += sum2 >> 32;
     sum[1] = uint(sum1); sum0 += sum1 >> 32;
     sum[0] = uint(sum0); // Discard the carry out of limb zero, as before.
+}
+
+kernel void searchNonces(
+    device const uint *dataset [[buffer(0)]],
+    constant const uint *message [[buffer(1)]],
+    constant const uint *target [[buffer(2)]],
+    device ulong *results [[buffer(3)]],
+    device atomic_uint *resultCount [[buffer(4)]],
+    constant ulong &baseNonce [[buffer(5)]],
+    constant uint &tableSize [[buffer(6)]],
+    constant SearchModuloParameters &modulo [[buffer(7)]],
+    uint id [[thread_position_in_grid]])
+{
+    ulong nonce = baseNonce + ulong(id);
+    uint sum[8];
+    gatherSearchSum(dataset, message, nonce, tableSize, modulo, sum);
 
     SearchDigest hitHash = searchSum(sum);
     if (searchDigestBelowTarget(hitHash, target)) {
+        uint slot = atomic_fetch_add_explicit(resultCount, 1U, memory_order_relaxed);
+        if (slot < 256) results[slot] = nonce;
+    }
+}
+
+kernel void gatherOnlyNonces(
+    device const uint *dataset [[buffer(0)]],
+    constant const uint *message [[buffer(1)]],
+    constant const uint *target [[buffer(2)]],
+    device ulong *results [[buffer(3)]],
+    device atomic_uint *resultCount [[buffer(4)]],
+    constant ulong &baseNonce [[buffer(5)]],
+    constant uint &tableSize [[buffer(6)]],
+    constant SearchModuloParameters &modulo [[buffer(7)]],
+    uint id [[thread_position_in_grid]])
+{
+    ulong nonce = baseNonce + ulong(id);
+    uint sum[8];
+    gatherSearchSum(dataset, message, nonce, tableSize, modulo, sum);
+
+    uint targetDifference = 0;
+    for (uint word = 0; word < 8; ++word) {
+        targetDifference |= sum[word] ^ target[word];
+    }
+    if (targetDifference == 0) {
         uint slot = atomic_fetch_add_explicit(resultCount, 1U, memory_order_relaxed);
         if (slot < 256) results[slot] = nonce;
     }

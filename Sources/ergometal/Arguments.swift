@@ -104,6 +104,7 @@ Usage:
                       [--dataset-threadgroup-size 128|256]
                       [--dataset-kernel u32pair-inline-m|u32pair|baseline]
                       [--dataset-scheduling overlap|serialized]
+                      [--search-kernel search|gather-only]
                       [--gpu-trace path.gputrace] [--gpu-trace-phase build|search]
                       [--api-bind 127.0.0.1:4078] [--stats-file path] [--json]
   ergometal replay --fixture path

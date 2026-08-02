@@ -110,6 +110,21 @@ final class ConsensusTests: XCTestCase {
         }
     }
 
+    func testGatherOnlySearchKernelExecutesOnlyWhenSelected() throws {
+        let defaultSolver = try MetalAutolykosSolver()
+        XCTAssertEqual(defaultSolver.searchKernel, .search)
+
+        let gatherSolver = try MetalAutolykosSolver(searchKernel: .gatherOnly)
+        XCTAssertEqual(gatherSolver.searchKernel, .gatherOnly)
+        _ = try gatherSolver.buildDataset(height: 614_400, tableSize: 1_024)
+        let batch = try gatherSolver.search(
+            message: [UInt8](repeating: 0x5a, count: 32),
+            target: .zero,
+            baseNonce: 0,
+            nonceCount: 1_024)
+        XCTAssertEqual(batch.candidates, [])
+    }
+
     func testDatasetElementReadbackRejectsInvalidIndices() throws {
         let solver = try MetalAutolykosSolver()
         _ = try solver.buildDataset(height: 614_400, tableSize: 32)

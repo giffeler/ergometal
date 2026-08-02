@@ -67,6 +67,18 @@ public enum DatasetKernel: String, CaseIterable, Codable, Sendable {
     }
 }
 
+public enum SearchKernel: String, CaseIterable, Codable, Sendable {
+    case search
+    case gatherOnly = "gather-only"
+
+    fileprivate var functionName: String {
+        switch self {
+        case .search: return "searchNonces"
+        case .gatherOnly: return "gatherOnlyNonces"
+        }
+    }
+}
+
 public enum DatasetScheduling: String, CaseIterable, Codable, Sendable {
     case serialized
     case overlap
@@ -353,6 +365,7 @@ public final class MetalAutolykosSolver {
     public let info: MetalDeviceInfo
     public let datasetKernel: DatasetKernel
     public let datasetScheduling: DatasetScheduling
+    public let searchKernel: SearchKernel
     private let searchCommandQueue: MTLCommandQueue
     private let buildCommandQueue: MTLCommandQueue
     private let buildPipeline: MTLComputePipelineState
@@ -377,7 +390,8 @@ public final class MetalAutolykosSolver {
         prefetchBuildChunkElements: Int = MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
         datasetThreadgroupSize: Int = 256,
         datasetKernel: DatasetKernel = .u32PairInlineM,
-        datasetScheduling: DatasetScheduling = .overlap
+        datasetScheduling: DatasetScheduling = .overlap,
+        searchKernel: SearchKernel = .search
     ) throws {
         guard synchronousBuildChunkElements > 0 else {
             throw MetalSolverError.invalidDatasetChunkSize(synchronousBuildChunkElements)
@@ -416,6 +430,7 @@ public final class MetalAutolykosSolver {
         self.device = device
         self.datasetKernel = datasetKernel
         self.datasetScheduling = datasetScheduling
+        self.searchKernel = searchKernel
         self.searchCommandQueue = searchCommandQueue
         self.buildCommandQueue = buildCommandQueue
         self.constantMBuffer = constantMBuffer
@@ -444,8 +459,8 @@ public final class MetalAutolykosSolver {
         guard let build = library.makeFunction(name: datasetKernel.functionName) else {
             throw MetalSolverError.functionMissing(datasetKernel.functionName)
         }
-        guard let search = library.makeFunction(name: "searchNonces") else {
-            throw MetalSolverError.functionMissing("searchNonces")
+        guard let search = library.makeFunction(name: searchKernel.functionName) else {
+            throw MetalSolverError.functionMissing(searchKernel.functionName)
         }
         do {
             buildPipeline = try device.makeComputePipelineState(function: build)
@@ -710,8 +725,8 @@ public final class MetalAutolykosSolver {
             releaseSearchResources(resources)
             throw MetalSolverError.commandEncoding
         }
-        command.label = "searchNonces"
-        encoder.label = "searchNonces"
+        command.label = searchKernel.functionName
+        encoder.label = searchKernel.functionName
         resources.resultCountBuffer.contents().storeBytes(of: UInt32(0), as: UInt32.self)
 
         var base = baseNonce

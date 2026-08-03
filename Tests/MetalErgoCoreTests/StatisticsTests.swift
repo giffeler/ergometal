@@ -22,6 +22,9 @@ final class StatisticsTests: XCTestCase {
         XCTAssertTrue(output.contains("ergometal_dataset_prefetch_builds_completed_total"))
         XCTAssertTrue(output.contains("ergometal_gpu_build_commands_completed_total"))
         XCTAssertTrue(output.contains("ergometal_gpu_search_commands_completed_total"))
+        XCTAssertTrue(output.contains("ergometal_gpu_search_command_wall_busy_seconds_total"))
+        XCTAssertTrue(output.contains("ergometal_gpu_search_command_gpu_busy_seconds_total"))
+        XCTAssertTrue(output.contains("ergometal_gpu_search_command_non_gpu_busy_seconds_total"))
         XCTAssertTrue(output.contains("ergometal_shares_accepted_total"))
         XCTAssertTrue(output.contains("ergometal_shares_expected_total"))
         XCTAssertTrue(output.contains("ergometal_share_luck_ratio"))
@@ -119,6 +122,8 @@ final class StatisticsTests: XCTestCase {
         work.searchCommandsCompleted = 24
         work.searchCommandWallSeconds = 3.5
         work.searchCommandGPUSeconds = 3.25
+        work.searchCommandWallBusySeconds = 2.9
+        work.searchCommandGPUBusySeconds = 2.4
         stats.updateDatasetWork(work)
         stats.update {
             $0.shares.expected = 4
@@ -141,6 +146,22 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(fields["gpu_build_command_non_gpu_seconds_total"], "0.25")
         XCTAssertEqual(fields["gpu_search_commands_completed_total"], "24")
         XCTAssertEqual(fields["gpu_search_command_non_gpu_seconds_total"], "0.25")
+        XCTAssertEqual(fields["gpu_search_command_wall_busy_seconds_total"], "2.9")
+        XCTAssertEqual(fields["gpu_search_command_gpu_busy_seconds_total"], "2.4")
+        XCTAssertEqual(fields["gpu_search_command_non_gpu_busy_seconds_total"], "0.5")
+        let prometheus = stats.prometheus()
+        XCTAssertTrue(prometheus.split(separator: "\n").contains {
+            $0.hasPrefix("ergometal_gpu_search_command_wall_busy_seconds_total{")
+                && $0.hasSuffix(" 2.9")
+        })
+        XCTAssertTrue(prometheus.split(separator: "\n").contains {
+            $0.hasPrefix("ergometal_gpu_search_command_gpu_busy_seconds_total{")
+                && $0.hasSuffix(" 2.4")
+        })
+        XCTAssertTrue(prometheus.split(separator: "\n").contains {
+            $0.hasPrefix("ergometal_gpu_search_command_non_gpu_busy_seconds_total{")
+                && $0.hasSuffix(" 0.5")
+        })
         XCTAssertEqual(Double(fields["share_luck_ratio"] ?? ""), 0.75)
         XCTAssertGreaterThanOrEqual(Double(fields["search_duty_cycle"] ?? "") ?? -1, 0)
     }

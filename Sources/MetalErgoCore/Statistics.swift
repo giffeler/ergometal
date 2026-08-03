@@ -268,7 +268,15 @@ public extension MinerSnapshot {
             "gpu_search_command_wall_seconds_total": String(datasetWork.searchCommandWallSeconds),
             "gpu_search_command_gpu_seconds_total": String(datasetWork.searchCommandGPUSeconds),
             "gpu_search_command_non_gpu_seconds_total": String(max(
-                0, datasetWork.searchCommandWallSeconds - datasetWork.searchCommandGPUSeconds))
+                0, datasetWork.searchCommandWallSeconds - datasetWork.searchCommandGPUSeconds)),
+            "gpu_search_command_wall_busy_seconds_total": String(
+                datasetWork.searchCommandWallBusySeconds),
+            "gpu_search_command_gpu_busy_seconds_total": String(
+                datasetWork.searchCommandGPUBusySeconds),
+            "gpu_search_command_non_gpu_busy_seconds_total": String(max(
+                0,
+                datasetWork.searchCommandWallBusySeconds
+                    - datasetWork.searchCommandGPUBusySeconds))
         ]
         fields.merge(workFields) { _, new in new }
         let runtimeFields: [String: String] = [
@@ -510,6 +518,18 @@ public final class StatisticsStore: @unchecked Sendable {
         ergometal_gpu_search_command_wall_seconds_total{\(labels)} \(s.datasetWork.searchCommandWallSeconds)
         # TYPE ergometal_gpu_search_command_gpu_seconds_total counter
         ergometal_gpu_search_command_gpu_seconds_total{\(labels)} \(s.datasetWork.searchCommandGPUSeconds)
+        # HELP ergometal_gpu_search_command_wall_busy_seconds_total Union of overlapping search command wall intervals.
+        # TYPE ergometal_gpu_search_command_wall_busy_seconds_total counter
+        ergometal_gpu_search_command_wall_busy_seconds_total{\(labels)} \(s.datasetWork.searchCommandWallBusySeconds)
+        # HELP ergometal_gpu_search_command_gpu_busy_seconds_total Union of overlapping search command GPU intervals.
+        # TYPE ergometal_gpu_search_command_gpu_busy_seconds_total counter
+        ergometal_gpu_search_command_gpu_busy_seconds_total{\(labels)} \(s.datasetWork.searchCommandGPUBusySeconds)
+        # HELP ergometal_gpu_search_command_non_gpu_busy_seconds_total Busy search wall time outside GPU execution.
+        # TYPE ergometal_gpu_search_command_non_gpu_busy_seconds_total counter
+        ergometal_gpu_search_command_non_gpu_busy_seconds_total{\(labels)} \(max(
+            0,
+            s.datasetWork.searchCommandWallBusySeconds
+                - s.datasetWork.searchCommandGPUBusySeconds))
         # TYPE ergometal_dataset_bytes gauge
         ergometal_dataset_bytes{\(labels)} \(s.datasetBytes)
         # TYPE ergometal_dataset_prefetch_progress gauge

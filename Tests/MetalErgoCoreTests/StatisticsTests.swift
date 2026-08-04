@@ -95,6 +95,16 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(stats.snapshot().shares.expected, 500, accuracy: 1e-12)
     }
 
+    func testStatisticsStoreSerializesConcurrentUpdates() {
+        let stats = StatisticsStore()
+
+        DispatchQueue.concurrentPerform(iterations: 128) { _ in
+            stats.update { $0.shares.accepted += 1 }
+        }
+
+        XCTAssertEqual(stats.snapshot().shares.accepted, 128)
+    }
+
     func testDatasetAndPrefetchMetricsRemainCumulative() {
         let stats = StatisticsStore(mode: .mining)
         let build = DatasetBuild(
@@ -177,6 +187,30 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(lines.count, 1)
         let object = try JSONSerialization.jsonObject(with: Data(lines[0].utf8)) as? [String: Any]
         XCTAssertEqual(object?["type"] as? String, "test")
+    }
+
+    func testEventWriterSerializesConcurrentWrites() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let writer = JSONLEventWriter(path: url.path)
+        let sessionID = UUID()
+
+        DispatchQueue.concurrentPerform(iterations: 64) { index in
+            writer.write(MinerEvent(
+                sessionID: sessionID,
+                type: "concurrent_test",
+                fields: ["index": String(index)]))
+        }
+
+        XCTAssertNil(writer.failure)
+        let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
+        XCTAssertEqual(lines.count, 64)
+        let indices = try Set(lines.map { line in
+            let object = try XCTUnwrap(
+                JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any])
+            return try XCTUnwrap((object["fields"] as? [String: String])?["index"])
+        })
+        XCTAssertEqual(indices.count, 64)
     }
 
     func testMinerStatusLineSelectsARepresentationThatFitsTheTerminal() {

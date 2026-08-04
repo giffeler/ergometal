@@ -1,5 +1,6 @@
 import Foundation
 import Metal
+import Synchronization
 
 public enum MetalSolverError: Error, LocalizedError {
     case noDevice
@@ -233,43 +234,42 @@ private struct PendingDatasetBuild {
 /// Tracks the union of submission-to-completion intervals. Summing individual
 /// command latencies would double-count the two pipelined commands and corrupt
 /// the existing wall-minus-GPU overhead metric.
-private final class DatasetBuildWallAccumulator: @unchecked Sendable {
+private final class DatasetBuildWallAccumulator: Sendable {
     private struct Interval {
         var start: TimeInterval
         var end: TimeInterval
     }
 
-    private let lock = NSLock()
-    private var intervals: [Interval] = []
+    private let intervals = Mutex<[Interval]>([])
 
     func record(start: TimeInterval, end: TimeInterval) -> Double {
         let lowerBound = min(start, end)
         let upperBound = max(start, end)
-        lock.lock(); defer { lock.unlock() }
-
-        var mergedStart = lowerBound
-        var mergedEnd = upperBound
-        var overlap = 0.0
-        var retained: [Interval] = []
-        retained.reserveCapacity(intervals.count + 1)
-        for interval in intervals {
-            if interval.end < mergedStart || interval.start > mergedEnd {
-                retained.append(interval)
-            } else {
-                overlap += max(
-                    0,
-                    min(upperBound, interval.end) - max(lowerBound, interval.start))
-                mergedStart = min(mergedStart, interval.start)
-                mergedEnd = max(mergedEnd, interval.end)
+        return intervals.withLock { intervals in
+            var mergedStart = lowerBound
+            var mergedEnd = upperBound
+            var overlap = 0.0
+            var retained: [Interval] = []
+            retained.reserveCapacity(intervals.count + 1)
+            for interval in intervals {
+                if interval.end < mergedStart || interval.start > mergedEnd {
+                    retained.append(interval)
+                } else {
+                    overlap += max(
+                        0,
+                        min(upperBound, interval.end) - max(lowerBound, interval.start))
+                    mergedStart = min(mergedStart, interval.start)
+                    mergedEnd = max(mergedEnd, interval.end)
+                }
             }
+            retained.append(Interval(start: mergedStart, end: mergedEnd))
+            intervals = retained
+            return max(0, upperBound - lowerBound - overlap)
         }
-        retained.append(Interval(start: mergedStart, end: mergedEnd))
-        intervals = retained
-        return max(0, upperBound - lowerBound - overlap)
     }
 }
 
-private final class CommandIntervalUnion: @unchecked Sendable {
+private final class CommandIntervalUnion: Sendable {
     private struct Interval {
         var start: TimeInterval
         var end: TimeInterval
@@ -277,40 +277,39 @@ private final class CommandIntervalUnion: @unchecked Sendable {
 
     private static let maximumLiveIntervals = 8
 
-    private let lock = NSLock()
-    private var live: [Interval] = []
+    private let live = Mutex<[Interval]>([])
 
     func record(start: TimeInterval, end: TimeInterval) -> Double {
         let lowerBound = min(start, end)
         let upperBound = max(start, end)
-        lock.lock(); defer { lock.unlock() }
-
-        var mergedStart = lowerBound
-        var mergedEnd = upperBound
-        var overlap = 0.0
-        var retained: [Interval] = []
-        retained.reserveCapacity(live.count + 1)
-        for interval in live {
-            if interval.end < mergedStart || interval.start > mergedEnd {
-                retained.append(interval)
-            } else {
-                overlap += max(
-                    0,
-                    min(upperBound, interval.end) - max(lowerBound, interval.start))
-                mergedStart = min(mergedStart, interval.start)
-                mergedEnd = max(mergedEnd, interval.end)
+        return live.withLock { live in
+            var mergedStart = lowerBound
+            var mergedEnd = upperBound
+            var overlap = 0.0
+            var retained: [Interval] = []
+            retained.reserveCapacity(live.count + 1)
+            for interval in live {
+                if interval.end < mergedStart || interval.start > mergedEnd {
+                    retained.append(interval)
+                } else {
+                    overlap += max(
+                        0,
+                        min(upperBound, interval.end) - max(lowerBound, interval.start))
+                    mergedStart = min(mergedStart, interval.start)
+                    mergedEnd = max(mergedEnd, interval.end)
+                }
             }
+            retained.append(Interval(start: mergedStart, end: mergedEnd))
+            // Only intervals that can still overlap a future submission need to stay
+            // live; pipeline depth is small, so this stays at a few entries across
+            // millions of commands instead of growing O(n) per run.
+            if retained.count > Self.maximumLiveIntervals {
+                retained.sort { $0.start < $1.start }
+                retained.removeFirst(retained.count - Self.maximumLiveIntervals)
+            }
+            live = retained
+            return max(0, upperBound - lowerBound - overlap)
         }
-        retained.append(Interval(start: mergedStart, end: mergedEnd))
-        // Only intervals that can still overlap a future submission need to stay
-        // live; pipeline depth is small, so this stays at a few entries across
-        // millions of commands instead of growing O(n) per run.
-        if retained.count > Self.maximumLiveIntervals {
-            retained.sort { $0.start < $1.start }
-            retained.removeFirst(retained.count - Self.maximumLiveIntervals)
-        }
-        live = retained
-        return max(0, upperBound - lowerBound - overlap)
     }
 }
 
@@ -370,7 +369,9 @@ private struct DatasetSpec {
     }
 }
 
-private final class DatasetSlot {
+/// Metal resources are thread-safe and the mutable timings are only accessed
+/// while `MetalAutolykosSolver.state` is held or by their owning build worker.
+private final class DatasetSlot: @unchecked Sendable {
     let spec: DatasetSpec
     let buffer: MTLBuffer
     var buildSeconds: Double = 0
@@ -382,7 +383,8 @@ private final class DatasetSlot {
     }
 }
 
-private final class DatasetPrefetchTask {
+/// All mutable task state is guarded by `MetalAutolykosSolver.state`.
+private final class DatasetPrefetchTask: @unchecked Sendable {
     let slot: DatasetSlot
     let started = ContinuousClock.now
     var completedElements = 0
@@ -396,7 +398,9 @@ private final class DatasetPrefetchTask {
     }
 }
 
-private final class SearchResources {
+/// Buffers stay alive until their Metal completion handler releases the slot;
+/// `inUse` is guarded by `searchResourceState`.
+private final class SearchResources: @unchecked Sendable {
     let resultBuffer: MTLBuffer
     let resultCountBuffer: MTLBuffer
     var inUse = false
@@ -407,7 +411,19 @@ private final class SearchResources {
     }
 }
 
-public final class MetalAutolykosSolver {
+/// Keeps the unannotated Objective-C Metal buffer alive across a `@Sendable`
+/// completion callback. Metal owns its internal synchronization.
+private final class MetalBufferLifetime: @unchecked Sendable {
+    let buffer: MTLBuffer
+
+    init(_ buffer: MTLBuffer) {
+        self.buffer = buffer
+    }
+}
+
+/// Metal objects are designed for concurrent command submission. Every Swift
+/// mutable property is protected by a condition variable or a dedicated lock.
+public final class MetalAutolykosSolver: @unchecked Sendable {
     private static let maximumResults = 256
     private static let searchPipelineDepth = 2
     private static let buildPipelineDepth = 2
@@ -1254,7 +1270,7 @@ public final class MetalAutolykosSolver {
 
         let submission = DatasetBuildSubmission()
         let pipeline = buildPipeline
-        let constantM = constantMBuffer
+        let constantM = MetalBufferLifetime(constantMBuffer)
         let commandSlots = buildCommandSlots
         command.addCompletedHandler {
             [weak self, slot, submission, pipeline, constantM, commandSlots] command in
@@ -1262,7 +1278,7 @@ public final class MetalAutolykosSolver {
             // resources alive until Metal has finished with this chunk.
             _ = slot
             _ = pipeline
-            _ = constantM
+            _ = constantM.buffer
             let wallSeconds = wallAccumulator.record(
                 start: wallStarted,
                 end: ProcessInfo.processInfo.systemUptime)

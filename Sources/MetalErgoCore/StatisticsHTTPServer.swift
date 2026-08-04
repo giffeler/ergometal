@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import Synchronization
 
 public enum HTTPServerError: Error, LocalizedError {
     case nonLoopback(String)
@@ -15,9 +16,9 @@ public enum HTTPServerError: Error, LocalizedError {
     }
 }
 
-public final class StatisticsHTTPServer: @unchecked Sendable {
+public final class StatisticsHTTPServer: Sendable {
     private let store: StatisticsStore
-    private var listener: NWListener?
+    private let listener = Mutex<NWListener?>(nil)
     private let queue = DispatchQueue(label: "dev.ergometal.http")
 
     public init(store: StatisticsStore) { self.store = store }
@@ -40,10 +41,15 @@ public final class StatisticsHTTPServer: @unchecked Sendable {
             }
         }
         listener.start(queue: queue)
-        self.listener = listener
+        self.listener.withLock { $0 = listener }
     }
 
-    public func stop() { listener?.cancel(); listener = nil }
+    public func stop() {
+        listener.withLock { listener in
+            listener?.cancel()
+            listener = nil
+        }
+    }
 
     private func handle(_ connection: NWConnection) {
         connection.start(queue: queue)

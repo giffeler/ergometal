@@ -12,7 +12,7 @@ Only a public payout address is required. Private keys and wallet seed phrases a
 
 ## Build
 
-Requirements: Xcode 26.6, macOS 26.5 or later, and an Apple Silicon Mac. Builds target arm64 only; Intel Macs and universal builds are not supported.
+Requirements: Xcode 26.6 with Swift 6.3, macOS 26.5 or later, and an Apple Silicon Mac. The project uses Swift 6 language mode with complete strict-concurrency checking. Builds target arm64 only; Intel Macs and universal builds are not supported.
 
 Current mainnet datasets require substantial unified memory. Mining uses one height-specific dataset; the default `--prebuild auto` strategy keeps it active while building the next height in a second buffer. It automatically falls back to a single buffer if Metal's recommended working set cannot hold both datasets plus at least 512 MB or 10% headroom.
 

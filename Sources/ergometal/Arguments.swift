@@ -5,7 +5,7 @@ struct Arguments {
     private let values: [String: String]
     private let flags: Set<String>
 
-    init(_ raw: [String]) throws {
+    init(_ raw: [String]) throws(CLIError) {
         guard let command = raw.first else { throw CLIError.usage }
         self.command = command
         var values: [String: String] = [:]
@@ -29,17 +29,21 @@ struct Arguments {
     }
 
     func string(_ key: String, default fallback: String? = nil) -> String? { values[key] ?? fallback }
-    func require(_ key: String) throws -> String {
+    func require(_ key: String) throws(CLIError) -> String {
         guard let value = values[key], !value.isEmpty else { throw CLIError.missing("--\(key)") }
         return value
     }
-    func int(_ key: String, default fallback: Int) throws -> Int {
+    func int(_ key: String, default fallback: Int) throws(CLIError) -> Int {
         guard let raw = values[key] else { return fallback }
         guard let value = Int(raw) else { throw CLIError.invalidArgument("--\(key) \(raw)") }
         return value
     }
 
-    func int(_ key: String, default fallback: Int, in range: ClosedRange<Int>) throws -> Int {
+    func int(
+        _ key: String,
+        default fallback: Int,
+        in range: ClosedRange<Int>
+    ) throws(CLIError) -> Int {
         let value = try int(key, default: fallback)
         guard range.contains(value) else {
             throw CLIError.invalidArgument("--\(key) must be in \(range.lowerBound)...\(range.upperBound)")
@@ -47,7 +51,10 @@ struct Arguments {
         return value
     }
 
-    func optionalInt(_ key: String, in range: ClosedRange<Int>) throws -> Int? {
+    func optionalInt(
+        _ key: String,
+        in range: ClosedRange<Int>
+    ) throws(CLIError) -> Int? {
         guard let raw = values[key] else { return nil }
         guard let value = Int(raw), range.contains(value) else {
             throw CLIError.invalidArgument("--\(key) must be in \(range.lowerBound)...\(range.upperBound)")
@@ -57,7 +64,10 @@ struct Arguments {
 
     func has(_ key: String) -> Bool { flags.contains(key) }
 
-    func validate(valueOptions: Set<String> = [], flagOptions: Set<String> = []) throws {
+    func validate(
+        valueOptions: Set<String> = [],
+        flagOptions: Set<String> = []
+    ) throws(CLIError) {
         for key in flags.sorted() {
             if valueOptions.contains(key) { throw CLIError.missing("--\(key) value") }
             guard flagOptions.contains(key) else { throw CLIError.invalidArgument("--\(key)") }

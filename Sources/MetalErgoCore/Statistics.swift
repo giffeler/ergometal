@@ -1,6 +1,7 @@
 import Foundation
 import IOKit.hidsystem
 import Darwin
+import Synchronization
 
 public struct SoCTemperatureSample: Codable, Sendable {
     public let averageCelsius: Double
@@ -86,7 +87,7 @@ private final class SoCTemperatureReader {
         ] as CFDictionary
         functions.setMatching(clientPointer, matching)
 
-        let client = unsafeBitCast(clientObject, to: IOHIDEventSystemClient.self)
+        let client = unsafeDowncast(clientObject, to: IOHIDEventSystemClient.self)
         guard let services = IOHIDEventSystemClientCopyServices(client) else { return nil }
 
         var readingsByName: [String: [Double]] = [:]
@@ -318,17 +319,19 @@ public extension MinerSnapshot {
     }
 }
 
-public final class StatisticsStore: @unchecked Sendable {
-    private let lock = NSLock()
-    private let temperatureReader: SoCTemperatureReader
-    private var value: MinerSnapshot
+public final class StatisticsStore: Sendable {
+    private struct State {
+        let temperatureReader: SoCTemperatureReader
+        var value: MinerSnapshot
+    }
+
+    private let state: Mutex<State>
 
     public init(mode: MinerMode = .idle, profile: String = "efficiency", device: MetalDeviceInfo? = nil) {
         let now = Date()
         let temperatureReader = SoCTemperatureReader()
         let temperature = temperatureReader.sample()
-        self.temperatureReader = temperatureReader
-        value = MinerSnapshot(schemaVersion: 1, sessionID: UUID(), startedAt: now, sampledAt: now,
+        let value = MinerSnapshot(schemaVersion: 1, sessionID: UUID(), startedAt: now, sampledAt: now,
             mode: mode, state: .starting, device: device, profile: profile, poolHost: nil,
             poolConnected: false, job: JobStatistics(), nonces: 0, hashrate: 0,
             averageHashrate: 0, effectiveHashrate: 0, datasetBytes: 0,
@@ -348,45 +351,49 @@ public final class StatisticsStore: @unchecked Sendable {
             socTemperatureSensorCount: temperature?.sensorCount ?? 0,
             temperatureSource: temperature == nil ? "unavailable" : "iohid_soc_die",
             shares: ShareStatistics(), lastError: nil)
+        state = Mutex(State(temperatureReader: temperatureReader, value: value))
     }
 
-    public func update(_ body: (inout MinerSnapshot) -> Void) {
-        lock.lock(); defer { lock.unlock() }
-        body(&value)
-        if let temperature = value.socTemperatureMaximumCelsius {
-            value.socTemperatureSessionPeakCelsius = max(
-                value.socTemperatureSessionPeakCelsius ?? temperature,
-                temperature)
+    public func update(_ body: @Sendable (inout MinerSnapshot) -> Void) {
+        state.withLock { state in
+            body(&state.value)
+            if let temperature = state.value.socTemperatureMaximumCelsius {
+                state.value.socTemperatureSessionPeakCelsius = max(
+                    state.value.socTemperatureSessionPeakCelsius ?? temperature,
+                    temperature)
+            }
+            state.value.sampledAt = Date()
+            state.value.thermalState = Self.thermalName
         }
-        value.sampledAt = Date()
-        value.thermalState = Self.thermalName
     }
 
     public func recordDatasetActivation(_ build: DatasetBuild) {
-        lock.lock(); defer { lock.unlock() }
-        value.datasetBytes = build.bytes
-        value.datasetBuildSeconds = build.seconds
-        value.datasetBuildGPUSeconds = build.gpuSeconds
-        value.datasetActivationSeconds = build.activationSeconds
-        value.datasetSource = build.source
-        value.datasetActivations += 1
-        value.datasetActivationSecondsTotal += build.activationSeconds
-        switch build.source {
-        case .built: value.datasetBuiltActivations += 1
-        case .prefetched: value.datasetPrefetchedActivations += 1
-        case .cached: value.datasetCachedActivations += 1
+        state.withLock { state in
+            state.value.datasetBytes = build.bytes
+            state.value.datasetBuildSeconds = build.seconds
+            state.value.datasetBuildGPUSeconds = build.gpuSeconds
+            state.value.datasetActivationSeconds = build.activationSeconds
+            state.value.datasetSource = build.source
+            state.value.datasetActivations += 1
+            state.value.datasetActivationSecondsTotal += build.activationSeconds
+            switch build.source {
+            case .built: state.value.datasetBuiltActivations += 1
+            case .prefetched: state.value.datasetPrefetchedActivations += 1
+            case .cached: state.value.datasetCachedActivations += 1
+            }
+            if build.waitedForPrefetch {
+                state.value.datasetPrefetchWaits += 1
+                state.value.datasetPrefetchWaitSecondsTotal += build.prefetchWaitSeconds
+            }
+            state.value.sampledAt = Date()
         }
-        if build.waitedForPrefetch {
-            value.datasetPrefetchWaits += 1
-            value.datasetPrefetchWaitSecondsTotal += build.prefetchWaitSeconds
-        }
-        value.sampledAt = Date()
     }
 
     public func updateDatasetWork(_ metrics: DatasetWorkMetrics) {
-        lock.lock(); defer { lock.unlock() }
-        value.datasetWork = metrics
-        value.sampledAt = Date()
+        state.withLock { state in
+            state.value.datasetWork = metrics
+            state.value.sampledAt = Date()
+        }
     }
 
     public func recordBatch(
@@ -395,48 +402,56 @@ public final class StatisticsStore: @unchecked Sendable {
         wallSeconds: Double,
         shareTarget: UInt256? = nil
     ) {
-        lock.lock(); defer { lock.unlock() }
-        value.nonces += UInt64(nonces)
-        value.gpuSeconds += gpuSeconds
-        value.searchSeconds += wallSeconds
-        if let shareTarget {
-            value.shares.expected += Double(nonces) * Self.shareProbability(for: shareTarget)
+        state.withLock { state in
+            state.value.nonces += UInt64(nonces)
+            state.value.gpuSeconds += gpuSeconds
+            state.value.searchSeconds += wallSeconds
+            if let shareTarget {
+                state.value.shares.expected += Double(nonces) * Self.shareProbability(
+                    for: shareTarget)
+            }
+            let now = Date()
+            state.value.hashrate = wallSeconds > 0 ? Double(nonces) / wallSeconds : 0
+            state.value.averageHashrate = state.value.searchSeconds > 0
+                ? Double(state.value.nonces) / state.value.searchSeconds
+                : 0
+            let elapsed = now.timeIntervalSince(state.value.startedAt)
+            state.value.effectiveHashrate = elapsed > 0
+                ? Double(state.value.nonces) / elapsed
+                : 0
+            state.value.sampledAt = now
+            state.value.thermalState = Self.thermalName
         }
-        let now = Date()
-        value.hashrate = wallSeconds > 0 ? Double(nonces) / wallSeconds : 0
-        value.averageHashrate = value.searchSeconds > 0 ? Double(value.nonces) / value.searchSeconds : 0
-        let elapsed = now.timeIntervalSince(value.startedAt)
-        value.effectiveHashrate = elapsed > 0 ? Double(value.nonces) / elapsed : 0
-        value.sampledAt = now
-        value.thermalState = Self.thermalName
     }
 
     /// Refreshes wall-clock dependent values even while no search batch is
     /// completing, for example during a long dataset build.
     @discardableResult
     public func refresh() -> MinerSnapshot {
-        lock.lock(); defer { lock.unlock() }
-        let now = Date()
-        let elapsed = now.timeIntervalSince(value.startedAt)
-        value.effectiveHashrate = elapsed > 0 ? Double(value.nonces) / elapsed : 0
-        let temperature = temperatureReader.sample()
-        value.socTemperatureAverageCelsius = temperature?.averageCelsius
-        value.socTemperatureMaximumCelsius = temperature?.maximumCelsius
-        if let maximum = temperature?.maximumCelsius {
-            value.socTemperatureSessionPeakCelsius = max(
-                value.socTemperatureSessionPeakCelsius ?? maximum,
-                maximum)
+        state.withLock { state in
+            let now = Date()
+            let elapsed = now.timeIntervalSince(state.value.startedAt)
+            state.value.effectiveHashrate = elapsed > 0
+                ? Double(state.value.nonces) / elapsed
+                : 0
+            let temperature = state.temperatureReader.sample()
+            state.value.socTemperatureAverageCelsius = temperature?.averageCelsius
+            state.value.socTemperatureMaximumCelsius = temperature?.maximumCelsius
+            if let maximum = temperature?.maximumCelsius {
+                state.value.socTemperatureSessionPeakCelsius = max(
+                    state.value.socTemperatureSessionPeakCelsius ?? maximum,
+                    maximum)
+            }
+            state.value.socTemperatureSensorCount = temperature?.sensorCount ?? 0
+            state.value.temperatureSource = temperature == nil ? "unavailable" : "iohid_soc_die"
+            state.value.sampledAt = now
+            state.value.thermalState = Self.thermalName
+            return state.value
         }
-        value.socTemperatureSensorCount = temperature?.sensorCount ?? 0
-        value.temperatureSource = temperature == nil ? "unavailable" : "iohid_soc_die"
-        value.sampledAt = now
-        value.thermalState = Self.thermalName
-        return value
     }
 
     public func snapshot() -> MinerSnapshot {
-        lock.lock(); defer { lock.unlock() }
-        return value
+        state.withLock { $0.value }
     }
 
     public func prometheus() -> String {
@@ -625,41 +640,55 @@ public struct MinerEvent: Codable, Sendable {
     }
 }
 
-public final class JSONLEventWriter: @unchecked Sendable {
-    private let lock = NSLock()
-    private var handle: FileHandle?
-    private let encoder: JSONEncoder
-    public private(set) var failure: Error?
+public final class JSONLEventWriter: Sendable {
+    private struct State {
+        var handle: FileHandle?
+        let encoder: JSONEncoder
+        var failure: Error?
+    }
+
+    private let state: Mutex<State>
+
+    public var failure: Error? {
+        state.withLock { $0.failure }
+    }
 
     public init(path: String?) {
-        encoder = JSONEncoder()
+        let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .iso8601
-        guard let path else { return }
-        let url = URL(fileURLWithPath: path)
-        FileManager.default.createFile(atPath: url.path, contents: nil)
-        do {
-            handle = try FileHandle(forWritingTo: url)
-            try handle?.seekToEnd()
-        } catch {
-            failure = error
-            fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
+        var handle: FileHandle?
+        var failure: Error?
+        if let path {
+            let url = URL(fileURLWithPath: path)
+            FileManager.default.createFile(atPath: url.path, contents: nil)
+            do {
+                handle = try FileHandle(forWritingTo: url)
+                try handle?.seekToEnd()
+            } catch {
+                failure = error
+                fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
+            }
         }
+        state = Mutex(State(handle: handle, encoder: encoder, failure: failure))
     }
 
     public func write(_ event: MinerEvent) {
-        lock.lock(); defer { lock.unlock() }
-        guard failure == nil, let handle else { return }
-        do {
-            var data = try encoder.encode(event)
-            data.append(0x0a)
-            try handle.write(contentsOf: data)
-        } catch {
-            failure = error
-            try? handle.close()
-            self.handle = nil
-            fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
+        state.withLock { state in
+            guard state.failure == nil, let handle = state.handle else { return }
+            do {
+                var data = try state.encoder.encode(event)
+                data.append(0x0a)
+                try handle.write(contentsOf: data)
+            } catch {
+                state.failure = error
+                try? handle.close()
+                state.handle = nil
+                fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
+            }
         }
     }
 
-    deinit { try? handle?.close() }
+    deinit {
+        state.withLock { try? $0.handle?.close() }
+    }
 }

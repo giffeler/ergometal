@@ -50,7 +50,10 @@ public enum AutolykosV2 {
     /// Constant M = 1024 consecutive big-endian UInt64 values.
     public static let constantM: [UInt8] = (0..<1024).flatMap { be64(UInt64($0)) }
 
-    public static func datasetElement(index: Int, height: Int) throws -> UInt256 {
+    public static func datasetElement(
+        index: Int,
+        height: Int
+    ) throws(AutolykosError) -> UInt256 {
         guard let encodedIndex = UInt32(exactly: index) else {
             throw AutolykosError.invalidDatasetIndex(index)
         }
@@ -62,7 +65,10 @@ public enum AutolykosV2 {
         return UInt256(bigEndian: digest)
     }
 
-    public static func indexes(seed: [UInt8], tableSize: Int) throws -> [Int] {
+    public static func indexes(
+        seed: [UInt8],
+        tableSize: Int
+    ) throws(AutolykosError) -> [Int] {
         guard tableSize > 0 else { throw AutolykosError.invalidTableSize(tableSize) }
         let digest = Blake2b256.hash(seed)
         let extended = digest + digest.prefix(3)
@@ -73,7 +79,12 @@ public enum AutolykosV2 {
         }
     }
 
-    public static func hit(message: [UInt8], nonce: [UInt8], height: Int, tableSize: Int? = nil) throws -> UInt256 {
+    public static func hit(
+        message: [UInt8],
+        nonce: [UInt8],
+        height: Int,
+        tableSize: Int? = nil
+    ) throws(AutolykosError) -> UInt256 {
         guard message.count == 32 else { throw AutolykosError.invalidMessageLength(message.count) }
         guard nonce.count == 8 else { throw AutolykosError.invalidNonceLength(nonce.count) }
         guard UInt32(exactly: height) != nil else { throw AutolykosError.invalidHeight(height) }

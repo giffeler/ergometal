@@ -176,17 +176,25 @@ final class StatisticsTests: XCTestCase {
         XCTAssertGreaterThanOrEqual(Double(fields["search_duty_cycle"] ?? "") ?? -1, 0)
     }
 
-    func testEventWriterAppendsValidJSONLines() throws {
+    func testEventWriterAppendsValidJSONLinesAcrossRestarts() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
         let stats = StatisticsStore()
         do {
             let writer = JSONLEventWriter(path: url.path)
-            writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "test"))
+            writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "first"))
+        }
+        do {
+            let writer = JSONLEventWriter(path: url.path)
+            writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "second"))
         }
         let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
-        XCTAssertEqual(lines.count, 1)
-        let object = try JSONSerialization.jsonObject(with: Data(lines[0].utf8)) as? [String: Any]
-        XCTAssertEqual(object?["type"] as? String, "test")
+        XCTAssertEqual(lines.count, 2)
+        let objects = try lines.map {
+            try XCTUnwrap(JSONSerialization.jsonObject(
+                with: Data($0.utf8)) as? [String: Any])
+        }
+        XCTAssertEqual(objects.compactMap { $0["type"] as? String }, ["first", "second"])
     }
 
     func testEventWriterSerializesConcurrentWrites() throws {

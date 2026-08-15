@@ -660,7 +660,9 @@ public final class JSONLEventWriter: Sendable {
         var failure: Error?
         if let path {
             let url = URL(fileURLWithPath: path)
-            FileManager.default.createFile(atPath: url.path, contents: nil)
+            if !FileManager.default.fileExists(atPath: url.path) {
+                FileManager.default.createFile(atPath: url.path, contents: nil)
+            }
             do {
                 handle = try FileHandle(forWritingTo: url)
                 try handle?.seekToEnd()

@@ -46,6 +46,8 @@ public struct MetalDeviceInfo: Codable, Sendable {
     public let recommendedWorkingSetBytes: UInt64
     public let maxBufferBytes: UInt64
     public let unifiedMemory: Bool
+    public let searchPipelineMaxThreads: Int?
+    public let buildPipelineMaxThreads: Int?
 }
 
 public enum DatasetBuildSource: String, Codable, Sendable {
@@ -509,13 +511,6 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         self.synchronousBuildChunkElements = synchronousBuildChunkElements
         self.prefetchBuildChunkElements = prefetchBuildChunkElements
         self.datasetThreadgroupSize = datasetThreadgroupSize
-        self.info = MetalDeviceInfo(
-            name: device.name,
-            registryID: device.registryID,
-            recommendedWorkingSetBytes: device.recommendedMaxWorkingSetSize,
-            maxBufferBytes: UInt64(device.maxBufferLength),
-            unifiedMemory: device.hasUnifiedMemory
-        )
         let constantM = constantMBuffer.contents().bindMemory(to: UInt64.self, capacity: 1_024)
         for index in 0..<1_024 {
             constantM[index] = UInt64(index).bigEndian
@@ -533,19 +528,33 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         guard let search = library.makeFunction(name: searchKernel.functionName) else {
             throw MetalSolverError.functionMissing(searchKernel.functionName)
         }
+        let buildPipeline: MTLComputePipelineState
+        let searchPipeline: MTLComputePipelineState
         do {
             buildPipeline = try device.makeComputePipelineState(function: build)
             searchPipeline = try device.makeComputePipelineState(function: search)
         } catch {
             throw MetalSolverError.pipeline(error.localizedDescription)
         }
+        self.buildPipeline = buildPipeline
+        self.searchPipeline = searchPipeline
+        self.info = MetalDeviceInfo(
+            name: device.name,
+            registryID: device.registryID,
+            recommendedWorkingSetBytes: device.recommendedMaxWorkingSetSize,
+            maxBufferBytes: UInt64(device.maxBufferLength),
+            unifiedMemory: device.hasUnifiedMemory,
+            searchPipelineMaxThreads: searchPipeline.maxTotalThreadsPerThreadgroup,
+            buildPipelineMaxThreads: buildPipeline.maxTotalThreadsPerThreadgroup
+        )
     }
 
     public static func devices() -> [MetalDeviceInfo] {
         MTLCopyAllDevices().map {
             MetalDeviceInfo(name: $0.name, registryID: $0.registryID,
                 recommendedWorkingSetBytes: $0.recommendedMaxWorkingSetSize,
-                maxBufferBytes: UInt64($0.maxBufferLength), unifiedMemory: $0.hasUnifiedMemory)
+                maxBufferBytes: UInt64($0.maxBufferLength), unifiedMemory: $0.hasUnifiedMemory,
+                searchPipelineMaxThreads: nil, buildPipelineMaxThreads: nil)
         }
     }
 

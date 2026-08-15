@@ -315,6 +315,12 @@ public extension MinerSnapshot {
         if let luck = shareLuckRatio {
             fields["share_luck_ratio"] = String(luck)
         }
+        if let value = device?.searchPipelineMaxThreads {
+            fields["search_pipeline_max_threads"] = String(value)
+        }
+        if let value = device?.buildPipelineMaxThreads {
+            fields["build_pipeline_max_threads"] = String(value)
+        }
         return fields
     }
 }

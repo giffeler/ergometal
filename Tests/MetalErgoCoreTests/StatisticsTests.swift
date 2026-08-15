@@ -81,6 +81,22 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(fields["temperature_source"], "iohid_soc_die")
     }
 
+    func testEventFieldsIncludePipelineOccupancyTelemetry() {
+        let device = MetalDeviceInfo(
+            name: "Test GPU",
+            registryID: 1,
+            recommendedWorkingSetBytes: 2,
+            maxBufferBytes: 3,
+            unifiedMemory: true,
+            searchPipelineMaxThreads: 256,
+            buildPipelineMaxThreads: 512)
+
+        let fields = StatisticsStore(device: device).snapshot().eventFields
+
+        XCTAssertEqual(fields["search_pipeline_max_threads"], "256")
+        XCTAssertEqual(fields["build_pipeline_max_threads"], "512")
+    }
+
     func testExpectedSharesUseFull256BitTarget() {
         let stats = StatisticsStore()
         let halfRangeTarget = UInt256(

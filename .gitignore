@@ -4,6 +4,7 @@
 # Xcode build products and per-user state
 DerivedData*/
 build/
+Distribution/
 *.hmap
 *.ipa
 *.dSYM.zip

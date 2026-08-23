@@ -13,7 +13,7 @@ settings:
     CODE_SIGNING_ALLOWED: NO
 targets:
   MetalErgoCore:
-    type: framework
+    type: library.static
     platform: macOS
     sources:
       - path: Sources/MetalErgoCore
@@ -34,16 +34,31 @@ targets:
         PRODUCT_NAME: ergometal
         GENERATE_INFOPLIST_FILE: YES
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @loader_path"
+        OTHER_LDFLAGS: "$(inherited) -Wl,-sectcreate,__TEXT,__metallib,$(TARGET_BUILD_DIR)/default.metallib"
   MetalErgoCoreTests:
     type: bundle.unit-test
     platform: macOS
     sources:
       - path: Tests/MetalErgoCoreTests
+      - path: Sources/MetalErgoCore/AutolykosKernels.metal
     dependencies:
       - target: MetalErgoCore
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: dev.ergometal.tests
+        GENERATE_INFOPLIST_FILE: YES
+  ErgoMetalCLITests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests/ErgoMetalCLITests
+      - path: Sources/ergometal/Arguments.swift
+      - path: Sources/ergometal/MiningCoordinator.swift
+    dependencies:
+      - target: MetalErgoCore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: dev.ergometal.cli-tests
         GENERATE_INFOPLIST_FILE: YES
 schemes:
   MetalErgoMiner:
@@ -54,6 +69,7 @@ schemes:
     test:
       targets:
         - MetalErgoCoreTests
+        - ErgoMetalCLITests
     run:
       config: Debug
       executable: ergometal

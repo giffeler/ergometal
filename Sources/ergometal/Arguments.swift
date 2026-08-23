@@ -1,4 +1,5 @@
 import Foundation
+import MetalErgoCore
 
 struct Arguments {
     let command: String
@@ -64,6 +65,14 @@ struct Arguments {
 
     func has(_ key: String) -> Bool { flags.contains(key) }
 
+    func donationPercent(network: ErgoNetwork) throws(CLIError) -> Int {
+        let value = try optionalInt("donation", in: 0...100)
+        if value != nil, network != .mainnet {
+            throw CLIError.invalidArgument("--donation is supported only on mainnet")
+        }
+        return value ?? 0
+    }
+
     func validate(
         valueOptions: Set<String> = [],
         flagOptions: Set<String> = []
@@ -128,7 +137,8 @@ Usage:
                  [--dataset-kernel u32pair-inline-m|u32pair-scalar-m|u32pair|baseline]
                  [--dataset-scheduling overlap|serialized]
                  [--api-bind 127.0.0.1:4078] [--stats-file path]
-                 [--stats-interval 60]
+                 [--stats-interval 60] [--donation 0|1...100]
 
 The pool password defaults to ERGOMETAL_POOL_PASSWORD or "x" and is never logged.
+Donation is opt-in: no donation is configured unless --donation is supplied with a positive percentage.
 """

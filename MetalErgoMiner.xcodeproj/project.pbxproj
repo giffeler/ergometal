@@ -7,25 +7,32 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0BF3FD30B7454434CA019F56 /* Arguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FAFCFE6D8DE609C7FE5988 /* Arguments.swift */; };
 		0F07CEA0CD741C4147D25204 /* ConsensusTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */; };
 		15A0CE51820EF7EC92404956 /* StatisticsHTTPServer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AFFD8D84F87585AD3EC95B /* StatisticsHTTPServer.swift */; };
 		1964BD9B8847BEBEDE6D7702 /* ErgoMetalCLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF64D7B5D0E1B535292931E6 /* ErgoMetalCLI.swift */; };
+		19A46A5397EB0E16D5575E04 /* libMetalErgoCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B08236D4687A9E76662A3FE2 /* libMetalErgoCore.a */; };
+		1E3885EB40F4943A847A5605 /* Donation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68DACEFF0589A9D8CA999DC1 /* Donation.swift */; };
+		28A7BB294411AF6F8A085252 /* libMetalErgoCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B08236D4687A9E76662A3FE2 /* libMetalErgoCore.a */; };
 		2BB717703ACFF0C0A5333634 /* Autolykos.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B25F9AC969607EED7D53F37 /* Autolykos.swift */; };
 		36F410B32194B8261E8FB291 /* StratumTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C628D393584693C84CD61F70 /* StratumTests.swift */; };
+		39899C37C121FE304098766F /* libMetalErgoCore.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B08236D4687A9E76662A3FE2 /* libMetalErgoCore.a */; };
+		466E0015E39400327702F340 /* MiningCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC10B3CAFE997AB5A6362652 /* MiningCoordinatorTests.swift */; };
 		52510C256BB69AAE6C6DAAE2 /* ErgoAddress.swift in Sources */ = {isa = PBXBuildFile; fileRef = 525F8B8BCE65C57ECA4F3C77 /* ErgoAddress.swift */; };
-		643FB5AECD85A01A46D9DC5C /* MetalErgoCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */; };
+		544C22C037B2A790761B1816 /* MiningCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F365F059EFEA3210BEA5702 /* MiningCoordinator.swift */; };
+		5D5B6E49040C17CFE9C34018 /* ArgumentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84004D497298899A0815ABA /* ArgumentsTests.swift */; };
 		65839A8A5DE283CC3F0B21AD /* Blake2b.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F973D0107EE834C7DD1908 /* Blake2b.swift */; };
-		73B6D26E7485A15B717F4FB0 /* MetalErgoCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		672CD7C42AEBA57D186F1AA6 /* DonationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7695C60F137DD35C28B5AF60 /* DonationTests.swift */; };
 		95BD076494F804629E9FC67A /* MinerStatusLineFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D13F7971385166397D3B7D5 /* MinerStatusLineFormatter.swift */; };
 		9810CA39ECEB7638CD118B21 /* UInt256.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3B76913F191F39DD6911B2 /* UInt256.swift */; };
 		99D287999C8E48F4218A81F2 /* Stratum.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD01266E7B9A5D18A424C76E /* Stratum.swift */; };
 		A17FBE53F5CE44520F8E877D /* StatisticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */; };
 		AD834C0F218B93356C32188F /* MetalSolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6094919297E34AE8C8B57313 /* MetalSolver.swift */; };
+		B079B1C7BB9A64E37E3D4F4E /* AutolykosKernels.metal in Sources */ = {isa = PBXBuildFile; fileRef = C832EFD7220872A528987BC7 /* AutolykosKernels.metal */; };
 		BF0819C0CF3E86A15361A9F8 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303DDB16A73D46898E0F7F3C /* Statistics.swift */; };
 		C73B7C4D497CC39331393324 /* Arguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FAFCFE6D8DE609C7FE5988 /* Arguments.swift */; };
 		CA364D1FCBDC347157A59159 /* AutolykosKernels.metal in Sources */ = {isa = PBXBuildFile; fileRef = C832EFD7220872A528987BC7 /* AutolykosKernels.metal */; };
 		E5AF378BF5223C7C5238EB73 /* MiningCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F365F059EFEA3210BEA5702 /* MiningCoordinator.swift */; };
-		F937331C02FFE117545C0086 /* MetalErgoCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,21 +50,14 @@
 			remoteGlobalIDString = 17BAA0F04C70C0A7F9C880F8;
 			remoteInfo = MetalErgoCore;
 		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		3B57DCADD76CBB38CC835E3B /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				73B6D26E7485A15B717F4FB0 /* MetalErgoCore.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
+		F56519370C76AB2007CCB4FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DB8A78D53A7667338D597271 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 17BAA0F04C70C0A7F9C880F8;
+			remoteInfo = MetalErgoCore;
 		};
-/* End PBXCopyFilesBuildPhase section */
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		21AFFD8D84F87585AD3EC95B /* StatisticsHTTPServer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsHTTPServer.swift; sourceTree = "<group>"; };
@@ -67,17 +67,22 @@
 		35FAFCFE6D8DE609C7FE5988 /* Arguments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Arguments.swift; sourceTree = "<group>"; };
 		525F8B8BCE65C57ECA4F3C77 /* ErgoAddress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgoAddress.swift; sourceTree = "<group>"; };
 		6094919297E34AE8C8B57313 /* MetalSolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalSolver.swift; sourceTree = "<group>"; };
+		68DACEFF0589A9D8CA999DC1 /* Donation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Donation.swift; sourceTree = "<group>"; };
+		758E65FF08469E6F57180419 /* ErgoMetalCLITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ErgoMetalCLITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7695C60F137DD35C28B5AF60 /* DonationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationTests.swift; sourceTree = "<group>"; };
 		7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsensusTests.swift; sourceTree = "<group>"; };
 		8D13F7971385166397D3B7D5 /* MinerStatusLineFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinerStatusLineFormatter.swift; sourceTree = "<group>"; };
 		8D4C6F52AE82BB55EA3B8DB8 /* MetalErgoCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetalErgoCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MetalErgoCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B25F9AC969607EED7D53F37 /* Autolykos.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autolykos.swift; sourceTree = "<group>"; };
+		B08236D4687A9E76662A3FE2 /* libMetalErgoCore.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libMetalErgoCore.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		B68AD6566AEDE4AE53B13B7F /* ergometal */ = {isa = PBXFileReference; includeInIndex = 0; path = ergometal; sourceTree = BUILT_PRODUCTS_DIR; };
 		C628D393584693C84CD61F70 /* StratumTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StratumTests.swift; sourceTree = "<group>"; };
 		C832EFD7220872A528987BC7 /* AutolykosKernels.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = AutolykosKernels.metal; sourceTree = "<group>"; };
 		CD01266E7B9A5D18A424C76E /* Stratum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stratum.swift; sourceTree = "<group>"; };
 		CF64D7B5D0E1B535292931E6 /* ErgoMetalCLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErgoMetalCLI.swift; sourceTree = "<group>"; };
+		DC10B3CAFE997AB5A6362652 /* MiningCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiningCoordinatorTests.swift; sourceTree = "<group>"; };
 		E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTests.swift; sourceTree = "<group>"; };
+		E84004D497298899A0815ABA /* ArgumentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentsTests.swift; sourceTree = "<group>"; };
 		FD3B76913F191F39DD6911B2 /* UInt256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt256.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,7 +91,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F937331C02FFE117545C0086 /* MetalErgoCore.framework in Frameworks */,
+				39899C37C121FE304098766F /* libMetalErgoCore.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D3FD758972C5F81FBFE4708 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				28A7BB294411AF6F8A085252 /* libMetalErgoCore.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -94,7 +107,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				643FB5AECD85A01A46D9DC5C /* MetalErgoCore.framework in Frameworks */,
+				19A46A5397EB0E16D5575E04 /* libMetalErgoCore.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -105,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */,
+				7695C60F137DD35C28B5AF60 /* DonationTests.swift */,
 				E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */,
 				C628D393584693C84CD61F70 /* StratumTests.swift */,
 			);
@@ -126,6 +140,7 @@
 				9B25F9AC969607EED7D53F37 /* Autolykos.swift */,
 				C832EFD7220872A528987BC7 /* AutolykosKernels.metal */,
 				29F973D0107EE834C7DD1908 /* Blake2b.swift */,
+				68DACEFF0589A9D8CA999DC1 /* Donation.swift */,
 				525F8B8BCE65C57ECA4F3C77 /* ErgoAddress.swift */,
 				6094919297E34AE8C8B57313 /* MetalSolver.swift */,
 				8D13F7971385166397D3B7D5 /* MinerStatusLineFormatter.swift */,
@@ -146,6 +161,15 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		AB3DEA43EA7BC910A8CAC078 /* ErgoMetalCLITests */ = {
+			isa = PBXGroup;
+			children = (
+				E84004D497298899A0815ABA /* ArgumentsTests.swift */,
+				DC10B3CAFE997AB5A6362652 /* MiningCoordinatorTests.swift */,
+			);
+			path = ErgoMetalCLITests;
+			sourceTree = "<group>";
+		};
 		C520042DDCBA0E58AAB7C638 /* ergometal */ = {
 			isa = PBXGroup;
 			children = (
@@ -159,6 +183,7 @@
 		E9CD3E987BC862FF5851199A /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				AB3DEA43EA7BC910A8CAC078 /* ErgoMetalCLITests */,
 				23F05F440F2A9A73E29FE8D2 /* MetalErgoCoreTests */,
 			);
 			path = Tests;
@@ -168,7 +193,8 @@
 			isa = PBXGroup;
 			children = (
 				B68AD6566AEDE4AE53B13B7F /* ergometal */,
-				97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */,
+				758E65FF08469E6F57180419 /* ErgoMetalCLITests.xctest */,
+				B08236D4687A9E76662A3FE2 /* libMetalErgoCore.a */,
 				8D4C6F52AE82BB55EA3B8DB8 /* MetalErgoCoreTests.xctest */,
 			);
 			name = Products;
@@ -182,6 +208,7 @@
 			buildConfigurationList = 14F412B41CF58F2E9D2AA4C3 /* Build configuration list for PBXNativeTarget "MetalErgoCore" */;
 			buildPhases = (
 				45D9B77863E3B0DB0B2E7398 /* Sources */,
+				7D70DA433CE9178ECCFA1105 /* Copy Swift Objective-C Interface Header */,
 			);
 			buildRules = (
 			);
@@ -191,8 +218,27 @@
 			packageProductDependencies = (
 			);
 			productName = MetalErgoCore;
-			productReference = 97CCDF722A5BADABDB247C42 /* MetalErgoCore.framework */;
-			productType = "com.apple.product-type.framework";
+			productReference = B08236D4687A9E76662A3FE2 /* libMetalErgoCore.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		41B47BBBADB8E149630D4064 /* ErgoMetalCLITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = BFB506D50ADFDF87CFB4007D /* Build configuration list for PBXNativeTarget "ErgoMetalCLITests" */;
+			buildPhases = (
+				F3942C14F25F018399BC9C52 /* Sources */,
+				3D3FD758972C5F81FBFE4708 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				692FA9FAB3791D357FD3DCFA /* PBXTargetDependency */,
+			);
+			name = ErgoMetalCLITests;
+			packageProductDependencies = (
+			);
+			productName = ErgoMetalCLITests;
+			productReference = 758E65FF08469E6F57180419 /* ErgoMetalCLITests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		7BB70E918F1B2817D22144AC /* MetalErgoCoreTests */ = {
 			isa = PBXNativeTarget;
@@ -200,7 +246,6 @@
 			buildPhases = (
 				2528B1F9CE480AA1E8F6AB92 /* Sources */,
 				9D2BDCE0E503CA4E85707BF8 /* Frameworks */,
-				3B57DCADD76CBB38CC835E3B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -261,16 +306,38 @@
 				17BAA0F04C70C0A7F9C880F8 /* MetalErgoCore */,
 				BA9C0BE1C53ABE3F72F9DDDB /* ergometal */,
 				7BB70E918F1B2817D22144AC /* MetalErgoCoreTests */,
+				41B47BBBADB8E149630D4064 /* ErgoMetalCLITests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7D70DA433CE9178ECCFA1105 /* Copy Swift Objective-C Interface Header */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(DERIVED_SOURCES_DIR)/$(SWIFT_OBJC_INTERFACE_HEADER_NAME)",
+			);
+			name = "Copy Swift Objective-C Interface Header";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/include/$(PRODUCT_MODULE_NAME)/$(SWIFT_OBJC_INTERFACE_HEADER_NAME)",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "ditto \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2528B1F9CE480AA1E8F6AB92 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B079B1C7BB9A64E37E3D4F4E /* AutolykosKernels.metal in Sources */,
 				0F07CEA0CD741C4147D25204 /* ConsensusTests.swift in Sources */,
+				672CD7C42AEBA57D186F1AA6 /* DonationTests.swift in Sources */,
 				A17FBE53F5CE44520F8E877D /* StatisticsTests.swift in Sources */,
 				36F410B32194B8261E8FB291 /* StratumTests.swift in Sources */,
 			);
@@ -293,6 +360,7 @@
 				2BB717703ACFF0C0A5333634 /* Autolykos.swift in Sources */,
 				CA364D1FCBDC347157A59159 /* AutolykosKernels.metal in Sources */,
 				65839A8A5DE283CC3F0B21AD /* Blake2b.swift in Sources */,
+				1E3885EB40F4943A847A5605 /* Donation.swift in Sources */,
 				52510C256BB69AAE6C6DAAE2 /* ErgoAddress.swift in Sources */,
 				AD834C0F218B93356C32188F /* MetalSolver.swift in Sources */,
 				95BD076494F804629E9FC67A /* MinerStatusLineFormatter.swift in Sources */,
@@ -303,9 +371,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F3942C14F25F018399BC9C52 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0BF3FD30B7454434CA019F56 /* Arguments.swift in Sources */,
+				5D5B6E49040C17CFE9C34018 /* ArgumentsTests.swift in Sources */,
+				544C22C037B2A790761B1816 /* MiningCoordinator.swift in Sources */,
+				466E0015E39400327702F340 /* MiningCoordinatorTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		692FA9FAB3791D357FD3DCFA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 17BAA0F04C70C0A7F9C880F8 /* MetalErgoCore */;
+			targetProxy = F56519370C76AB2007CCB4FF /* PBXContainerItemProxy */;
+		};
 		B1E290D11F880E5C01C1B730 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 17BAA0F04C70C0A7F9C880F8 /* MetalErgoCore */;
@@ -325,6 +409,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path";
+				OTHER_LDFLAGS = (
+					"$(inherited) -Wl,-sectcreate,__TEXT,__metallib,$(TARGET_BUILD_DIR)/default.metallib",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.ergometal;
 				PRODUCT_NAME = ergometal;
 				SDKROOT = macosx;
@@ -337,6 +425,10 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path";
+				OTHER_LDFLAGS = (
+					"$(inherited) -Wl,-sectcreate,__TEXT,__metallib,$(TARGET_BUILD_DIR)/default.metallib",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.ergometal;
 				PRODUCT_NAME = ergometal;
 				SDKROOT = macosx;
@@ -412,15 +504,9 @@
 		78A1B866EFC36E972332BD70 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -428,22 +514,35 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.core;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		8D6B26A5F9A0A91856CA15AB /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.ergometal.cli-tests";
+				SDKROOT = macosx;
+			};
+			name = Debug;
 		};
 		AD3D5F6D5DD94C7B8EB7DAD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
 				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = YES;
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -451,7 +550,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.core;
 				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
-				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
 		};
@@ -525,7 +623,31 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.tests;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		D41AEA8D7770A3E146A150EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "dev.ergometal.cli-tests";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -540,6 +662,10 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
+				);
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.ergometal.tests;
 				SDKROOT = macosx;
@@ -572,6 +698,15 @@
 			buildConfigurations = (
 				0C4A19780052062C21DF91B2 /* Debug */,
 				2C126490993F756706A3DBA4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BFB506D50ADFDF87CFB4007D /* Build configuration list for PBXNativeTarget "ErgoMetalCLITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8D6B26A5F9A0A91856CA15AB /* Debug */,
+				D41AEA8D7770A3E146A150EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

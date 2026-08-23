@@ -34,13 +34,14 @@ public enum MinerStatusLineFormatter {
         let luck = snapshot.shareLuckRatio.map {
             String(format: "luck=%5.1f%%", $0 * 100)
         } ?? "luck=n/a"
+        let donation = "donation=\(snapshot.donation.percent)% role=\(snapshot.donation.activeRecipient.rawValue)"
+        let compactDonation = "don=\(snapshot.donation.percent)%/\(snapshot.donation.activeRecipient == .donation ? "d" : "u")"
         let tinySuffix = suffix
             .replacingOccurrences(of: "shares=", with: "sh=")
             .replacingOccurrences(of: "verified=", with: "v=")
 
-        let candidates = [
-            String(
-                format: "current=%6.2f  avg=%6.2f  effective=%6.2f MH/s  duty=%5.1f%%  %@  %@  expected=%.2f  %@  nonces=%llu  %@",
+        let full = String(
+                format: "current=%6.2f  avg=%6.2f  effective=%6.2f MH/s  duty=%5.1f%%  %@  %@  expected=%.2f  %@  nonces=%llu",
                 snapshot.hashrate / 1_000_000,
                 snapshot.averageHashrate / 1_000_000,
                 snapshot.effectiveHashrate / 1_000_000,
@@ -49,10 +50,9 @@ public enum MinerStatusLineFormatter {
                 temperature,
                 snapshot.shares.expected,
                 luck,
-                snapshot.nonces,
-                suffix),
-            String(
-                format: "cur=%.2f avg=%.2f eff=%.2f MH/s duty=%.1f%% %@ %@ exp=%.2f %@ %@",
+                snapshot.nonces)
+        let compact = String(
+                format: "cur=%.2f avg=%.2f eff=%.2f MH/s duty=%.1f%% %@ %@ exp=%.2f %@",
                 snapshot.hashrate / 1_000_000,
                 snapshot.averageHashrate / 1_000_000,
                 snapshot.effectiveHashrate / 1_000_000,
@@ -60,15 +60,20 @@ public enum MinerStatusLineFormatter {
                 compactPrefetch,
                 compactTemperature,
                 snapshot.shares.expected,
-                luck,
-                suffix),
-            String(
-                format: "cur=%.2f eff=%.2f MH/s %@ %@ %@",
+                luck)
+        let short = String(
+                format: "cur=%.2f eff=%.2f MH/s %@ %@",
                 snapshot.hashrate / 1_000_000,
                 snapshot.effectiveHashrate / 1_000_000,
                 compactPrefetch,
-                compactTemperature,
-                suffix),
+                compactTemperature)
+        let donationFields = snapshot.donation.percent > 0
+            ? [donation, compactDonation, compactDonation]
+            : [nil, nil, nil]
+        let candidates = [
+            [full, donationFields[0], suffix].compactMap { $0 }.joined(separator: "  "),
+            [compact, donationFields[1], suffix].compactMap { $0 }.joined(separator: " "),
+            [short, donationFields[2], suffix].compactMap { $0 }.joined(separator: " "),
             String(
                 format: "%.2f/%.2f MH/s %@ %@",
                 snapshot.hashrate / 1_000_000,

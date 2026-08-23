@@ -1,4 +1,5 @@
 import Foundation
+import MachO
 import Metal
 import Synchronization
 
@@ -317,6 +318,16 @@ private final class CommandIntervalUnion: Sendable {
 
 private final class MetalBundleToken {}
 
+private func embeddedMetalLibraryData() -> DispatchData? {
+    guard let header = _dyld_get_image_header(0) else { return nil }
+    let header64 = UnsafeRawPointer(header).assumingMemoryBound(to: mach_header_64.self)
+    var size: UInt = 0
+    guard let bytes = getsectiondata(header64, "__TEXT", "__metallib", &size), size > 0 else {
+        return nil
+    }
+    return DispatchData(bytes: UnsafeRawBufferPointer(start: bytes, count: Int(size)))
+}
+
 /// FIFO admission prevents either the dataset worker or the search loop from
 /// repeatedly reacquiring the GPU while the other side is already waiting.
 private final class MetalCommandGate {
@@ -518,7 +529,11 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
 
         let library: MTLLibrary
         do {
-            library = try device.makeDefaultLibrary(bundle: Bundle(for: MetalBundleToken.self))
+            if let embedded = embeddedMetalLibraryData() {
+                library = try device.makeLibrary(data: embedded)
+            } else {
+                library = try device.makeDefaultLibrary(bundle: Bundle(for: MetalBundleToken.self))
+            }
         } catch {
             throw MetalSolverError.pipeline(error.localizedDescription)
         }

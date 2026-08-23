@@ -111,6 +111,45 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(stats.snapshot().shares.expected, 500, accuracy: 1e-12)
     }
 
+    func testDonationTelemetryIsAttributedAndCredentialFree() {
+        let stats = StatisticsStore(mode: .mining)
+        let halfRangeTarget = UInt256(
+            limbs: [0x8000_0000] + [UInt32](repeating: 0, count: 7))
+        stats.configureDonation(percent: 1, initialRecipient: .user)
+        stats.setDonationScheduledRecipient(.donation)
+        stats.setActiveMiningRecipient(.donation, switched: true)
+        stats.recordBatch(
+            nonces: 1_000,
+            gpuSeconds: 0.1,
+            wallSeconds: 0.2,
+            shareTarget: halfRangeTarget,
+            recipient: .donation)
+        stats.recordShareFound(recipient: .donation)
+        stats.recordShareSubmitted(recipient: .donation)
+        stats.recordShareResult(recipient: .donation, accepted: true)
+        stats.recordDonationFailure()
+
+        let snapshot = stats.snapshot()
+        let fields = snapshot.eventFields
+        let prometheus = stats.prometheus()
+
+        XCTAssertEqual(snapshot.donation.percent, 1)
+        XCTAssertEqual(snapshot.donation.scheduledRecipient, .donation)
+        XCTAssertEqual(snapshot.donation.activeRecipient, .donation)
+        XCTAssertEqual(snapshot.donation.nonces, 1_000)
+        XCTAssertEqual(snapshot.donation.searchSeconds, 0.2)
+        XCTAssertEqual(snapshot.donation.shares.expected, 500, accuracy: 1e-12)
+        XCTAssertEqual(snapshot.donation.shares.accepted, 1)
+        XCTAssertEqual(snapshot.donation.switches, 1)
+        XCTAssertEqual(snapshot.donation.failures, 1)
+        XCTAssertEqual(fields["donation_percent"], "1")
+        XCTAssertEqual(fields["donation_active_recipient"], "donation")
+        XCTAssertTrue(prometheus.contains("ergometal_donation_percent"))
+        XCTAssertTrue(prometheus.contains("ergometal_donation_nonces_total"))
+        XCTAssertFalse(fields.values.contains { $0.contains("2miners") })
+        XCTAssertFalse(prometheus.contains("2miners"))
+    }
+
     func testStatisticsStoreSerializesConcurrentUpdates() {
         let stats = StatisticsStore()
 
@@ -251,6 +290,8 @@ final class StatisticsTests: XCTestCase {
         snapshot.nonces = 198_739_886_080
         snapshot.shares.expected = 11.39
         snapshot.shares.accepted = 15
+        snapshot.donation.percent = 1
+        snapshot.donation.activeRecipient = .donation
 
         for width in [200, 120, 80, 50, 20, 8, 1] {
             let line = MinerStatusLineFormatter.format(
@@ -277,6 +318,8 @@ final class StatisticsTests: XCTestCase {
         snapshot.nonces = 198_739_886_080
         snapshot.shares.expected = 11.39
         snapshot.shares.accepted = 15
+        snapshot.donation.percent = 1
+        snapshot.donation.activeRecipient = .donation
 
         let line = MinerStatusLineFormatter.format(
             snapshot, suffix: "shares=15/0", maximumColumns: 200)
@@ -290,6 +333,7 @@ final class StatisticsTests: XCTestCase {
         XCTAssertTrue(line.contains("expected="))
         XCTAssertTrue(line.contains("luck="))
         XCTAssertTrue(line.contains("nonces="))
+        XCTAssertTrue(line.contains("donation=1% role=donation"))
         XCTAssertTrue(line.contains("shares=15/0"))
     }
 }

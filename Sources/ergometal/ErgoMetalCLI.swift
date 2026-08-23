@@ -9,6 +9,9 @@ enum ErgoMetalCLI {
     private static let defaultPrebuildBatchNonces = 65_536
     private static let searchPipelineDepth = 2
     private static let searchStatisticsBatchCount = 16
+    private static let donationPool = "stratum+tls://erg.2miners.com:18888"
+    private static let donationWallet = "9emWVfBsLPbV6dvpugpjsjwKwETT7yBBfCyMefXbZDory7kDUVg"
+    private static let donationWorker = "ergometal"
     private enum PrebuildMode: String {
         case auto
         case on
@@ -415,7 +418,8 @@ enum ErgoMetalCLI {
                                          "build-chunk-elements", "prefetch-chunk-elements",
                                          "dataset-threadgroup-size",
                                          "dataset-kernel", "dataset-scheduling",
-                                         "api-bind", "stats-file", "stats-interval"])
+                                         "api-bind", "stats-file", "stats-interval",
+                                         "donation"])
         let pool = try args.require("pool")
         let wallet = try args.require("wallet")
         let worker = args.string("worker", default: "metal")!
@@ -424,6 +428,8 @@ enum ErgoMetalCLI {
         guard let network = ErgoNetwork(rawValue: networkValue) else {
             throw CLIError.invalidArgument("--network \(networkValue)")
         }
+        let donationPercent = try args.donationPercent(network: network)
+        let donationSchedule = try DonationSchedule(percent: donationPercent)
         guard ErgoAddress.isPlausible(wallet, network: network) else { throw CLIError.invalidAddress }
         let profile = args.string("profile", default: "efficiency")!
         guard ["efficiency", "peak"].contains(profile) else { throw CLIError.invalidArgument("--profile \(profile)") }
@@ -462,15 +468,39 @@ enum ErgoMetalCLI {
         let server = StatisticsHTTPServer(store: stats)
         try server.start(bind: args.string("api-bind", default: "127.0.0.1:4078")!)
         defer { server.stop() }
-        let coordinator = MiningCoordinator(stats: stats, writer: writer)
+        let coordinator = MiningCoordinator(
+            stats: stats,
+            writer: writer,
+            donationSchedule: donationSchedule)
         coordinator.beforeStop = {
             solver.cancelPrefetch(waitUntilFinished: true)
             stats.updateDatasetWork(solver.datasetWorkMetrics())
         }
         let password = ProcessInfo.processInfo.environment["ERGOMETAL_POOL_PASSWORD"] ?? "x"
-        let client = try ErgoStratumClient(url: pool, user: "\(wallet).\(worker)", password: password) { event in coordinator.handle(event) }
-        coordinator.client = client
-        stats.update { $0.poolHost = client.redactedHost }
+        let userClient = try ErgoStratumClient(
+            url: pool,
+            user: "\(wallet).\(worker)",
+            password: password
+        ) { [weak coordinator] event in
+            coordinator?.handle(event, recipient: .user)
+        }
+        let donationClient: ErgoStratumClient?
+        if donationSchedule.isEnabled {
+            guard ErgoAddress.isPlausible(donationWallet, network: .mainnet) else {
+                throw CLIError.invalidArgument("embedded donation wallet is invalid")
+            }
+            donationClient = try ErgoStratumClient(
+                url: donationPool,
+                user: "\(donationWallet).\(donationWorker)",
+                password: "x"
+            ) { [weak coordinator] event in
+                coordinator?.handle(event, recipient: .donation)
+            }
+        } else {
+            donationClient = nil
+        }
+        coordinator.configure(userClient: userClient, donationClient: donationClient)
+        stats.update { $0.poolHost = userClient.redactedHost }
         writer.write(MinerEvent(
             sessionID: stats.snapshot().sessionID,
             type: "session_started",
@@ -485,7 +515,12 @@ enum ErgoMetalCLI {
                 datasetThreadgroupSize: datasetThreadgroupSize,
                 datasetKernel: datasetKernel,
                 datasetScheduling: datasetScheduling,
-                extra: ["mode": "mining", "network": network.rawValue])))
+                extra: [
+                    "mode": "mining",
+                    "network": network.rawValue,
+                    "donation_percent": String(donationPercent),
+                    "donation_cycle_seconds": String(Int(donationSchedule.cycleSeconds))
+                ])))
 
         let statsTimer = DispatchSource.makeTimerSource(
             queue: DispatchQueue(label: "dev.ergometal.statistics"))
@@ -510,7 +545,7 @@ enum ErgoMetalCLI {
         let sigterm = DispatchSource.makeSignalSource(signal: SIGTERM, queue: signalQueue)
         sigint.setEventHandler { coordinator.stop() }
         sigterm.setEventHandler { coordinator.stop() }
-        sigint.resume(); sigterm.resume(); client.connect()
+        sigint.resume(); sigterm.resume(); coordinator.start()
 
         var nextStatusAt = Date.distantPast
         var reportedPrefetchHeight: Int?
@@ -568,8 +603,12 @@ enum ErgoMetalCLI {
                     height: job.height,
                     shouldContinue: { coordinator.isHeightCurrent(job.height) })
                 guard coordinator.isCurrent(job) else {
-                    if !coordinator.isHeightCurrent(job.height) {
+                    if coordinator.isRecipientCurrent(job.recipient),
+                       !coordinator.isHeightCurrent(job.height)
+                    {
                         coldBuildCancellations += 1
+                    } else {
+                        coldBuildCancellations = 0
                     }
                     continue
                 }
@@ -668,18 +707,22 @@ enum ErgoMetalCLI {
                             nonces: statisticsSample.nonces,
                             gpuSeconds: statisticsSample.gpuSeconds,
                             wallSeconds: statisticsSample.activeSearchSeconds,
-                            shareTarget: job.target)
+                            shareTarget: job.target,
+                            recipient: job.recipient)
                     }
                     for nonce in batch.candidates {
-                        guard coordinator.isCurrent(job) else { stats.update { $0.shares.stale += 1 }; break }
+                        guard coordinator.isCurrent(job) else {
+                            stats.recordShareStale(recipient: job.recipient)
+                            break
+                        }
                         let hit = try AutolykosV2.hit(message: job.message, nonce: nonceBytes(nonce), height: job.height)
                         guard hit < job.target else { continue }
-                        stats.update { $0.shares.found += 1 }
+                        stats.recordShareFound(recipient: job.recipient)
                         do {
-                            _ = try client.submit(job: job, nonce: nonce)
-                            stats.update { $0.shares.submitted += 1 }
+                            _ = try coordinator.submit(job, nonce: nonce)
+                            stats.recordShareSubmitted(recipient: job.recipient)
                         } catch StratumError.notReady {
-                            stats.update { $0.shares.stale += 1 }
+                            stats.recordShareStale(recipient: job.recipient)
                             break
                         }
                     }
@@ -716,7 +759,8 @@ enum ErgoMetalCLI {
                         nonces: statisticsSample.nonces,
                         gpuSeconds: statisticsSample.gpuSeconds,
                         wallSeconds: statisticsSample.activeSearchSeconds,
-                        shareTarget: job.target)
+                        shareTarget: job.target,
+                        recipient: job.recipient)
                 }
                 if nonceSpaceExhausted,
                    coordinator.isCurrent(job),
@@ -725,7 +769,11 @@ enum ErgoMetalCLI {
                     coordinator.handle(.protocolError("nonce space exhausted for job \(job.id)"))
                 }
             } catch MetalSolverError.cancelled {
-                coldBuildCancellations += 1
+                if coordinator.isRecipientCurrent(job.recipient) {
+                    coldBuildCancellations += 1
+                } else {
+                    coldBuildCancellations = 0
+                }
                 continue
             } catch {
                 stats.update { $0.lastError = error.localizedDescription; $0.state = .failed }

@@ -64,6 +64,17 @@
                ReferencedContainer = "container:MetalErgoMiner.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "41B47BBBADB8E149630D4064"
+               BuildableName = "ErgoMetalCLITests.xctest"
+               BlueprintName = "ErgoMetalCLITests"
+               ReferencedContainer = "container:MetalErgoMiner.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>

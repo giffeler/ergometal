@@ -28,7 +28,13 @@ xcodebuild -project MetalErgoMiner.xcodeproj -scheme MetalErgoMiner \
   -destination 'platform=macOS,arch=arm64' CODE_SIGNING_ALLOWED=NO test
 ```
 
-The canonical release executable is `DerivedData/Build/Products/Release/ergometal`; its sibling `MetalErgoCore.framework` is also required at runtime. Release builds always use `-derivedDataPath DerivedData`, while disposable test products stay under `/tmp`, preventing parallel stale executables inside the repository. From Xcode, select the `MetalErgoMiner` scheme and set one of these argument sets:
+The canonical release executable is `DerivedData/Build/Products/Release/ergometal`.
+It statically links `MetalErgoCore` and embeds the compiled Metal library, so no
+sibling framework or `.metallib` is required at runtime. macOS system libraries
+and Metal remain operating-system dependencies. Release builds always use
+`-derivedDataPath DerivedData`, while disposable test products stay under
+`/tmp`, preventing parallel stale executables inside the repository. From
+Xcode, select the `MetalErgoMiner` scheme and set one of these argument sets:
 
 ```sh
 ergometal devices
@@ -38,6 +44,94 @@ ergometal mine --pool stratum+tls://POOL:PORT --wallet ERGO_ADDRESS --worker m4 
 ```
 
 `benchmark` uses the consensus table size unless `--table-size` is explicitly supplied for a small diagnostic run. `mine` has no default pool and supports Miningcore-compatible Ergo Stratum v1 over TCP or certificate-validated TLS.
+
+## Standalone distribution
+
+`Scripts/package-release.zsh` builds the arm64 Release executable in a temporary
+directory, signs it, verifies that it contains the embedded Metal library and no
+project-local dynamic dependencies, and runs an isolated Metal smoke benchmark.
+The resulting ZIP contains exactly one root entry named `ergometal`; its SHA-256
+file is written beside the ZIP rather than into it.
+
+For a trusted-tester build with an ad-hoc signature:
+
+```sh
+Scripts/package-release.zsh ad-hoc 2026-08-23
+```
+
+For public distribution, first install a `Developer ID Application` certificate
+and its private key in the login keychain. An `Apple Development` certificate is
+not sufficient. Store notarization credentials under the fixed keychain profile
+name `ergometal-notary`; omitting the password option keeps the app-specific
+password out of shell history and prompts for it securely:
+
+```sh
+security find-identity -v -p codesigning
+xcrun notarytool store-credentials ergometal-notary \
+  --apple-id APPLE_ID --team-id TEAM_ID
+Scripts/package-release.zsh notarized 2026-08-23
+```
+
+If more than one Developer ID identity is installed, select it with
+`ERGOMETAL_DEVELOPER_ID_APPLICATION`. A different existing notary profile can be
+selected with `ERGOMETAL_NOTARY_PROFILE`. The notarized mode enables Hardened
+Runtime and a secure timestamp, waits for Apple's final `Accepted` status, and
+requires Gatekeeper to recognize the online ticket before publishing the local
+artifact. Because a raw command-line executable is not an app bundle, `spctl`
+then identifies it as valid code rather than returning an app assessment.
+Bare executables and ZIP archives cannot carry a stapled ticket, so Gatekeeper
+retrieves this notarization ticket from Apple when the downloaded binary is
+first assessed.
+
+The generated archives are named
+`Distribution/ergometal-macos-arm64-VERSION-ad-hoc.zip` and
+`Distribution/ergometal-macos-arm64-VERSION-notarized.zip`. After unpacking,
+run the only contained file directly:
+
+```sh
+./ergometal devices
+```
+
+Binary-only redistribution must also provide access to the matching GPLv3
+source and license. The canonical source repository is
+<https://github.com/giffeler/ergometal>; publish or name the exact matching tag
+or commit alongside every distributed archive.
+
+## Optional donation
+
+Donation mining is disabled by default. Nothing is donated unless `mine` is
+started with an explicit positive integer `--donation PERCENT` value. `1`
+means one percent of wall-clock time, not one percent of hashes or shares;
+`--donation 0` is equivalent to omitting the option. Accepted values are
+integers from `0` through `100`.
+
+```sh
+ergometal mine --pool stratum+tls://POOL:PORT --wallet ERGO_ADDRESS \
+  --worker m4 --donation 1
+```
+
+Each 100-minute cycle starts with `100 - PERCENT` minutes for the user's pool
+and ends with `PERCENT` minutes for the donation pool. A one-percent setting
+therefore mines for the user for 99 minutes, then targets the donation pool for
+one minute. Runs shorter than the initial user window may end without entering
+a donation window. Scheduling never uses hashrate, nonce, difficulty, or share
+counts, and missed donation time is never recovered later.
+
+Donation is available only on mainnet; on testnet the option must be omitted,
+including `--donation 0`. It uses the certificate-validated pool
+`stratum+tls://erg.2miners.com:18888`, public payout address
+`9emWVfBsLPbV6dvpugpjsjwKwETT7yBBfCyMefXbZDory7kDUVg`, worker `ergometal`, and
+password `x`. The address is intentionally public; no private key or seed is
+needed or accepted. If the donation connection does not provide an authorized
+job within 15 seconds, disconnects, or reports a protocol error, the current
+donation window is abandoned and mining returns to the user's pool. A new
+donation attempt occurs only in the next scheduled donation window.
+
+Pool connection setup and already queued Metal work can consume a small part
+of a window. The configured percentage therefore describes scheduled
+wall-clock allocation; `donation_search_seconds` and `donation_nonces` expose
+the actual search work separately. Pool URLs, wallet addresses, and passwords
+are not written to Prometheus or JSONL event fields.
 
 For a replayable Metal GPU trace, enable capture and select either the dataset build or the first search batch:
 
@@ -101,6 +195,13 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 - `/healthz` — process and solver health
 
 The terminal shows current, active-average, and effective wall-clock hashrate together with search duty, prebuild progress, current/session-peak temperature, expected shares, and accepted-share luck. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file.
+
+When donation is enabled, the terminal and `/v1/status` expose the configured
+percentage and current recipient. Prometheus and JSONL additionally report the
+scheduled donation-window time, actual donation search time, donation nonces,
+attributed shares, pool switches, and failures. JSONL records
+`donation_window_started`, `donation_window_ended`, and
+`donation_window_failed` without including the donation wallet or pool URL.
 
 Long-term fields include `search_duty_cycle`, total dataset activations and activation time, cold-build and prefetch completed/cancelled/failed counts, prefetch wait time, GPU build time, and explicitly discarded/wasted prefetch work. Command-level cumulative counters separately record build/search command counts, wall time, GPU time, and their non-GPU difference. For the two-deep build pipeline, wall time is the union of overlapping submission-to-completion intervals, so it remains comparable with summed GPU time and does not double-count queued commands. The summed search command fields deliberately retain the latency of every command and therefore measure concurrency at pipeline depths above one. The JSONL fields `gpu_search_command_wall_busy_seconds_total`, `gpu_search_command_gpu_busy_seconds_total`, and `gpu_search_command_non_gpu_busy_seconds_total` instead use unions of overlapping command intervals, making them wall-comparable quantities; matching `ergometal_*` counters are exposed through Prometheus. The campaign's `search_gpu_busy_ratio` is therefore bounded by one, while `search_gpu_concurrency` reports the average in-flight depth. The `search_pipeline_max_threads` and `build_pipeline_max_threads` fields expose Metal's pipeline-specific threadgroup limits as occupancy and register-pressure proxies. These fields make queueing, driver overhead, and pipeline occupancy limits visible without emitting one JSONL record per command buffer. Numeric thermal telemetry is stored as `soc_temperature_average_celsius`, `soc_temperature_maximum_celsius`, `soc_temperature_session_peak_celsius`, `soc_temperature_sensor_count`, and `temperature_source`; unsupported systems report `temperature_source=unavailable` without failing the run. Every received job records its full 256-bit pool target as `job_target_hex`. The cumulative `shares_expected` counter adds `nonces × target / 2^256` for each completed search batch; `share_luck_ratio` is accepted shares divided by that expectation. The initial `session_started` record captures the performance parameters, architecture, OS, and executable SHA-256. When launched from a Git worktree it also records the launch-time worktree revision and dirty state; the executable hash remains the authoritative binary identity. A history write failure is reported but never stops mining.
 

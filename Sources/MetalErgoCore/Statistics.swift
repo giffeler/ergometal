@@ -160,6 +160,22 @@ public struct ShareStatistics: Codable, Sendable {
     public var accepted = 0
     public var rejected = 0
     public var stale = 0
+
+    public init(
+        expected: Double = 0,
+        found: Int = 0,
+        submitted: Int = 0,
+        accepted: Int = 0,
+        rejected: Int = 0,
+        stale: Int = 0
+    ) {
+        self.expected = expected
+        self.found = found
+        self.submitted = submitted
+        self.accepted = accepted
+        self.rejected = rejected
+        self.stale = stale
+    }
 }
 
 public struct MinerSnapshot: Codable, Sendable {
@@ -206,6 +222,7 @@ public struct MinerSnapshot: Codable, Sendable {
     public var socTemperatureSensorCount: Int
     public var temperatureSource: String
     public var shares: ShareStatistics
+    public var donation: DonationStatistics
     public var lastError: String?
 }
 
@@ -292,7 +309,21 @@ public extension MinerSnapshot {
             "shares_submitted": String(shares.submitted),
             "shares_accepted": String(shares.accepted),
             "shares_rejected": String(shares.rejected),
-            "shares_stale": String(shares.stale)
+            "shares_stale": String(shares.stale),
+            "donation_percent": String(donation.percent),
+            "donation_scheduled_recipient": donation.scheduledRecipient.rawValue,
+            "donation_active_recipient": donation.activeRecipient.rawValue,
+            "donation_window_seconds": String(donation.windowSeconds),
+            "donation_search_seconds": String(donation.searchSeconds),
+            "donation_nonces": String(donation.nonces),
+            "donation_shares_expected": String(donation.shares.expected),
+            "donation_shares_found": String(donation.shares.found),
+            "donation_shares_submitted": String(donation.shares.submitted),
+            "donation_shares_accepted": String(donation.shares.accepted),
+            "donation_shares_rejected": String(donation.shares.rejected),
+            "donation_shares_stale": String(donation.shares.stale),
+            "donation_switches": String(donation.switches),
+            "donation_failures": String(donation.failures)
         ]
         fields.merge(runtimeFields) { _, new in new }
         if let id = job.id { fields["job_id"] = id }
@@ -329,6 +360,7 @@ public final class StatisticsStore: Sendable {
     private struct State {
         let temperatureReader: SoCTemperatureReader
         var value: MinerSnapshot
+        var donationWindowStartedAt: Date?
     }
 
     private let state: Mutex<State>
@@ -356,8 +388,11 @@ public final class StatisticsStore: Sendable {
             socTemperatureSessionPeakCelsius: temperature?.maximumCelsius,
             socTemperatureSensorCount: temperature?.sensorCount ?? 0,
             temperatureSource: temperature == nil ? "unavailable" : "iohid_soc_die",
-            shares: ShareStatistics(), lastError: nil)
-        state = Mutex(State(temperatureReader: temperatureReader, value: value))
+            shares: ShareStatistics(), donation: DonationStatistics(), lastError: nil)
+        state = Mutex(State(
+            temperatureReader: temperatureReader,
+            value: value,
+            donationWindowStartedAt: nil))
     }
 
     public func update(_ body: @Sendable (inout MinerSnapshot) -> Void) {
@@ -406,15 +441,23 @@ public final class StatisticsStore: Sendable {
         nonces: Int,
         gpuSeconds: Double,
         wallSeconds: Double,
-        shareTarget: UInt256? = nil
+        shareTarget: UInt256? = nil,
+        recipient: MiningRecipient = .user
     ) {
         state.withLock { state in
             state.value.nonces += UInt64(nonces)
             state.value.gpuSeconds += gpuSeconds
             state.value.searchSeconds += wallSeconds
+            if recipient == .donation {
+                state.value.donation.nonces += UInt64(nonces)
+                state.value.donation.searchSeconds += wallSeconds
+            }
             if let shareTarget {
-                state.value.shares.expected += Double(nonces) * Self.shareProbability(
-                    for: shareTarget)
+                let expected = Double(nonces) * Self.shareProbability(for: shareTarget)
+                state.value.shares.expected += expected
+                if recipient == .donation {
+                    state.value.donation.shares.expected += expected
+                }
             }
             let now = Date()
             state.value.hashrate = wallSeconds > 0 ? Double(nonces) / wallSeconds : 0
@@ -427,6 +470,93 @@ public final class StatisticsStore: Sendable {
                 : 0
             state.value.sampledAt = now
             state.value.thermalState = Self.thermalName
+        }
+    }
+
+    public func configureDonation(percent: Int, initialRecipient: MiningRecipient) {
+        state.withLock { state in
+            let now = Date()
+            state.value.donation = DonationStatistics(
+                percent: percent,
+                scheduledRecipient: initialRecipient,
+                activeRecipient: initialRecipient)
+            state.donationWindowStartedAt = percent > 0 && initialRecipient == .donation
+                ? now
+                : nil
+            state.value.sampledAt = now
+        }
+    }
+
+    public func setDonationScheduledRecipient(_ recipient: MiningRecipient) {
+        state.withLock { state in
+            let now = Date()
+            Self.finishDonationWindow(in: &state, at: now)
+            state.value.donation.scheduledRecipient = recipient
+            state.donationWindowStartedAt = state.value.donation.percent > 0
+                    && recipient == .donation
+                ? now
+                : nil
+            state.value.sampledAt = now
+        }
+    }
+
+    public func setActiveMiningRecipient(_ recipient: MiningRecipient, switched: Bool) {
+        state.withLock { state in
+            state.value.donation.activeRecipient = recipient
+            if switched { state.value.donation.switches += 1 }
+            state.value.sampledAt = Date()
+        }
+    }
+
+    public func recordDonationFailure() {
+        state.withLock { state in
+            state.value.donation.failures += 1
+            state.value.sampledAt = Date()
+        }
+    }
+
+    public func recordShareFound(recipient: MiningRecipient) {
+        state.withLock { state in
+            state.value.shares.found += 1
+            if recipient == .donation { state.value.donation.shares.found += 1 }
+            state.value.sampledAt = Date()
+        }
+    }
+
+    public func recordShareSubmitted(recipient: MiningRecipient) {
+        state.withLock { state in
+            state.value.shares.submitted += 1
+            if recipient == .donation { state.value.donation.shares.submitted += 1 }
+            state.value.sampledAt = Date()
+        }
+    }
+
+    public func recordShareStale(recipient: MiningRecipient) {
+        state.withLock { state in
+            state.value.shares.stale += 1
+            if recipient == .donation { state.value.donation.shares.stale += 1 }
+            state.value.sampledAt = Date()
+        }
+    }
+
+    public func recordShareResult(recipient: MiningRecipient, accepted: Bool) {
+        state.withLock { state in
+            if accepted {
+                state.value.shares.accepted += 1
+                if recipient == .donation { state.value.donation.shares.accepted += 1 }
+            } else {
+                state.value.shares.rejected += 1
+                if recipient == .donation { state.value.donation.shares.rejected += 1 }
+            }
+            state.value.sampledAt = Date()
+        }
+    }
+
+    public func finishDonationTiming() {
+        state.withLock { state in
+            let now = Date()
+            Self.finishDonationWindow(in: &state, at: now)
+            state.value.sampledAt = now
         }
     }
 
@@ -452,12 +582,12 @@ public final class StatisticsStore: Sendable {
             state.value.temperatureSource = temperature == nil ? "unavailable" : "iohid_soc_die"
             state.value.sampledAt = now
             state.value.thermalState = Self.thermalName
-            return state.value
+            return Self.snapshotValue(from: state, at: now)
         }
     }
 
     public func snapshot() -> MinerSnapshot {
-        state.withLock { $0.value }
+        state.withLock { Self.snapshotValue(from: $0, at: Date()) }
     }
 
     public func prometheus() -> String {
@@ -574,6 +704,34 @@ public final class StatisticsStore: Sendable {
         ergometal_reconnects_total{\(labels)} \(s.reconnects)
         # TYPE ergometal_protocol_errors_total counter
         ergometal_protocol_errors_total{\(labels)} \(s.protocolErrors)
+        # HELP ergometal_donation_percent Configured wall-clock donation percentage.
+        # TYPE ergometal_donation_percent gauge
+        ergometal_donation_percent{\(labels)} \(s.donation.percent)
+        # HELP ergometal_donation_active Whether the active pool recipient is the donation address.
+        # TYPE ergometal_donation_active gauge
+        ergometal_donation_active{\(labels)} \(s.donation.activeRecipient == .donation ? 1 : 0)
+        # TYPE ergometal_donation_window_seconds_total counter
+        ergometal_donation_window_seconds_total{\(labels)} \(s.donation.windowSeconds)
+        # TYPE ergometal_donation_search_seconds_total counter
+        ergometal_donation_search_seconds_total{\(labels)} \(s.donation.searchSeconds)
+        # TYPE ergometal_donation_nonces_total counter
+        ergometal_donation_nonces_total{\(labels)} \(s.donation.nonces)
+        # TYPE ergometal_donation_shares_expected_total counter
+        ergometal_donation_shares_expected_total{\(labels)} \(s.donation.shares.expected)
+        # TYPE ergometal_donation_shares_found_total counter
+        ergometal_donation_shares_found_total{\(labels)} \(s.donation.shares.found)
+        # TYPE ergometal_donation_shares_submitted_total counter
+        ergometal_donation_shares_submitted_total{\(labels)} \(s.donation.shares.submitted)
+        # TYPE ergometal_donation_shares_accepted_total counter
+        ergometal_donation_shares_accepted_total{\(labels)} \(s.donation.shares.accepted)
+        # TYPE ergometal_donation_shares_rejected_total counter
+        ergometal_donation_shares_rejected_total{\(labels)} \(s.donation.shares.rejected)
+        # TYPE ergometal_donation_shares_stale_total counter
+        ergometal_donation_shares_stale_total{\(labels)} \(s.donation.shares.stale)
+        # TYPE ergometal_donation_switches_total counter
+        ergometal_donation_switches_total{\(labels)} \(s.donation.switches)
+        # TYPE ergometal_donation_failures_total counter
+        ergometal_donation_failures_total{\(labels)} \(s.donation.failures)
         """
         if let temperature = s.socTemperatureAverageCelsius {
             output += """
@@ -617,6 +775,20 @@ public final class StatisticsStore: Sendable {
         return target.limbs.reversed().reduce(0.0) {
             ($0 + Double($1)) / radix
         }
+    }
+
+    private static func finishDonationWindow(in state: inout State, at now: Date) {
+        guard let startedAt = state.donationWindowStartedAt else { return }
+        state.value.donation.windowSeconds += max(0, now.timeIntervalSince(startedAt))
+        state.donationWindowStartedAt = nil
+    }
+
+    private static func snapshotValue(from state: State, at now: Date) -> MinerSnapshot {
+        var value = state.value
+        if let startedAt = state.donationWindowStartedAt {
+            value.donation.windowSeconds += max(0, now.timeIntervalSince(startedAt))
+        }
+        return value
     }
 
     private static var thermalName: String {

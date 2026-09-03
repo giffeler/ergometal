@@ -29,7 +29,7 @@ print -r -- "${RELEASE_VERSION}" \
     | /usr/bin/grep -Eq '^[A-Za-z0-9][A-Za-z0-9._-]*$' \
     || fail "version must use only letters, digits, dots, underscores, and hyphens"
 
-for release_tool in xcodebuild codesign otool lipo zip unzip shasum; do
+for release_tool in xcodebuild codesign otool lipo strip zip unzip shasum; do
     command -v "${release_tool}" >/dev/null \
         || fail "required tool '${release_tool}' was not found"
 done
@@ -95,6 +95,12 @@ readonly BUILT_BINARY="${DERIVED_DATA}/Build/Products/Release/ergometal"
 [[ -f "${BUILT_BINARY}" ]] || fail "Release build did not produce ergometal"
 /bin/cp "${BUILT_BINARY}" "${STAGED_BINARY}"
 /bin/chmod 755 "${STAGED_BINARY}"
+/usr/bin/strip -S -x "${STAGED_BINARY}"
+
+if /usr/bin/otool -l "${STAGED_BINARY}" \
+    | /usr/bin/awk '$1 == "segname" && $2 == "__DWARF" { found = 1 } END { exit !found }'; then
+    fail "release executable still contains a __DWARF segment after stripping"
+fi
 
 if [[ "${RELEASE_MODE}" == ad-hoc ]]; then
     print -- "Applying an ad-hoc signature"
@@ -110,6 +116,12 @@ else
 fi
 
 /usr/bin/codesign --verify --strict --verbose=2 "${STAGED_BINARY}"
+
+if [[ "${RELEASE_MODE}" == notarized ]]; then
+    /usr/bin/codesign -d --verbose=4 "${STAGED_BINARY}" 2>&1 \
+        | /usr/bin/grep -E '^CodeDirectory .*flags=.*\(runtime\)' >/dev/null \
+        || fail "Developer ID signature does not enable Hardened Runtime"
+fi
 
 [[ "$(/usr/bin/lipo -archs "${STAGED_BINARY}")" == arm64 ]] \
     || fail "release executable is not arm64-only"
@@ -143,7 +155,10 @@ print -- "Running an isolated Metal smoke benchmark"
     --height 614399 \
     --table-size 1024 \
     --batch-nonces 1024 \
+    --autotune off \
     --build-chunk-elements 1024 \
+    --search-pipeline-depth 2 \
+    --build-pipeline-depth 2 \
     --prebuild off \
     --json >/dev/null
 

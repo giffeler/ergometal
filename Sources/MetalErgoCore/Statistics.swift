@@ -187,6 +187,8 @@ public struct MinerSnapshot: Codable, Sendable {
     public var state: MinerState
     public var device: MetalDeviceInfo?
     public var profile: String
+    public var autotuneMode: AutotuneMode?
+    public var tuning: ResolvedTuning?
     public var poolHost: String?
     public var poolConnected: Bool
     public var job: JobStatistics
@@ -352,6 +354,30 @@ public extension MinerSnapshot {
         if let value = device?.buildPipelineMaxThreads {
             fields["build_pipeline_max_threads"] = String(value)
         }
+        if let device {
+            fields["gpu_architecture"] = device.architectureName
+            fields["gpu_generation"] = device.generation.rawValue
+            fields["gpu_family"] = device.highestKnownAppleFamily.map { "apple\($0)" } ?? "unknown"
+        }
+        if let autotuneMode { fields["autotune_mode"] = autotuneMode.rawValue }
+        if let tuning {
+            let configuration = tuning.configuration
+            fields["threadgroup_size"] = String(configuration.searchThreadgroupSize)
+            fields["dataset_threadgroup_size"] = String(configuration.datasetThreadgroupSize)
+            fields["batch_nonces"] = String(configuration.batchNonces)
+            fields["prebuild_batch_nonces"] = String(configuration.prebuildBatchNonces)
+            fields["build_chunk_elements"] = String(
+                configuration.synchronousBuildChunkElements)
+            fields["prefetch_chunk_elements"] = String(
+                configuration.prefetchBuildChunkElements)
+            fields["search_pipeline_depth"] = String(configuration.searchPipelineDepth)
+            fields["build_pipeline_depth"] = String(configuration.buildPipelineDepth)
+            fields["tuning_provenance"] = tuning.summaryProvenance.rawValue
+            if let cacheKey = tuning.cacheKey { fields["autotune_cache_key"] = cacheKey }
+            for (field, source) in tuning.provenance {
+                fields["tuning_source_\(field)"] = source.rawValue
+            }
+        }
         return fields
     }
 }
@@ -365,12 +391,19 @@ public final class StatisticsStore: Sendable {
 
     private let state: Mutex<State>
 
-    public init(mode: MinerMode = .idle, profile: String = "efficiency", device: MetalDeviceInfo? = nil) {
+    public init(
+        mode: MinerMode = .idle,
+        profile: String = "efficiency",
+        device: MetalDeviceInfo? = nil,
+        autotuneMode: AutotuneMode? = nil,
+        tuning: ResolvedTuning? = nil
+    ) {
         let now = Date()
         let temperatureReader = SoCTemperatureReader()
         let temperature = temperatureReader.sample()
         let value = MinerSnapshot(schemaVersion: 1, sessionID: UUID(), startedAt: now, sampledAt: now,
-            mode: mode, state: .starting, device: device, profile: profile, poolHost: nil,
+            mode: mode, state: .starting, device: device, profile: profile,
+            autotuneMode: autotuneMode, tuning: tuning, poolHost: nil,
             poolConnected: false, job: JobStatistics(), nonces: 0, hashrate: 0,
             averageHashrate: 0, effectiveHashrate: 0, datasetBytes: 0,
             datasetBuildSeconds: 0, datasetBuildGPUSeconds: 0,

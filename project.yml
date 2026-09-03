@@ -1,4 +1,8 @@
 name: MetalErgoMiner
+configs:
+  Debug: debug
+  Profile: release
+  Release: release
 options:
   bundleIdPrefix: dev.ergometal
   deploymentTarget:
@@ -11,6 +15,10 @@ settings:
     SWIFT_STRICT_CONCURRENCY: complete
     MACOSX_DEPLOYMENT_TARGET: "26.5"
     CODE_SIGNING_ALLOWED: NO
+  configs:
+    Profile:
+      DEBUG_INFORMATION_FORMAT: dwarf
+      MTL_ENABLE_DEBUG_INFO: INCLUDE_SOURCE
 targets:
   MetalErgoCore:
     type: library.static
@@ -54,6 +62,7 @@ targets:
       - path: Tests/ErgoMetalCLITests
       - path: Sources/ergometal/Arguments.swift
       - path: Sources/ergometal/MiningCoordinator.swift
+      - path: Sources/ergometal/Tuning.swift
     dependencies:
       - target: MetalErgoCore
     settings:

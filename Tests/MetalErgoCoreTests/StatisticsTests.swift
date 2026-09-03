@@ -2,6 +2,40 @@ import XCTest
 @testable import MetalErgoCore
 
 final class StatisticsTests: XCTestCase {
+    func testStatusAndEventFieldsExposeResolvedTuning() {
+        let configuration = MetalExecutionConfiguration.safeFallback(profile: .peak)
+        let tuning = MetalTuningResolver.resolve(
+            profile: .peak,
+            cached: configuration,
+            cacheKey: "cache-key")
+        let device = MetalDeviceInfo(
+            name: "Apple M6",
+            registryID: 1,
+            recommendedWorkingSetBytes: 2,
+            maxBufferBytes: 3,
+            unifiedMemory: true,
+            searchPipelineMaxThreads: 128,
+            buildPipelineMaxThreads: 256,
+            architectureName: "applegpu_future",
+            highestKnownAppleFamily: nil,
+            searchThreadExecutionWidth: 32,
+            buildThreadExecutionWidth: 32)
+        let snapshot = StatisticsStore(
+            mode: .benchmark,
+            profile: "peak",
+            device: device,
+            autotuneMode: .auto,
+            tuning: tuning).snapshot()
+        XCTAssertEqual(snapshot.autotuneMode, .auto)
+        XCTAssertEqual(snapshot.tuning?.configuration, configuration)
+        XCTAssertEqual(snapshot.device?.generation, .m6)
+        XCTAssertEqual(snapshot.eventFields["gpu_architecture"], "applegpu_future")
+        XCTAssertEqual(snapshot.eventFields["gpu_family"], "unknown")
+        XCTAssertEqual(snapshot.eventFields["autotune_cache_key"], "cache-key")
+        XCTAssertEqual(snapshot.eventFields["search_pipeline_depth"], "2")
+        XCTAssertEqual(snapshot.eventFields["tuning_source_batch_nonces"], "cache")
+    }
+
     func testPrometheusIsStableAndContainsNoPoolCredentials() {
         let stats = StatisticsStore(mode: .mining)
         stats.update { snapshot in

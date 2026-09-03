@@ -5,9 +5,6 @@ import MetalErgoCore
 
 @main
 enum ErgoMetalCLI {
-    private static let maximumBatchNonces = 16_777_216
-    private static let defaultPrebuildBatchNonces = 65_536
-    private static let searchPipelineDepth = 2
     private static let searchStatisticsBatchCount = 16
     private static let donationPool = "stratum+tls://erg.2miners.com:18888"
     private static let donationWallet = "9emWVfBsLPbV6dvpugpjsjwKwETT7yBBfCyMefXbZDory7kDUVg"
@@ -86,6 +83,7 @@ enum ErgoMetalCLI {
             switch args.command {
             case "devices": try devices(args)
             case "temperature": try temperature(args)
+            case "tune": try tune(args)
             case "benchmark": try benchmark(args)
             case "replay": try replay(args)
             case "mine": try mine(args)
@@ -108,7 +106,8 @@ enum ErgoMetalCLI {
             print("No Metal devices found")
         } else {
             for d in devices {
-                print("\(d.name)  unified=\(d.unifiedMemory)  working-set=\(formatBytes(d.recommendedWorkingSetBytes))  max-buffer=\(formatBytes(d.maxBufferBytes))")
+                let family = d.highestKnownAppleFamily.map { "apple\($0)" } ?? "unknown"
+                print("\(d.name)  architecture=\(d.architectureName)  generation=\(d.generation.rawValue)  family=\(family)  unified=\(d.unifiedMemory)  working-set=\(formatBytes(d.recommendedWorkingSetBytes))  max-buffer=\(formatBytes(d.maxBufferBytes))")
             }
         }
     }
@@ -130,12 +129,74 @@ enum ErgoMetalCLI {
         }
     }
 
+    private struct TuneReport: Codable {
+        let profile: PerformanceProfile
+        let fingerprint: GPUArchitectureFingerprint
+        let resolved: ResolvedTuning
+        let cachePath: String
+        let cacheWritten: Bool
+        let measurements: [String: Double]
+    }
+
+    private static func tune(_ args: Arguments) throws {
+        try args.validate(
+            valueOptions: CLITuning.valueOptions.union([
+                "profile", "dataset-kernel", "dataset-scheduling", "search-kernel"
+            ]),
+            flagOptions: ["json"])
+        let rawProfile = args.string("profile", default: "all")!
+        let profiles: [PerformanceProfile]
+        if rawProfile == "all" {
+            profiles = PerformanceProfile.allCases
+        } else if let profile = PerformanceProfile(rawValue: rawProfile) {
+            profiles = [profile]
+        } else {
+            throw CLIError.invalidArgument("--profile must be efficiency|peak|all")
+        }
+        let datasetKernel = try datasetKernel(from: args)
+        let datasetScheduling = try datasetScheduling(from: args)
+        let searchKernel = try searchKernel(from: args)
+        var reports: [TuneReport] = []
+        for profile in profiles {
+            let result = try CLITuning.resolve(
+                args: args, profile: profile,
+                datasetKernel: datasetKernel,
+                datasetScheduling: datasetScheduling,
+                searchKernel: searchKernel,
+                forceRefresh: true)
+            reports.append(TuneReport(
+                profile: profile,
+                fingerprint: result.fingerprint,
+                resolved: result.resolved,
+                cachePath: result.cacheURL.path,
+                cacheWritten: result.cacheWritten,
+                measurements: result.measurements))
+        }
+        if args.has("json") {
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+            FileHandle.standardOutput.write(try encoder.encode(reports))
+            print()
+        } else {
+            for report in reports {
+                let value = report.resolved.configuration
+                print("\(report.profile.rawValue): \(report.fingerprint.deviceName) \(report.fingerprint.architectureName) \(report.fingerprint.familyName)")
+                print("  search: tg=\(value.searchThreadgroupSize) batch=\(value.batchNonces) depth=\(value.searchPipelineDepth)")
+                print("  dataset: tg=\(value.datasetThreadgroupSize) cold-chunk=\(value.synchronousBuildChunkElements) prefetch-chunk=\(value.prefetchBuildChunkElements) prebuild-batch=\(value.prebuildBatchNonces) depth=\(value.buildPipelineDepth)")
+                print("  measurements: \(report.measurements.count)")
+                print("  cache: \(report.cachePath) written=\(report.cacheWritten)")
+            }
+        }
+    }
+
     private static func benchmark(_ args: Arguments) throws {
         try args.validate(
             valueOptions: ["duration", "height", "profile", "table-size", "batch-nonces",
                            "height-interval",
                            "prebuild", "prebuild-batch-nonces", "threadgroup-size",
                            "build-chunk-elements", "prefetch-chunk-elements",
+                           "search-pipeline-depth", "build-pipeline-depth",
+                           "autotune", "autotune-budget", "autotune-cache",
                            "dataset-threadgroup-size",
                            "dataset-kernel", "dataset-scheduling", "search-kernel",
                            "api-bind", "stats-file",
@@ -146,8 +207,8 @@ enum ErgoMetalCLI {
         let heightInterval = try args.int(
             "height-interval", default: 0, in: 0...Int.max)
         let tableOverride = try args.optionalInt("table-size", in: 1...Int(UInt32.max))
-        let profile = args.string("profile", default: "efficiency")!
-        guard ["efficiency", "peak"].contains(profile) else { throw CLIError.invalidArgument(profile) }
+        let profile = try CLITuning.profile(from: args)
+        let profileName = profile.rawValue
         let prebuildValue = args.string("prebuild", default: "off")!
         guard prebuildValue == "on" || prebuildValue == "off" else {
             throw CLIError.invalidArgument("--prebuild \(prebuildValue)")
@@ -165,25 +226,21 @@ enum ErgoMetalCLI {
                     "benchmark height range including prefetch must fit UInt32")
             }
         }
-        let batchSize = try args.int(
-            "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
-            in: 1...maximumBatchNonces)
-        let prebuildBatchSize = try args.int(
-            "prebuild-batch-nonces", default: defaultPrebuildBatchNonces,
-            in: 1...maximumBatchNonces)
-        let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
-        let buildChunkElements = try args.int(
-            "build-chunk-elements",
-            default: MetalAutolykosSolver.defaultSynchronousBuildChunkElements,
-            in: 1...maximumBatchNonces)
-        let prefetchChunkElements = try args.int(
-            "prefetch-chunk-elements",
-            default: MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
-            in: 1...maximumBatchNonces)
         let datasetKernel = try datasetKernel(from: args)
         let datasetScheduling = try datasetScheduling(from: args)
-        let datasetThreadgroupSize = try datasetThreadgroupSize(from: args)
         let searchKernel = try searchKernel(from: args)
+        let tuning = try CLITuning.resolve(
+            args: args, profile: profile,
+            datasetKernel: datasetKernel,
+            datasetScheduling: datasetScheduling,
+            searchKernel: searchKernel)
+        let execution = tuning.resolved.configuration
+        let batchSize = execution.batchNonces
+        let prebuildBatchSize = execution.prebuildBatchNonces
+        let group = execution.searchThreadgroupSize
+        let buildChunkElements = execution.synchronousBuildChunkElements
+        let prefetchChunkElements = execution.prefetchBuildChunkElements
+        let datasetThreadgroupSize = execution.datasetThreadgroupSize
         let tracePath = args.string("gpu-trace")
         let tracePhaseValue = args.string("gpu-trace-phase", default: "search")!
         guard let tracePhase = GPUTracePhase(rawValue: tracePhaseValue) else {
@@ -195,12 +252,17 @@ enum ErgoMetalCLI {
         let solver = try MetalAutolykosSolver(
             synchronousBuildChunkElements: buildChunkElements,
             prefetchBuildChunkElements: prefetchChunkElements,
+            searchThreadgroupSize: group,
             datasetThreadgroupSize: datasetThreadgroupSize,
+            searchPipelineDepth: execution.searchPipelineDepth,
+            buildPipelineDepth: execution.buildPipelineDepth,
             datasetKernel: datasetKernel,
             datasetScheduling: datasetScheduling,
             searchKernel: searchKernel)
         defer { solver.stopGPUCapture() }
-        let stats = StatisticsStore(mode: .benchmark, profile: profile, device: solver.info)
+        let stats = StatisticsStore(
+            mode: .benchmark, profile: profileName, device: solver.info,
+            autotuneMode: tuning.mode, tuning: tuning.resolved)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
         let server = StatisticsHTTPServer(store: stats)
         try server.start(bind: args.string("api-bind", default: "127.0.0.1:4078")!)
@@ -209,7 +271,7 @@ enum ErgoMetalCLI {
             sessionID: stats.snapshot().sessionID,
             type: "session_started",
             fields: runMetadataFields(
-                profile: profile,
+                profile: profileName,
                 prebuild: prebuildValue,
                 batchSize: batchSize,
                 prebuildBatchSize: prebuildBatchSize,
@@ -219,6 +281,7 @@ enum ErgoMetalCLI {
                 datasetThreadgroupSize: datasetThreadgroupSize,
                 datasetKernel: datasetKernel,
                 datasetScheduling: datasetScheduling,
+                tuning: tuning,
                 extra: [
                     "mode": "benchmark",
                     "duration_seconds": String(duration),
@@ -297,7 +360,7 @@ enum ErgoMetalCLI {
         // A trace remains intentionally limited to one command buffer. Normal
         // operation below then keeps two independent search submissions queued.
         if searchTracePending, let tracePath, Date() < end {
-            thermalPauseIfNeeded(profile: profile)
+            thermalPauseIfNeeded(profile: profileName)
             let activeBatchSize = solver.prefetchStatus()?.finished == false
                 ? min(batchSize, prebuildBatchSize)
                 : batchSize
@@ -314,8 +377,8 @@ enum ErgoMetalCLI {
         var pending: [SearchSubmission] = []
         while Date() < end || !pending.isEmpty {
             let searchDeadline = min(end, nextHeightAt)
-            while pending.count < searchPipelineDepth, Date() < searchDeadline {
-                thermalPauseIfNeeded(profile: profile)
+            while pending.count < execution.searchPipelineDepth, Date() < searchDeadline {
+                thermalPauseIfNeeded(profile: profileName)
                 let activeBatchSize = solver.prefetchStatus()?.finished == false
                     ? min(batchSize, prebuildBatchSize)
                     : batchSize
@@ -357,8 +420,8 @@ enum ErgoMetalCLI {
             let batch = try pending.removeFirst().wait()
 
             // Refill before CPU verification so the GPU and CPU stages overlap.
-            while pending.count < searchPipelineDepth, Date() < searchDeadline {
-                thermalPauseIfNeeded(profile: profile)
+            while pending.count < execution.searchPipelineDepth, Date() < searchDeadline {
+                thermalPauseIfNeeded(profile: profileName)
                 let activeBatchSize = solver.prefetchStatus()?.finished == false
                     ? min(batchSize, prebuildBatchSize)
                     : batchSize
@@ -416,6 +479,8 @@ enum ErgoMetalCLI {
                                          "prebuild", "prebuild-batch-nonces",
                                          "batch-nonces", "threadgroup-size",
                                          "build-chunk-elements", "prefetch-chunk-elements",
+                                         "search-pipeline-depth", "build-pipeline-depth",
+                                         "autotune", "autotune-budget", "autotune-cache",
                                          "dataset-threadgroup-size",
                                          "dataset-kernel", "dataset-scheduling",
                                          "api-bind", "stats-file", "stats-interval",
@@ -431,39 +496,40 @@ enum ErgoMetalCLI {
         let donationPercent = try args.donationPercent(network: network)
         let donationSchedule = try DonationSchedule(percent: donationPercent)
         guard ErgoAddress.isPlausible(wallet, network: network) else { throw CLIError.invalidAddress }
-        let profile = args.string("profile", default: "efficiency")!
-        guard ["efficiency", "peak"].contains(profile) else { throw CLIError.invalidArgument("--profile \(profile)") }
+        let profile = try CLITuning.profile(from: args)
+        let profileName = profile.rawValue
         let prebuildValue = args.string("prebuild", default: "auto")!
         guard let requestedPrebuild = PrebuildMode(rawValue: prebuildValue) else {
             throw CLIError.invalidArgument("--prebuild \(prebuildValue)")
         }
         var prebuildEnabled = requestedPrebuild != .off
-        let batchSize = try args.int(
-            "batch-nonces", default: profile == "peak" ? 1_048_576 : 262_144,
-            in: 1...maximumBatchNonces)
-        let prebuildBatchSize = try args.int(
-            "prebuild-batch-nonces", default: defaultPrebuildBatchNonces,
-            in: 1...maximumBatchNonces)
-        let group = try args.int("threadgroup-size", default: 128, in: 1...1_024)
-        let buildChunkElements = try args.int(
-            "build-chunk-elements",
-            default: MetalAutolykosSolver.defaultSynchronousBuildChunkElements,
-            in: 1...maximumBatchNonces)
-        let prefetchChunkElements = try args.int(
-            "prefetch-chunk-elements",
-            default: MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
-            in: 1...maximumBatchNonces)
         let datasetKernel = try datasetKernel(from: args)
         let datasetScheduling = try datasetScheduling(from: args)
-        let datasetThreadgroupSize = try datasetThreadgroupSize(from: args)
+        let tuning = try CLITuning.resolve(
+            args: args, profile: profile,
+            datasetKernel: datasetKernel,
+            datasetScheduling: datasetScheduling,
+            searchKernel: .search)
+        let execution = tuning.resolved.configuration
+        let batchSize = execution.batchNonces
+        let prebuildBatchSize = execution.prebuildBatchNonces
+        let group = execution.searchThreadgroupSize
+        let buildChunkElements = execution.synchronousBuildChunkElements
+        let prefetchChunkElements = execution.prefetchBuildChunkElements
+        let datasetThreadgroupSize = execution.datasetThreadgroupSize
         let statsInterval = try args.int("stats-interval", default: 60, in: 1...3_600)
         let solver = try MetalAutolykosSolver(
             synchronousBuildChunkElements: buildChunkElements,
             prefetchBuildChunkElements: prefetchChunkElements,
+            searchThreadgroupSize: group,
             datasetThreadgroupSize: datasetThreadgroupSize,
+            searchPipelineDepth: execution.searchPipelineDepth,
+            buildPipelineDepth: execution.buildPipelineDepth,
             datasetKernel: datasetKernel,
             datasetScheduling: datasetScheduling)
-        let stats = StatisticsStore(mode: .mining, profile: profile, device: solver.info)
+        let stats = StatisticsStore(
+            mode: .mining, profile: profileName, device: solver.info,
+            autotuneMode: tuning.mode, tuning: tuning.resolved)
         let writer = JSONLEventWriter(path: args.string("stats-file"))
         let server = StatisticsHTTPServer(store: stats)
         try server.start(bind: args.string("api-bind", default: "127.0.0.1:4078")!)
@@ -505,7 +571,7 @@ enum ErgoMetalCLI {
             sessionID: stats.snapshot().sessionID,
             type: "session_started",
             fields: runMetadataFields(
-                profile: profile,
+                profile: profileName,
                 prebuild: prebuildValue,
                 batchSize: batchSize,
                 prebuildBatchSize: prebuildBatchSize,
@@ -515,6 +581,7 @@ enum ErgoMetalCLI {
                 datasetThreadgroupSize: datasetThreadgroupSize,
                 datasetKernel: datasetKernel,
                 datasetScheduling: datasetScheduling,
+                tuning: tuning,
                 extra: [
                     "mode": "mining",
                     "network": network.rawValue,
@@ -668,7 +735,7 @@ enum ErgoMetalCLI {
                           coordinator.isCurrent(job),
                           !coordinator.isStopped
                     else { return false }
-                    thermalPauseIfNeeded(profile: profile)
+                    thermalPauseIfNeeded(profile: profileName)
                     let activeBatchSize = solver.prefetchStatus()?.finished == false
                         ? min(batchSize, prebuildBatchSize)
                         : batchSize
@@ -694,13 +761,13 @@ enum ErgoMetalCLI {
                     return true
                 }
 
-                while pending.count < searchPipelineDepth, try enqueueNextBatch() {}
+                while pending.count < execution.searchPipelineDepth, try enqueueNextBatch() {}
                 while !pending.isEmpty {
                     let batch = try pending.removeFirst().wait()
 
                     // Keep the next GPU command ready before CPU verification
                     // and any synchronous Stratum submission work.
-                    while pending.count < searchPipelineDepth, try enqueueNextBatch() {}
+                    while pending.count < execution.searchPipelineDepth, try enqueueNextBatch() {}
                     let statisticsSample = statisticsAccumulator.append(batch)
                     if let statisticsSample {
                         stats.recordBatch(
@@ -858,14 +925,6 @@ enum ErgoMetalCLI {
         return value
     }
 
-    private static func datasetThreadgroupSize(from args: Arguments) throws -> Int {
-        let value = try args.int("dataset-threadgroup-size", default: 256, in: 128...256)
-        guard value == 128 || value == 256 else {
-            throw CLIError.invalidArgument("--dataset-threadgroup-size must be 128|256")
-        }
-        return value
-    }
-
     private static func searchKernel(from args: Arguments) throws -> SearchKernel {
         let raw = args.string("search-kernel", default: SearchKernel.search.rawValue)!
         guard let value = SearchKernel(rawValue: raw) else {
@@ -896,6 +955,7 @@ enum ErgoMetalCLI {
         datasetThreadgroupSize: Int,
         datasetKernel: DatasetKernel,
         datasetScheduling: DatasetScheduling,
+        tuning: CLITuningResolution,
         extra: [String: String]
     ) -> [String: String] {
         var fields = extra
@@ -910,9 +970,23 @@ enum ErgoMetalCLI {
             "dataset_threadgroup_size": String(datasetThreadgroupSize),
             "dataset_kernel": datasetKernel.rawValue,
             "dataset_scheduling": datasetScheduling.rawValue,
+            "search_pipeline_depth": String(tuning.resolved.configuration.searchPipelineDepth),
+            "build_pipeline_depth": String(tuning.resolved.configuration.buildPipelineDepth),
+            "gpu_architecture": tuning.fingerprint.architectureName,
+            "gpu_generation": tuning.fingerprint.generation.rawValue,
+            "gpu_family": tuning.fingerprint.familyName,
+            "os_build": tuning.fingerprint.operatingSystemBuild,
+            "autotune_mode": tuning.mode.rawValue,
+            "tuning_provenance": tuning.resolved.summaryProvenance.rawValue,
             "architecture": "arm64",
             "os_version": ProcessInfo.processInfo.operatingSystemVersionString
         ]) { _, new in new }
+        if let cacheKey = tuning.resolved.cacheKey {
+            fields["autotune_cache_key"] = cacheKey
+        }
+        for (field, source) in tuning.resolved.provenance {
+            fields["tuning_source_\(field)"] = source.rawValue
+        }
         if let digest = executableSHA256() {
             fields["executable_sha256"] = digest
         }

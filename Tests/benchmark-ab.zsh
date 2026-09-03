@@ -41,6 +41,9 @@ jq -s -e '
   and (.[1] | option_values("--threadgroup-size")) == ["64"]
   and all(.[2:20][] | select(option_values("--threadgroup-size") != ["64"]);
     option_values("--threadgroup-size") == ["128"])
+  and all(.[]; option_values("--autotune") == ["off"])
+  and all(.[]; option_values("--search-pipeline-depth") == ["2"])
+  and all(.[]; option_values("--build-pipeline-depth") == ["2"])
   and all(.[]; option_count("--json") == 1)
 ' "$argv_log" >/dev/null
 

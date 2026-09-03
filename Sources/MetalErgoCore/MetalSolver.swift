@@ -13,6 +13,7 @@ public enum MetalSolverError: Error, LocalizedError {
     case invalidNonceCount(Int)
     case invalidNonceRange(base: UInt64, count: Int)
     case invalidThreadgroupSize(Int)
+    case invalidPipelineDepth(Int)
     case invalidDatasetChunkSize(Int)
     case resultOverflow(limit: Int, found: UInt32)
     case capture(String)
@@ -31,6 +32,7 @@ public enum MetalSolverError: Error, LocalizedError {
         case .invalidNonceRange(let base, let count):
             return "Nonce range starting at \(base) with \(count) values exceeds UInt64"
         case .invalidThreadgroupSize(let size): return "Threadgroup size must be positive, got \(size)"
+        case .invalidPipelineDepth(let depth): return "Pipeline depth must be in 1...4, got \(depth)"
         case .invalidDatasetChunkSize(let size):
             return "Dataset chunk size must be positive, got \(size)"
         case .resultOverflow(let limit, let found):
@@ -43,12 +45,45 @@ public enum MetalSolverError: Error, LocalizedError {
 
 public struct MetalDeviceInfo: Codable, Sendable {
     public let name: String
+    public let architectureName: String
+    public let highestKnownAppleFamily: Int?
+    public let generation: AppleSiliconGeneration
     public let registryID: UInt64
     public let recommendedWorkingSetBytes: UInt64
     public let maxBufferBytes: UInt64
     public let unifiedMemory: Bool
     public let searchPipelineMaxThreads: Int?
     public let buildPipelineMaxThreads: Int?
+    public let searchThreadExecutionWidth: Int?
+    public let buildThreadExecutionWidth: Int?
+
+    public init(
+        name: String,
+        registryID: UInt64,
+        recommendedWorkingSetBytes: UInt64,
+        maxBufferBytes: UInt64,
+        unifiedMemory: Bool,
+        searchPipelineMaxThreads: Int?,
+        buildPipelineMaxThreads: Int?,
+        architectureName: String = "unknown",
+        highestKnownAppleFamily: Int? = nil,
+        generation: AppleSiliconGeneration? = nil,
+        searchThreadExecutionWidth: Int? = nil,
+        buildThreadExecutionWidth: Int? = nil
+    ) {
+        self.name = name
+        self.architectureName = architectureName
+        self.highestKnownAppleFamily = highestKnownAppleFamily
+        self.generation = generation ?? GPUArchitectureFingerprint.generation(for: name)
+        self.registryID = registryID
+        self.recommendedWorkingSetBytes = recommendedWorkingSetBytes
+        self.maxBufferBytes = maxBufferBytes
+        self.unifiedMemory = unifiedMemory
+        self.searchPipelineMaxThreads = searchPipelineMaxThreads
+        self.buildPipelineMaxThreads = buildPipelineMaxThreads
+        self.searchThreadExecutionWidth = searchThreadExecutionWidth
+        self.buildThreadExecutionWidth = buildThreadExecutionWidth
+    }
 }
 
 public enum DatasetBuildSource: String, Codable, Sendable {
@@ -438,8 +473,6 @@ private final class MetalBufferLifetime: @unchecked Sendable {
 /// mutable property is protected by a condition variable or a dedicated lock.
 public final class MetalAutolykosSolver: @unchecked Sendable {
     private static let maximumResults = 256
-    private static let searchPipelineDepth = 2
-    private static let buildPipelineDepth = 2
     public static let defaultSynchronousBuildChunkElements = 2_097_152
     public static let defaultPrefetchBuildChunkElements = 1_048_576
 
@@ -448,6 +481,8 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
     public let datasetKernel: DatasetKernel
     public let datasetScheduling: DatasetScheduling
     public let searchKernel: SearchKernel
+    public let searchPipelineDepth: Int
+    public let buildPipelineDepth: Int
     private let searchCommandQueue: MTLCommandQueue
     private let buildCommandQueue: MTLCommandQueue
     private let buildPipeline: MTLComputePipelineState
@@ -457,7 +492,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
     private let searchResourceState = NSCondition()
     private let searchWallUnion = CommandIntervalUnion()
     private let searchGPUUnion = CommandIntervalUnion()
-    private let buildCommandSlots = DispatchSemaphore(value: buildPipelineDepth)
+    private let buildCommandSlots: DispatchSemaphore
     private let commandGate = MetalCommandGate()
     private let state = NSCondition()
     private let prefetchWorker = DispatchQueue(label: "dev.ergometal.dataset-prefetch", qos: .userInitiated)
@@ -472,7 +507,10 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         device: MTLDevice? = MTLCreateSystemDefaultDevice(),
         synchronousBuildChunkElements: Int = MetalAutolykosSolver.defaultSynchronousBuildChunkElements,
         prefetchBuildChunkElements: Int = MetalAutolykosSolver.defaultPrefetchBuildChunkElements,
+        searchThreadgroupSize: Int = 128,
         datasetThreadgroupSize: Int = 256,
+        searchPipelineDepth: Int = 2,
+        buildPipelineDepth: Int = 2,
         datasetKernel: DatasetKernel = .u32PairInlineM,
         datasetScheduling: DatasetScheduling = .overlap,
         searchKernel: SearchKernel = .search
@@ -485,6 +523,15 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         }
         guard datasetThreadgroupSize > 0 else {
             throw MetalSolverError.invalidThreadgroupSize(datasetThreadgroupSize)
+        }
+        guard searchThreadgroupSize > 0 else {
+            throw MetalSolverError.invalidThreadgroupSize(searchThreadgroupSize)
+        }
+        guard (1...4).contains(searchPipelineDepth) else {
+            throw MetalSolverError.invalidPipelineDepth(searchPipelineDepth)
+        }
+        guard (1...4).contains(buildPipelineDepth) else {
+            throw MetalSolverError.invalidPipelineDepth(buildPipelineDepth)
         }
         guard let device else { throw MetalSolverError.noDevice }
         guard let searchCommandQueue = device.makeCommandQueue(),
@@ -500,7 +547,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
             buildCommandQueue = searchCommandQueue
         }
         var searchResources: [SearchResources] = []
-        for _ in 0..<Self.searchPipelineDepth {
+        for _ in 0..<searchPipelineDepth {
             guard let resultBuffer = device.makeBuffer(
                     length: Self.maximumResults * MemoryLayout<UInt64>.size,
                     options: .storageModeShared),
@@ -519,6 +566,9 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         self.buildCommandQueue = buildCommandQueue
         self.constantMBuffer = constantMBuffer
         self.searchResources = searchResources
+        self.searchPipelineDepth = searchPipelineDepth
+        self.buildPipelineDepth = buildPipelineDepth
+        self.buildCommandSlots = DispatchSemaphore(value: buildPipelineDepth)
         self.synchronousBuildChunkElements = synchronousBuildChunkElements
         self.prefetchBuildChunkElements = prefetchBuildChunkElements
         self.datasetThreadgroupSize = datasetThreadgroupSize
@@ -546,8 +596,16 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         let buildPipeline: MTLComputePipelineState
         let searchPipeline: MTLComputePipelineState
         do {
-            buildPipeline = try device.makeComputePipelineState(function: build)
-            searchPipeline = try device.makeComputePipelineState(function: search)
+            let buildDescriptor = MTLComputePipelineDescriptor()
+            buildDescriptor.computeFunction = build
+            buildDescriptor.maxTotalThreadsPerThreadgroup = datasetThreadgroupSize
+            buildPipeline = try device.makeComputePipelineState(
+                descriptor: buildDescriptor, options: [], reflection: nil)
+            let searchDescriptor = MTLComputePipelineDescriptor()
+            searchDescriptor.computeFunction = search
+            searchDescriptor.maxTotalThreadsPerThreadgroup = searchThreadgroupSize
+            searchPipeline = try device.makeComputePipelineState(
+                descriptor: searchDescriptor, options: [], reflection: nil)
         } catch {
             throw MetalSolverError.pipeline(error.localizedDescription)
         }
@@ -560,7 +618,11 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
             maxBufferBytes: UInt64(device.maxBufferLength),
             unifiedMemory: device.hasUnifiedMemory,
             searchPipelineMaxThreads: searchPipeline.maxTotalThreadsPerThreadgroup,
-            buildPipelineMaxThreads: buildPipeline.maxTotalThreadsPerThreadgroup
+            buildPipelineMaxThreads: buildPipeline.maxTotalThreadsPerThreadgroup,
+            architectureName: device.architecture.name,
+            highestKnownAppleFamily: GPUArchitectureFingerprint.highestKnownAppleFamily(device: device),
+            searchThreadExecutionWidth: searchPipeline.threadExecutionWidth,
+            buildThreadExecutionWidth: buildPipeline.threadExecutionWidth
         )
     }
 
@@ -569,7 +631,10 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
             MetalDeviceInfo(name: $0.name, registryID: $0.registryID,
                 recommendedWorkingSetBytes: $0.recommendedMaxWorkingSetSize,
                 maxBufferBytes: UInt64($0.maxBufferLength), unifiedMemory: $0.hasUnifiedMemory,
-                searchPipelineMaxThreads: nil, buildPipelineMaxThreads: nil)
+                searchPipelineMaxThreads: nil, buildPipelineMaxThreads: nil,
+                architectureName: $0.architecture.name,
+                highestKnownAppleFamily: GPUArchitectureFingerprint.highestKnownAppleFamily(device: $0),
+                searchThreadExecutionWidth: nil, buildThreadExecutionWidth: nil)
         }
     }
 
@@ -1026,7 +1091,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
                 failure = MetalSolverError.cancelled
                 break
             }
-            if pending.count == Self.buildPipelineDepth {
+            if pending.count == buildPipelineDepth {
                 do {
                     gpuSeconds += try waitForBuildSubmission(
                         pending[0].submission, shouldContinue: shouldContinue)
@@ -1104,7 +1169,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
                 failure = MetalSolverError.cancelled
                 break
             }
-            if pending.count == Self.buildPipelineDepth {
+            if pending.count == buildPipelineDepth {
                 do {
                     let chunk = pending[0]
                     let gpuSeconds = try waitForBuildSubmission(

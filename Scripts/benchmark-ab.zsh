@@ -82,6 +82,7 @@ common=(
   --duration "$duration"
   --height "$height"
   --profile peak
+  --autotune off
   --prebuild on
   --batch-nonces 1048576
   --prebuild-batch-nonces 65536
@@ -89,6 +90,8 @@ common=(
   --build-chunk-elements 2097152
   --prefetch-chunk-elements 1048576
   --dataset-threadgroup-size 256
+  --search-pipeline-depth 2
+  --build-pipeline-depth 2
   --api-bind 127.0.0.1:0
   --json
 )

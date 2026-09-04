@@ -48,6 +48,10 @@ public enum StratumError: Error, LocalizedError {
 public final class ErgoStratumClient: @unchecked Sendable {
     public typealias EventHandler = @Sendable (StratumEvent) -> Void
 
+    static let keepaliveIdleSeconds = 30
+    static let keepaliveIntervalSeconds = 10
+    static let keepaliveProbeCount = 3
+
     private let queue = DispatchQueue(label: "dev.ergometal.stratum")
     private let queueKey = DispatchSpecificKey<Void>()
     private let endpoint: NWEndpoint
@@ -73,8 +77,8 @@ public final class ErgoStratumClient: @unchecked Sendable {
               let rawPort = UInt16(exactly: portValue), let port = NWEndpoint.Port(rawValue: rawPort)
         else { throw StratumError.invalidURL(value) }
         switch url.scheme?.lowercased() {
-        case "stratum+tcp": parameters = .tcp
-        case "stratum+tls", "stratum+ssl": parameters = NWParameters(tls: .init(), tcp: .init())
+        case "stratum+tcp": parameters = Self.connectionParameters(useTLS: false)
+        case "stratum+tls", "stratum+ssl": parameters = Self.connectionParameters(useTLS: true)
         default: throw StratumError.unsupportedScheme(url.scheme ?? "")
         }
         endpoint = .hostPort(host: NWEndpoint.Host(host), port: port)
@@ -83,6 +87,15 @@ public final class ErgoStratumClient: @unchecked Sendable {
         self.password = password
         self.handler = handler
         queue.setSpecific(key: queueKey, value: ())
+    }
+
+    static func connectionParameters(useTLS: Bool) -> NWParameters {
+        let tcp = NWProtocolTCP.Options()
+        tcp.enableKeepalive = true
+        tcp.keepaliveIdle = keepaliveIdleSeconds
+        tcp.keepaliveInterval = keepaliveIntervalSeconds
+        tcp.keepaliveCount = keepaliveProbeCount
+        return NWParameters(tls: useTLS ? NWProtocolTLS.Options() : nil, tcp: tcp)
     }
 
     public func connect() {

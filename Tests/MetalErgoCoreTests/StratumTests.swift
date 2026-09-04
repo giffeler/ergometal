@@ -1,7 +1,21 @@
 import XCTest
+import Network
 @testable import MetalErgoCore
 
 final class StratumTests: XCTestCase {
+    func testTCPAndTLSConnectionsEnableKeepalive() throws {
+        for useTLS in [false, true] {
+            let parameters = ErgoStratumClient.connectionParameters(useTLS: useTLS)
+            let tcp = try XCTUnwrap(
+                parameters.defaultProtocolStack.transportProtocol as? NWProtocolTCP.Options)
+
+            XCTAssertTrue(tcp.enableKeepalive)
+            XCTAssertEqual(tcp.keepaliveIdle, ErgoStratumClient.keepaliveIdleSeconds)
+            XCTAssertEqual(tcp.keepaliveInterval, ErgoStratumClient.keepaliveIntervalSeconds)
+            XCTAssertEqual(tcp.keepaliveCount, ErgoStratumClient.keepaliveProbeCount)
+        }
+    }
+
     func testMiningcoreSubscriptionAndJobLayout() throws {
         let subscription: [Any] = [[["mining.set_difficulty", "id"], ["mining.notify", "id"]], "a1b2", 6]
         let extra = try ErgoStratumClient.decodeSubscription(subscription)

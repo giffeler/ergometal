@@ -45,6 +45,9 @@ ergometal mine --pool stratum+tls://POOL:PORT --wallet ERGO_ADDRESS --worker m4 
 ```
 
 `benchmark` uses the consensus table size unless `--table-size` is explicitly supplied for a small diagnostic run. `mine` has no default pool and supports Miningcore-compatible Ergo Stratum v1 over TCP or certificate-validated TLS.
+Every Stratum socket enables TCP keepalive after 30 seconds of inactivity, with
+three probes at 10-second intervals. This detects silently broken pool paths
+without relying on a pool-specific application-level ping method.
 
 ## Adaptive GPU configuration
 

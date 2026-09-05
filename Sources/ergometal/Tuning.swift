@@ -220,7 +220,7 @@ private enum SHA256Digest {
     }
 }
 
-private final class LiveMetalAutotuner {
+final class LiveMetalAutotuner {
     struct Outcome {
         let configuration: MetalExecutionConfiguration
         let measurements: [String: Double]
@@ -365,7 +365,7 @@ private final class LiveMetalAutotuner {
         try checkEnvironment()
         let tableSize = 4_194_304
         let solver = try makeSolver(value)
-        let build = try solver.buildDataset(height: 614_400, tableSize: tableSize)
+        let build = try buildDataset(solver, height: 614_400, tableSize: tableSize)
         try verifyConsensus(solver: solver, height: 614_400, tableSize: tableSize)
         try checkEnvironment()
         return Double(tableSize) / max(build.seconds, .leastNonzeroMagnitude)
@@ -375,7 +375,7 @@ private final class LiveMetalAutotuner {
         try checkEnvironment()
         let tableSize = 4_194_304
         let solver = try makeSolver(value)
-        _ = try solver.buildDataset(height: 614_400, tableSize: tableSize)
+        _ = try buildDataset(solver, height: 614_400, tableSize: tableSize)
         try verifyConsensus(solver: solver, height: 614_400, tableSize: tableSize)
         let message = Blake2b256.hash(Array("ergometal-autotune-search".utf8))
         let target = UInt256.zero
@@ -385,10 +385,12 @@ private final class LiveMetalAutotuner {
             threadgroupSize: value.searchThreadgroupSize)
         let commandCount = max(4, value.searchPipelineDepth * 2)
         var pending: [SearchSubmission] = []
+        defer { for submission in pending { _ = try? submission.wait() } }
         var submitted = 0
         var completedNonces = 0
         let started = ProcessInfo.processInfo.systemUptime
         while submitted < commandCount || !pending.isEmpty {
+            try checkEnvironment()
             while submitted < commandCount && pending.count < value.searchPipelineDepth {
                 pending.append(try solver.enqueueSearch(
                     message: message, target: target, baseNonce: nonce,
@@ -409,7 +411,7 @@ private final class LiveMetalAutotuner {
         let activeTableSize = 1_048_576
         let prefetchTableSize = 4_194_304
         let solver = try makeSolver(value)
-        _ = try solver.buildDataset(height: 614_400, tableSize: activeTableSize)
+        _ = try buildDataset(solver, height: 614_400, tableSize: activeTableSize)
         guard try solver.prefetchDataset(height: 614_401, tableSize: prefetchTableSize) else {
             throw LiveAutotuneError.invalidMeasurement("prefetch did not start")
         }
@@ -427,7 +429,7 @@ private final class LiveMetalAutotuner {
             throw LiveAutotuneError.invalidMeasurement(
                 "prefetch failed: \(reason)")
         }
-        _ = try solver.buildDataset(height: 614_401, tableSize: prefetchTableSize)
+        _ = try buildDataset(solver, height: 614_401, tableSize: prefetchTableSize)
         return Double(prefetchTableSize) / max(seconds, .leastNonzeroMagnitude)
     }
 
@@ -436,7 +438,7 @@ private final class LiveMetalAutotuner {
         let solver = try makeSolver(value)
         let activeTableSize = 4_194_304
         let prefetchTableSize = 16_777_216
-        _ = try solver.buildDataset(height: 614_400, tableSize: activeTableSize)
+        _ = try buildDataset(solver, height: 614_400, tableSize: activeTableSize)
         try verifyConsensus(solver: solver, height: 614_400, tableSize: activeTableSize)
         guard try solver.prefetchDataset(height: 614_401, tableSize: prefetchTableSize) else {
             throw LiveAutotuneError.invalidMeasurement("overlap prefetch did not start")
@@ -447,6 +449,7 @@ private final class LiveMetalAutotuner {
         var submitted = 0
         var completed = 0
         var pending: [SearchSubmission] = []
+        defer { for submission in pending { _ = try? submission.wait() } }
         let started = ProcessInfo.processInfo.systemUptime
         while submitted < requestedNonces || !pending.isEmpty {
             while submitted < requestedNonces && pending.count < value.searchPipelineDepth {
@@ -482,6 +485,24 @@ private final class LiveMetalAutotuner {
             max(seconds, .leastNonzeroMagnitude)
         let searchWeight = profile == .peak ? 0.7 : 0.5
         return exp(searchWeight * log(searchRate) + (1 - searchWeight) * log(buildRate))
+    }
+
+    /// The solver drains already submitted chunks when cancellation is
+    /// requested. Preserve the budget/thermal reason for the tuning policy.
+    private func buildDataset(
+        _ solver: MetalAutolykosSolver, height: Int, tableSize: Int
+    ) throws -> DatasetBuild {
+        try checkEnvironment()
+        var interruption: Error?
+        do {
+            return try solver.buildDataset(height: height, tableSize: tableSize,
+                shouldContinue: {
+                    do { try self.checkEnvironment(); return true }
+                    catch { interruption = error; return false }
+                })
+        } catch MetalSolverError.cancelled {
+            throw interruption ?? MetalSolverError.cancelled
+        }
     }
 
     private func verifyConsensus(

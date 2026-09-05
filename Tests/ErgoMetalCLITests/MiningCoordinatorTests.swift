@@ -3,6 +3,88 @@ import XCTest
 @testable import MetalErgoCore
 
 final class MiningCoordinatorTests: XCTestCase {
+    func testStopFinalizesOnlyAfterCompletedSearchIsAccountedFor() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let stats = StatisticsStore(mode: .mining)
+        let coordinator = MiningCoordinator(
+            stats: stats, writer: JSONLEventWriter(path: url.path),
+            donationSchedule: try DonationSchedule(percent: 0),
+            automaticallySchedules: false)
+        coordinator.configure(userClient: FakeStratumClient(), donationClient: nil)
+        coordinator.start()
+
+        coordinator.requestStop()
+        XCTAssertTrue(coordinator.isStopped)
+        XCTAssertNil(coordinator.nextJob())
+        XCTAssertEqual(try Data(contentsOf: url).count, 0)
+        stats.recordBatch(nonces: 2_048, gpuSeconds: 0.1, wallSeconds: 0.2)
+        coordinator.stop()
+        coordinator.stop()
+        coordinator.recordStatisticsSample()
+
+        let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
+        XCTAssertEqual(lines.count, 1)
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+        let event = try decoder.decode(MinerEvent.self, from: Data(try XCTUnwrap(lines.first).utf8))
+        XCTAssertEqual(event.type, "session_ended")
+        XCTAssertEqual(event.fields["nonces"], "2048")
+        XCTAssertEqual(event.fields["search_seconds"], "0.2")
+    }
+
+    func testRecipientRoundTripInvalidatesPendingReconnect() {
+        let user = FakeStratumClient()
+        let coordinator = makeCoordinator(percent: 1, cycleSeconds: 100)
+        coordinator.configure(userClient: user, donationClient: FakeStratumClient())
+        coordinator.start()
+        coordinator.handle(.disconnected("local test"), recipient: .user)
+        coordinator.advanceSchedule(to: 99)
+        coordinator.advanceSchedule(to: 100)
+        XCTAssertEqual(user.connectCount, 2)
+        Thread.sleep(forTimeInterval: 1.7)
+        XCTAssertEqual(user.connectCount, 2)
+        coordinator.stop()
+    }
+
+    func testAuthorizationInvalidatesPendingReconnect() {
+        let user = FakeStratumClient()
+        let coordinator = makeCoordinator(percent: 0)
+        coordinator.configure(userClient: user, donationClient: nil)
+        coordinator.start()
+        coordinator.handle(.disconnected("local test"), recipient: .user)
+        coordinator.handle(.authorized, recipient: .user)
+        Thread.sleep(forTimeInterval: 1.7)
+        XCTAssertEqual(user.connectCount, 1)
+        coordinator.stop()
+    }
+
+    func testPoolMessagesRedactCredentialsWithoutRedactingCounters() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let coordinator = MiningCoordinator(
+            stats: StatisticsStore(mode: .mining), writer: JSONLEventWriter(path: url.path),
+            donationSchedule: try DonationSchedule(percent: 0),
+            automaticallySchedules: false,
+            sensitiveValues: ["WALLET_SENTINEL", "secret/password", "1"])
+        coordinator.configure(userClient: FakeStratumClient(), donationClient: nil)
+        coordinator.start()
+        coordinator.handle(.shareResult(id: 10, accepted: false,
+            message: "WALLET_SENTINEL secret/password secret%2Fpassword"), recipient: .user)
+        coordinator.handle(.protocolError("invalid WALLET_SENTINEL secret/password"), recipient: .user)
+        XCTAssertFalse(coordinator.stats.snapshot().lastError!.contains("secret/password"))
+        coordinator.stop()
+        let text = try String(contentsOf: url, encoding: .utf8)
+        for secret in ["WALLET_SENTINEL", "secret/password", "secret%2Fpassword"] {
+            XCTAssertFalse(text.contains(secret))
+        }
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+        let events = try text.split(separator: "\n").map {
+            try decoder.decode(MinerEvent.self, from: Data($0.utf8))
+        }
+        XCTAssertEqual(events.last?.fields["shares_rejected"], "1")
+        XCTAssertEqual(events.last?.fields["protocol_errors"], "1")
+    }
+
     func testDisabledDonationNeverConnectsDonationClient() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()

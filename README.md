@@ -65,6 +65,11 @@ On a cache miss, the default `--autotune auto` performs a staged preflight for a
 
 The default cache is `~/Library/Caches/dev.ergometal/autotune-v1.json`. Its key includes the schema and tuning algorithm versions, executable SHA-256, OS build, GPU fingerprint, profile, workload, and normalized overrides. Writes are locked, atomic, and mode `0600`; an absent or corrupt cache never prevents mining. Resolution order is explicit CLI value, matching cache entry, fresh tuning result, then the M1-safe fallback. Use `--autotune off` to prohibit both cache access and tuning. For a fully reproducible benchmark, also specify `--threadgroup-size`, `--dataset-threadgroup-size`, `--batch-nonces`, `--prebuild-batch-nonces`, `--build-chunk-elements`, `--prefetch-chunk-elements`, `--search-pipeline-depth`, and `--build-pipeline-depth`.
 
+Cache entries are also checked against numeric ranges, SIMD widths, and device
+pipeline limits. Invalid execution values are treated as a cache miss. The
+tuning budget and thermal checks interrupt Dataset builds between chunks;
+already submitted GPU work is drained before tuning returns.
+
 ### M4 Peak real-pool observation
 
 Three real-pool runs of the same notarized M4 executable compared the default
@@ -93,6 +98,8 @@ the embedded Metal library, no `__DWARF` segment, and no project-local dynamic
 dependencies, and runs an isolated Metal smoke benchmark.
 The resulting ZIP contains exactly one root entry named `ergometal`; its SHA-256
 file is written beside the ZIP rather than into it.
+Release compilation disables Swift and Metal debug information; the separate
+`Profile` configuration retains profiling information.
 
 For a trusted-tester build with an ad-hoc signature:
 
@@ -238,6 +245,15 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 - `/healthz` — process and solver health
 
 The terminal shows current, active-average, and effective wall-clock hashrate together with search duty, prebuild progress, current/session-peak temperature, expected shares, and accepted-share luck. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file.
+
+The HTTP server accepts fragmented request headers, with an 8 KiB header limit
+and a five-second request timeout. Independent log writers coordinate complete
+JSONL appends to a shared file. On SIGINT or SIGTERM, the miner drains queued
+Search work and flushes counters before writing one final `session_ended`.
+Pending reconnects are invalidated when the mining recipient changes or the
+user connection is authorized again. Pool share rejections retain their numeric
+protocol code without logging the pool's free-form reply; other diagnostic
+texts redact configured payout addresses, pool URLs, and custom passwords.
 
 When donation is enabled, the terminal and `/v1/status` expose the configured
 percentage and current recipient. Prometheus and JSONL additionally report the

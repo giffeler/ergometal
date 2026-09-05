@@ -310,6 +310,25 @@ final class StatisticsTests: XCTestCase {
         XCTAssertEqual(indices.count, 64)
     }
 
+    func testIndependentEventWritersAppendCompleteRecordsToTheSameFile() throws {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        defer { try? FileManager.default.removeItem(at: url) }
+        let writers = (0..<8).map { _ in JSONLEventWriter(path: url.path) }
+        let sessionID = UUID()
+        DispatchQueue.concurrentPerform(iterations: 128) { index in
+            writers[index % writers.count].write(MinerEvent(
+                sessionID: sessionID, type: "shared_file",
+                fields: ["index": String(index), "payload": String(repeating: "x", count: 32_768)]))
+        }
+        for writer in writers { XCTAssertNil(writer.failure) }
+        let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
+        XCTAssertEqual(lines.count, 128)
+        let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
+        let events = try lines.map { try decoder.decode(MinerEvent.self, from: Data($0.utf8)) }
+        XCTAssertEqual(Set(events.compactMap { $0.fields["index"] }).count, 128)
+        XCTAssertTrue(events.allSatisfy { $0.fields["payload"]?.count == 32_768 })
+    }
+
     func testMinerStatusLineSelectsARepresentationThatFitsTheTerminal() {
         var snapshot = StatisticsStore(mode: .mining).snapshot()
         snapshot.hashrate = 15_660_000

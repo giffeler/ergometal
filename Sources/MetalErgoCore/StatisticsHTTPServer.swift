@@ -20,8 +20,24 @@ public final class StatisticsHTTPServer: Sendable {
     private let store: StatisticsStore
     private let listener = Mutex<NWListener?>(nil)
     private let queue = DispatchQueue(label: "dev.ergometal.http")
+    private let requestTimeout: TimeInterval
+    private static let maximumHeaderBytes = 8192
 
-    public init(store: StatisticsStore) { self.store = store }
+    public convenience init(store: StatisticsStore) {
+        self.init(store: store, requestTimeout: 5)
+    }
+
+    init(store: StatisticsStore, requestTimeout: TimeInterval) {
+        self.store = store
+        self.requestTimeout = requestTimeout
+    }
+
+    var listeningPort: UInt16? {
+        listener.withLock {
+            guard let port = $0?.port?.rawValue, port != 0 else { return nil }
+            return port
+        }
+    }
 
     public func start(bind: String) throws {
         let pieces = bind.split(separator: ":", maxSplits: 1).map(String.init)
@@ -53,15 +69,52 @@ public final class StatisticsHTTPServer: Sendable {
 
     private func handle(_ connection: NWConnection) {
         connection.start(queue: queue)
-        connection.receive(minimumIncompleteLength: 1, maximumLength: 8192) { [weak self] data, _, _, _ in
-            guard let self, let data, let request = String(data: data, encoding: .utf8) else {
-                connection.cancel(); return
+        let timeout = DispatchSource.makeTimerSource(queue: queue)
+        timeout.schedule(deadline: .now() + requestTimeout)
+        timeout.setEventHandler {
+            connection.cancel()
+        }
+        timeout.resume()
+        receiveHeader(connection, buffer: Data(), timeout: timeout)
+    }
+
+    private func receiveHeader(
+        _ connection: NWConnection, buffer: Data, timeout: DispatchSourceTimer
+    ) {
+        connection.receive(minimumIncompleteLength: 1, maximumLength: Self.maximumHeaderBytes) {
+            [weak self] data, _, complete, error in
+            guard let self else {
+                timeout.cancel(); connection.cancel(); return
             }
-            let line = request.split(separator: "\r\n").first?.split(separator: " ") ?? []
-            let method = line.count > 0 ? String(line[0]) : ""
-            let path = line.count > 1 ? String(line[1]) : ""
-            let response = self.response(method: method, path: path)
-            connection.send(content: response, completion: .contentProcessed { _ in connection.cancel() })
+            var buffer = buffer
+            if let data { buffer.append(data) }
+            let end = buffer.range(of: Data("\r\n\r\n".utf8))?.upperBound
+            if let end, end <= Self.maximumHeaderBytes,
+               let request = String(data: buffer[..<end], encoding: .utf8) {
+                let line = request.components(separatedBy: "\r\n")[0]
+                    .split(separator: " ", omittingEmptySubsequences: false)
+                let response: Data
+                if line.count == 3, !line[0].isEmpty, line[1].hasPrefix("/"),
+                   line[2] == "HTTP/1.0" || line[2] == "HTTP/1.1" {
+                    response = self.response(method: String(line[0]), path: String(line[1]))
+                } else {
+                    response = self.http(status: "400 Bad Request", type: "text/plain",
+                        body: Data("invalid request line\n".utf8))
+                }
+                connection.send(content: response, completion: .contentProcessed { _ in
+                    timeout.cancel(); connection.cancel()
+                })
+            } else if buffer.count >= Self.maximumHeaderBytes {
+                let response = self.http(status: "431 Request Header Fields Too Large",
+                    type: "text/plain", body: Data("request header too large\n".utf8))
+                connection.send(content: response, completion: .contentProcessed { _ in
+                    timeout.cancel(); connection.cancel()
+                })
+            } else if complete || error != nil || end != nil {
+                timeout.cancel(); connection.cancel()
+            } else {
+                self.receiveHeader(connection, buffer: buffer, timeout: timeout)
+            }
         }
     }
 

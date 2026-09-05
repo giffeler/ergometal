@@ -25,6 +25,7 @@
 		5D5B6E49040C17CFE9C34018 /* ArgumentsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E84004D497298899A0815ABA /* ArgumentsTests.swift */; };
 		65839A8A5DE283CC3F0B21AD /* Blake2b.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29F973D0107EE834C7DD1908 /* Blake2b.swift */; };
 		672CD7C42AEBA57D186F1AA6 /* DonationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7695C60F137DD35C28B5AF60 /* DonationTests.swift */; };
+		86C5AFA001C4F94FC7BE2125 /* StatisticsHTTPServerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B14A2BACA5CF2E16676DC3C /* StatisticsHTTPServerTests.swift */; };
 		95BD076494F804629E9FC67A /* MinerStatusLineFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D13F7971385166397D3B7D5 /* MinerStatusLineFormatter.swift */; };
 		9810CA39ECEB7638CD118B21 /* UInt256.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD3B76913F191F39DD6911B2 /* UInt256.swift */; };
 		99D287999C8E48F4218A81F2 /* Stratum.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD01266E7B9A5D18A424C76E /* Stratum.swift */; };
@@ -35,7 +36,9 @@
 		BF0819C0CF3E86A15361A9F8 /* Statistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 303DDB16A73D46898E0F7F3C /* Statistics.swift */; };
 		C73B7C4D497CC39331393324 /* Arguments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35FAFCFE6D8DE609C7FE5988 /* Arguments.swift */; };
 		CA364D1FCBDC347157A59159 /* AutolykosKernels.metal in Sources */ = {isa = PBXBuildFile; fileRef = C832EFD7220872A528987BC7 /* AutolykosKernels.metal */; };
+		CBC36830944B9DA5641132DB /* TuningTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F422A61D84E122DDAD2AD60B /* TuningTests.swift */; };
 		E5AF378BF5223C7C5238EB73 /* MiningCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F365F059EFEA3210BEA5702 /* MiningCoordinator.swift */; };
+		F9ADAFD9F107EE7BF6B13691 /* AutolykosKernels.metal in Sources */ = {isa = PBXBuildFile; fileRef = C832EFD7220872A528987BC7 /* AutolykosKernels.metal */; };
 		FCEFD123D44E435715FC8FE9 /* PerformanceTuning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A80D85362A0B751E61E88C1 /* PerformanceTuning.swift */; };
 /* End PBXBuildFile section */
 
@@ -74,6 +77,7 @@
 		68DACEFF0589A9D8CA999DC1 /* Donation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Donation.swift; sourceTree = "<group>"; };
 		758E65FF08469E6F57180419 /* ErgoMetalCLITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ErgoMetalCLITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7695C60F137DD35C28B5AF60 /* DonationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonationTests.swift; sourceTree = "<group>"; };
+		7B14A2BACA5CF2E16676DC3C /* StatisticsHTTPServerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsHTTPServerTests.swift; sourceTree = "<group>"; };
 		7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsensusTests.swift; sourceTree = "<group>"; };
 		8D13F7971385166397D3B7D5 /* MinerStatusLineFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MinerStatusLineFormatter.swift; sourceTree = "<group>"; };
 		8D4C6F52AE82BB55EA3B8DB8 /* MetalErgoCoreTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetalErgoCoreTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +94,7 @@
 		E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatisticsTests.swift; sourceTree = "<group>"; };
 		E84004D497298899A0815ABA /* ArgumentsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArgumentsTests.swift; sourceTree = "<group>"; };
 		EDE65B4C602E62C18F14EB9A /* PerformanceTuningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerformanceTuningTests.swift; sourceTree = "<group>"; };
+		F422A61D84E122DDAD2AD60B /* TuningTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TuningTests.swift; sourceTree = "<group>"; };
 		FD3B76913F191F39DD6911B2 /* UInt256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UInt256.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -127,6 +132,7 @@
 				7F59CC47B157BB0E01F4E8D1 /* ConsensusTests.swift */,
 				7695C60F137DD35C28B5AF60 /* DonationTests.swift */,
 				EDE65B4C602E62C18F14EB9A /* PerformanceTuningTests.swift */,
+				7B14A2BACA5CF2E16676DC3C /* StatisticsHTTPServerTests.swift */,
 				E01033A6DE420F7FB8FCB38B /* StatisticsTests.swift */,
 				C628D393584693C84CD61F70 /* StratumTests.swift */,
 			);
@@ -175,6 +181,7 @@
 			children = (
 				E84004D497298899A0815ABA /* ArgumentsTests.swift */,
 				DC10B3CAFE997AB5A6362652 /* MiningCoordinatorTests.swift */,
+				F422A61D84E122DDAD2AD60B /* TuningTests.swift */,
 			);
 			path = ErgoMetalCLITests;
 			sourceTree = "<group>";
@@ -349,6 +356,7 @@
 				0F07CEA0CD741C4147D25204 /* ConsensusTests.swift in Sources */,
 				672CD7C42AEBA57D186F1AA6 /* DonationTests.swift in Sources */,
 				140FCC84A29717078E48E5E1 /* PerformanceTuningTests.swift in Sources */,
+				86C5AFA001C4F94FC7BE2125 /* StatisticsHTTPServerTests.swift in Sources */,
 				A17FBE53F5CE44520F8E877D /* StatisticsTests.swift in Sources */,
 				36F410B32194B8261E8FB291 /* StratumTests.swift in Sources */,
 			);
@@ -390,9 +398,11 @@
 			files = (
 				0BF3FD30B7454434CA019F56 /* Arguments.swift in Sources */,
 				5D5B6E49040C17CFE9C34018 /* ArgumentsTests.swift in Sources */,
+				F9ADAFD9F107EE7BF6B13691 /* AutolykosKernels.metal in Sources */,
 				544C22C037B2A790761B1816 /* MiningCoordinator.swift in Sources */,
 				466E0015E39400327702F340 /* MiningCoordinatorTests.swift in Sources */,
 				3E918D63CDC9A97D39623491 /* Tuning.swift in Sources */,
+				CBC36830944B9DA5641132DB /* TuningTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -635,10 +645,11 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGNING_ALLOWED = NO;
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEBUG_INFORMATION_FORMAT = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;

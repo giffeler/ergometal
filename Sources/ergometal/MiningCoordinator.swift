@@ -27,11 +27,14 @@ final class MiningCoordinator: @unchecked Sendable {
     let writer: JSONLEventWriter
 
     private let condition = NSCondition()
+    private let eventLock = NSLock()
+    private var eventsFinalized = false
     private let scheduleQueue = DispatchQueue(label: "dev.ergometal.donation-schedule")
     private let donationSchedule: DonationSchedule
     private let donationTimeoutSeconds: TimeInterval
     private let uptime: @Sendable () -> TimeInterval
     private let automaticallySchedules: Bool
+    private let sensitiveValues: [String]
 
     private var userClient: (any MiningStratumClient)?
     private var donationClient: (any MiningStratumClient)?
@@ -43,7 +46,10 @@ final class MiningCoordinator: @unchecked Sendable {
     private var latestHeight: Int?
     private var stopped = false
     private var stopFinalized = false
+    private var stopFinalizing = false
     private var reconnectAttempt = 0
+    private var reconnectGeneration: UInt64 = 0
+    private var reconnectWorkItem: DispatchWorkItem?
     private var scheduleStartedAt: TimeInterval?
     private var boundaryWorkItem: DispatchWorkItem?
     private var donationTimeoutWorkItem: DispatchWorkItem?
@@ -63,7 +69,8 @@ final class MiningCoordinator: @unchecked Sendable {
         uptime: @escaping @Sendable () -> TimeInterval = {
             ProcessInfo.processInfo.systemUptime
         },
-        automaticallySchedules: Bool = true
+        automaticallySchedules: Bool = true,
+        sensitiveValues: [String] = []
     ) {
         self.stats = stats
         self.writer = writer
@@ -71,6 +78,9 @@ final class MiningCoordinator: @unchecked Sendable {
         self.donationTimeoutSeconds = donationTimeoutSeconds
         self.uptime = uptime
         self.automaticallySchedules = automaticallySchedules
+        self.sensitiveValues = Array(Set(sensitiveValues.filter { !$0.isEmpty }.flatMap {
+            [$0, $0.addingPercentEncoding(withAllowedCharacters: .alphanumerics) ?? $0]
+        })).sorted { $0.count > $1.count }
     }
 
     func configure(
@@ -91,7 +101,6 @@ final class MiningCoordinator: @unchecked Sendable {
         scheduleStartedAt = uptime()
         scheduledRecipient = initialRecipient
         currentCycleIndex = 0
-        condition.unlock()
 
         stats.configureDonation(
             percent: donationSchedule.percent,
@@ -99,6 +108,7 @@ final class MiningCoordinator: @unchecked Sendable {
         if initialRecipient == .donation {
             emitDonationWindow("donation_window_started", cycle: 0)
         }
+        condition.unlock()
         activate(initialRecipient, countSwitch: false)
         if automaticallySchedules { scheduleNextBoundary() }
     }
@@ -150,6 +160,7 @@ final class MiningCoordinator: @unchecked Sendable {
                 return
             }
             reconnectAttempt = 0
+            if recipient == .user { invalidateReconnectLocked() }
             if recipient == .donation {
                 donationAuthorized = true
                 markDonationReadyIfPossible()
@@ -180,7 +191,7 @@ final class MiningCoordinator: @unchecked Sendable {
             }
             stats.update {
                 $0.job = JobStatistics(
-                    id: job.id,
+                    id: redact(job.id),
                     height: job.height,
                     receivedAt: job.receivedAt,
                     difficulty: $0.job.difficulty,
@@ -203,7 +214,7 @@ final class MiningCoordinator: @unchecked Sendable {
                 $0.protocolErrors += 1
                 $0.lastError = recipient == .donation
                     ? "donation pool protocol error"
-                    : message
+                    : redact(message)
             }
             condition.unlock()
             emit(
@@ -285,11 +296,10 @@ final class MiningCoordinator: @unchecked Sendable {
 
     func recordStatisticsSample() {
         condition.lock()
-        let shouldRecord = !stopped
-        condition.unlock()
-        guard shouldRecord else { return }
+        defer { condition.unlock() }
+        guard !stopped else { return }
         let snapshot = stats.refresh()
-        writer.write(MinerEvent(
+        writeEvent(MinerEvent(
             sessionID: snapshot.sessionID,
             type: "statistics_sample",
             fields: snapshot.eventFields))
@@ -312,7 +322,6 @@ final class MiningCoordinator: @unchecked Sendable {
         let currentActive = activeRecipient
         scheduledRecipient = nextRecipient
         currentCycleIndex = nextCycle
-        condition.unlock()
 
         if previousScheduled == .donation {
             emitDonationWindow("donation_window_ended", cycle: previousCycle)
@@ -321,6 +330,7 @@ final class MiningCoordinator: @unchecked Sendable {
         if nextRecipient == .donation {
             emitDonationWindow("donation_window_started", cycle: nextCycle)
         }
+        condition.unlock()
         if nextRecipient != currentActive {
             activate(
                 nextRecipient,
@@ -329,14 +339,14 @@ final class MiningCoordinator: @unchecked Sendable {
         }
     }
 
-    func stop() {
+    /// Signals cancellation without finalizing counters still owned by the
+    /// mining loop. Safe to call from signal and connection queues.
+    func requestStop() {
         condition.lock()
-        if stopped {
-            while !stopFinalized { condition.wait() }
-            condition.unlock()
-            return
-        }
+        defer { condition.unlock() }
+        guard !stopped else { return }
         stopped = true
+        invalidateReconnectLocked()
         boundaryWorkItem?.cancel()
         boundaryWorkItem = nil
         donationTimeoutWorkItem?.cancel()
@@ -344,10 +354,22 @@ final class MiningCoordinator: @unchecked Sendable {
         queuedJob = nil
         latestHeight = nil
         condition.broadcast()
-        condition.unlock()
-
         userClient?.disconnect()
         donationClient?.disconnect()
+    }
+
+    /// Called after the mining loop has drained Search and flushed its
+    /// accumulator. Repeated finalization produces exactly one final event.
+    func stop() {
+        requestStop()
+        condition.lock()
+        while stopFinalizing && !stopFinalized { condition.wait() }
+        guard !stopFinalized else {
+            condition.unlock()
+            return
+        }
+        stopFinalizing = true
+        condition.unlock()
         beforeStop?()
         stats.finishDonationTiming()
         stats.update {
@@ -355,12 +377,13 @@ final class MiningCoordinator: @unchecked Sendable {
             $0.poolConnected = false
         }
         let snapshot = stats.refresh()
-        writer.write(MinerEvent(
+        writeEvent(MinerEvent(
             sessionID: snapshot.sessionID,
             type: "session_ended",
-            fields: snapshot.eventFields))
+            fields: snapshot.eventFields), final: true)
         condition.lock()
         stopFinalized = true
+        stopFinalizing = false
         condition.broadcast()
         condition.unlock()
     }
@@ -393,6 +416,8 @@ final class MiningCoordinator: @unchecked Sendable {
         latestHeight = nil
         queuedJob = nil
         reconnectAttempt = 0
+        invalidateReconnectLocked()
+        let generation = reconnectGeneration
         donationAuthorized = false
         donationJobReceived = false
         donationReady = false
@@ -400,7 +425,6 @@ final class MiningCoordinator: @unchecked Sendable {
         donationTimeoutWorkItem?.cancel()
         donationTimeoutWorkItem = nil
         condition.broadcast()
-        condition.unlock()
 
         if let previousClient, previousClient !== nextClient {
             previousClient.disconnect()
@@ -413,7 +437,8 @@ final class MiningCoordinator: @unchecked Sendable {
             $0.lastError = nil
         }
         nextClient.connect()
-        if recipient == .donation { startDonationTimeout() }
+        condition.unlock()
+        if recipient == .donation { startDonationTimeout(generation: generation) }
     }
 
     private func reconnectUser(after message: String) {
@@ -428,26 +453,44 @@ final class MiningCoordinator: @unchecked Sendable {
         condition.broadcast()
         let attempt = reconnectAttempt
         reconnectAttempt += 1
-        condition.unlock()
+        invalidateReconnectLocked()
+        let generation = reconnectGeneration
 
         stats.update {
             $0.poolConnected = false
             $0.state = .reconnecting
             $0.reconnects += 1
-            $0.lastError = message
+            $0.lastError = redact(message)
         }
         emit("pool_disconnected", fieldsWithRecipient(.user, ["message": message]))
+        condition.unlock()
         let delay = min(30.0, pow(2.0, Double(min(attempt, 5))))
             + Double.random(in: 0...0.5)
-        scheduleQueue.asyncAfter(deadline: .now() + delay) { [weak self] in
+        let work = DispatchWorkItem { [weak self] in
             guard let self else { return }
             self.condition.lock()
-            let client = self.activeRecipient == .user && !self.stopped
-                ? self.activeClient
-                : nil
-            self.condition.unlock()
-            client?.connect()
+            defer { self.condition.unlock() }
+            guard self.activeRecipient == .user, !self.stopped,
+                  self.reconnectGeneration == generation else { return }
+            self.reconnectWorkItem = nil
+            self.activeClient?.connect()
         }
+        condition.lock()
+        guard !stopped, reconnectGeneration == generation else {
+            condition.unlock()
+            return
+        }
+        reconnectWorkItem = work
+        condition.unlock()
+        scheduleQueue.asyncAfter(deadline: .now() + delay, execute: work)
+    }
+
+    /// Called only with `condition` held. Cancellation alone cannot invalidate
+    /// a callback that has already started and is waiting for this lock.
+    private func invalidateReconnectLocked() {
+        reconnectGeneration &+= 1
+        reconnectWorkItem?.cancel()
+        reconnectWorkItem = nil
     }
 
     private func failDonation(reason: String) {
@@ -461,27 +504,33 @@ final class MiningCoordinator: @unchecked Sendable {
         }
         donationFailureInProgress = true
         let cycle = currentCycleIndex
-        condition.unlock()
 
         stats.recordDonationFailure()
         emitDonationWindow("donation_window_failed", cycle: cycle, reason: reason)
+        condition.unlock()
         activate(
             .user,
             countSwitch: true,
             expectedCurrentRecipient: .donation)
     }
 
-    private func startDonationTimeout() {
+    private func startDonationTimeout(generation: UInt64) {
         let work = DispatchWorkItem { [weak self] in
             guard let self else { return }
             self.condition.lock()
             let timedOut = !self.stopped
                 && self.activeRecipient == .donation
+                && self.reconnectGeneration == generation
                 && !self.donationReady
             self.condition.unlock()
             if timedOut { self.failDonation(reason: "timeout") }
         }
         condition.lock()
+        guard !stopped, activeRecipient == .donation,
+              reconnectGeneration == generation else {
+            condition.unlock()
+            return
+        }
         donationTimeoutWorkItem?.cancel()
         donationTimeoutWorkItem = work
         condition.unlock()
@@ -549,9 +598,27 @@ final class MiningCoordinator: @unchecked Sendable {
     }
 
     private func emit(_ type: String, _ fields: [String: String] = [:]) {
-        writer.write(MinerEvent(
+        var fields = fields
+        for key in ["message", "reason", "id"] {
+            if let value = fields[key] { fields[key] = redact(value) }
+        }
+        writeEvent(MinerEvent(
             sessionID: stats.snapshot().sessionID,
             type: type,
             fields: fields))
+    }
+
+    private func writeEvent(_ event: MinerEvent, final: Bool = false) {
+        eventLock.lock()
+        defer { eventLock.unlock() }
+        guard !eventsFinalized else { return }
+        writer.write(event)
+        eventsFinalized = final
+    }
+
+    private func redact(_ message: String) -> String {
+        sensitiveValues.reduce(message) {
+            $0.replacingOccurrences(of: $1, with: "[redacted]")
+        }
     }
 }

@@ -139,6 +139,54 @@ final class PerformanceTuningTests: XCTestCase {
         }
     }
 
+    func testSemanticallyInvalidCacheRecordsAreIgnoredAndReplaceable() throws {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("ergometal-invalid-cache-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let url = directory.appendingPathComponent("cache.json")
+        let store = AutotuneCacheStore(url: url)
+        let identity = cacheIdentity(binary: "test", architecture: "g16", profile: .peak)
+        let valid = AutotuneRecord(identity: identity,
+            configuration: .safeFallback(profile: .peak), measurements: [:],
+            tunedAt: Date(timeIntervalSince1970: 123))
+        XCTAssertTrue(store.save(valid))
+        let original = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
+        for (field, value) in [
+            ("batchNonces", 0), ("prebuildBatchNonces", -1),
+            ("synchronousBuildChunkElements", 0), ("prefetchBuildChunkElements", 16_777_217),
+            ("searchPipelineDepth", 0), ("buildPipelineDepth", 5),
+            ("searchThreadgroupSize", 33), ("datasetThreadgroupSize", 2_048)
+        ] {
+            var envelope = original
+            var records = try XCTUnwrap(envelope["records"] as? [[String: Any]])
+            var configuration = try XCTUnwrap(records[0]["configuration"] as? [String: Any])
+            configuration[field] = value
+            records[0]["configuration"] = configuration
+            envelope["records"] = records
+            try JSONSerialization.data(withJSONObject: envelope).write(to: url)
+            XCTAssertNil(store.load(identity: identity), "accepted invalid \(field)=\(value)")
+        }
+        XCTAssertTrue(store.save(valid))
+        XCTAssertEqual(store.load(identity: identity), valid)
+        var invalid = valid.configuration
+        invalid.batchNonces = 0
+        XCTAssertFalse(store.save(AutotuneRecord(identity: identity,
+            configuration: invalid, measurements: [:])))
+        XCTAssertEqual(store.load(identity: identity), valid)
+    }
+
+    func testExecutionConfigurationRespectsDevicePipelineLimits() {
+        let limited = GPUArchitectureFingerprint(deviceName: "Test", architectureName: "test",
+            highestKnownAppleFamily: nil, searchThreadExecutionWidth: 32,
+            searchMaxThreadsPerThreadgroup: 64, buildThreadExecutionWidth: 32,
+            buildMaxThreadsPerThreadgroup: 128, operatingSystemBuild: "test")
+        var configuration = MetalExecutionConfiguration.safeFallback(profile: .peak)
+        XCTAssertFalse(configuration.isValid(for: limited))
+        configuration.searchThreadgroupSize = 64
+        configuration.datasetThreadgroupSize = 128
+        XCTAssertTrue(configuration.isValid(for: limited))
+    }
+
     func testPipelineDepthsOneThroughFourPreserveSearchConsensus() throws {
         let message = Blake2b256.hash(Array("pipeline-depth-test".utf8))
         for depth in 1...4 {

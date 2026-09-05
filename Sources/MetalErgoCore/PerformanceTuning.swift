@@ -149,6 +149,23 @@ public struct MetalExecutionConfiguration: Codable, Equatable, Sendable {
             searchPipelineDepth: 2,
             buildPipelineDepth: 2)
     }
+
+    public func isValid(for fingerprint: GPUArchitectureFingerprint) -> Bool {
+        func validGroup(_ size: Int, width: Int, limit: Int) -> Bool {
+            width > 0 && size > 0 && size <= min(1_024, limit)
+                && size.isMultiple(of: width)
+        }
+        return validGroup(searchThreadgroupSize,
+                   width: fingerprint.searchThreadExecutionWidth,
+                   limit: fingerprint.searchMaxThreadsPerThreadgroup)
+            && validGroup(datasetThreadgroupSize,
+                   width: fingerprint.buildThreadExecutionWidth,
+                   limit: fingerprint.buildMaxThreadsPerThreadgroup)
+            && [batchNonces, prebuildBatchNonces, synchronousBuildChunkElements,
+                prefetchBuildChunkElements].allSatisfy { (1...16_777_216).contains($0) }
+            && (1...4).contains(searchPipelineDepth)
+            && (1...4).contains(buildPipelineDepth)
+    }
 }
 
 public struct MetalExecutionOverrides: Codable, Equatable, Sendable {
@@ -384,14 +401,17 @@ public final class AutotuneCacheStore: @unchecked Sendable {
                   let envelope = try? Self.decoder().decode(Envelope.self, from: data),
                   envelope.schemaVersion == AutotuneCacheIdentity.schemaVersion
             else { return nil }
-            return envelope.records.first { $0.identity == identity }
+            return envelope.records.first {
+                $0.identity == identity && $0.configuration.isValid(for: identity.fingerprint)
+            }
         }
         return result ?? nil
     }
 
     @discardableResult
     public func save(_ record: AutotuneRecord) -> Bool {
-        withLock {
+        guard record.configuration.isValid(for: record.identity.fingerprint) else { return false }
+        return withLock {
             do {
                 let directory = url.deletingLastPathComponent()
                 try FileManager.default.createDirectory(

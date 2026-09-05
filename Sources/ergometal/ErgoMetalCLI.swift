@@ -534,15 +534,17 @@ enum ErgoMetalCLI {
         let server = StatisticsHTTPServer(store: stats)
         try server.start(bind: args.string("api-bind", default: "127.0.0.1:4078")!)
         defer { server.stop() }
+        let password = ProcessInfo.processInfo.environment["ERGOMETAL_POOL_PASSWORD"] ?? "x"
         let coordinator = MiningCoordinator(
             stats: stats,
             writer: writer,
-            donationSchedule: donationSchedule)
+            donationSchedule: donationSchedule,
+            sensitiveValues: [pool, wallet, donationPool, donationWallet,
+                              password == "x" ? "" : password])
         coordinator.beforeStop = {
             solver.cancelPrefetch(waitUntilFinished: true)
             stats.updateDatasetWork(solver.datasetWorkMetrics())
         }
-        let password = ProcessInfo.processInfo.environment["ERGOMETAL_POOL_PASSWORD"] ?? "x"
         let userClient = try ErgoStratumClient(
             url: pool,
             user: "\(wallet).\(worker)",
@@ -589,8 +591,8 @@ enum ErgoMetalCLI {
                     "donation_cycle_seconds": String(Int(donationSchedule.cycleSeconds))
                 ])))
 
-        let statsTimer = DispatchSource.makeTimerSource(
-            queue: DispatchQueue(label: "dev.ergometal.statistics"))
+        let statsQueue = DispatchQueue(label: "dev.ergometal.statistics")
+        let statsTimer = DispatchSource.makeTimerSource(queue: statsQueue)
         statsTimer.schedule(
             deadline: .now() + .seconds(statsInterval),
             repeating: .seconds(statsInterval),
@@ -603,6 +605,7 @@ enum ErgoMetalCLI {
         statsTimer.resume()
         defer {
             statsTimer.cancel()
+            statsQueue.sync {}
             coordinator.stop()
         }
 
@@ -610,8 +613,8 @@ enum ErgoMetalCLI {
         signal(SIGINT, SIG_IGN); signal(SIGTERM, SIG_IGN)
         let sigint = DispatchSource.makeSignalSource(signal: SIGINT, queue: signalQueue)
         let sigterm = DispatchSource.makeSignalSource(signal: SIGTERM, queue: signalQueue)
-        sigint.setEventHandler { coordinator.stop() }
-        sigterm.setEventHandler { coordinator.stop() }
+        sigint.setEventHandler { coordinator.requestStop() }
+        sigterm.setEventHandler { coordinator.requestStop() }
         sigint.resume(); sigterm.resume(); coordinator.start()
 
         var nextStatusAt = Date.distantPast
@@ -729,6 +732,25 @@ enum ErgoMetalCLI {
                 var nonceSpaceExhausted = false
                 var pending: [SearchSubmission] = []
                 var statisticsAccumulator = SearchStatisticsAccumulator()
+                // Also drain and account for queued work if a later submission
+                // or share-handling operation throws before the normal drain.
+                defer {
+                    for submission in pending {
+                        if let batch = try? submission.wait(),
+                           let sample = statisticsAccumulator.append(batch) {
+                            stats.recordBatch(
+                                nonces: sample.nonces, gpuSeconds: sample.gpuSeconds,
+                                wallSeconds: sample.activeSearchSeconds,
+                                shareTarget: job.target, recipient: job.recipient)
+                        }
+                    }
+                    if let sample = statisticsAccumulator.flush() {
+                        stats.recordBatch(
+                            nonces: sample.nonces, gpuSeconds: sample.gpuSeconds,
+                            wallSeconds: sample.activeSearchSeconds,
+                            shareTarget: job.target, recipient: job.recipient)
+                    }
+                }
 
                 func enqueueNextBatch() throws -> Bool {
                     guard !nonceSpaceExhausted,
@@ -765,9 +787,6 @@ enum ErgoMetalCLI {
                 while !pending.isEmpty {
                     let batch = try pending.removeFirst().wait()
 
-                    // Keep the next GPU command ready before CPU verification
-                    // and any synchronous Stratum submission work.
-                    while pending.count < execution.searchPipelineDepth, try enqueueNextBatch() {}
                     let statisticsSample = statisticsAccumulator.append(batch)
                     if let statisticsSample {
                         stats.recordBatch(
@@ -777,6 +796,9 @@ enum ErgoMetalCLI {
                             shareTarget: job.target,
                             recipient: job.recipient)
                     }
+                    // Account for the completed batch before a refill can
+                    // throw, then overlap the next GPU work with verification.
+                    while pending.count < execution.searchPipelineDepth, try enqueueNextBatch() {}
                     for nonce in batch.candidates {
                         guard coordinator.isCurrent(job) else {
                             stats.recordShareStale(recipient: job.recipient)
@@ -820,14 +842,6 @@ enum ErgoMetalCLI {
                             suffix: "shares=\(snapshot.shares.accepted)/\(snapshot.shares.rejected)")
                         nextStatusAt = now.addingTimeInterval(1)
                     }
-                }
-                if let statisticsSample = statisticsAccumulator.flush() {
-                    stats.recordBatch(
-                        nonces: statisticsSample.nonces,
-                        gpuSeconds: statisticsSample.gpuSeconds,
-                        wallSeconds: statisticsSample.activeSearchSeconds,
-                        shareTarget: job.target,
-                        recipient: job.recipient)
                 }
                 if nonceSpaceExhausted,
                    coordinator.isCurrent(job),

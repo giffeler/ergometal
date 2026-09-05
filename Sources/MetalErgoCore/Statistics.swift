@@ -870,13 +870,14 @@ public final class JSONLEventWriter: Sendable {
         var handle: FileHandle?
         var failure: Error?
         if let path {
-            let url = URL(fileURLWithPath: path)
-            if !FileManager.default.fileExists(atPath: url.path) {
-                FileManager.default.createFile(atPath: url.path, contents: nil)
-            }
             do {
-                handle = try FileHandle(forWritingTo: url)
-                try handle?.seekToEnd()
+                let descriptor = Darwin.open(
+                    path, O_WRONLY | O_CREAT | O_APPEND | O_CLOEXEC,
+                    S_IRUSR | S_IWUSR)
+                guard descriptor >= 0 else {
+                    throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
+                }
+                handle = FileHandle(fileDescriptor: descriptor, closeOnDealloc: true)
             } catch {
                 failure = error
                 fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
@@ -891,7 +892,7 @@ public final class JSONLEventWriter: Sendable {
             do {
                 var data = try state.encoder.encode(event)
                 data.append(0x0a)
-                try handle.write(contentsOf: data)
+                try Self.append(data, to: handle)
             } catch {
                 state.failure = error
                 try? handle.close()
@@ -899,6 +900,17 @@ public final class JSONLEventWriter: Sendable {
                 fputs("ergometal event log: \(error.localizedDescription)\n", stderr)
             }
         }
+    }
+
+    private static func append(_ data: Data, to handle: FileHandle) throws {
+        // FileHandle may use multiple writes for one record. The file lock
+        // keeps those together across independent writers and processes.
+        while flock(handle.fileDescriptor, LOCK_EX) != 0 {
+            if errno == EINTR { continue }
+            throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO)
+        }
+        defer { flock(handle.fileDescriptor, LOCK_UN) }
+        try handle.write(contentsOf: data)
     }
 
     deinit {

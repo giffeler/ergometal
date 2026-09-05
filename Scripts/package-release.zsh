@@ -160,6 +160,7 @@ print -- "Running an isolated Metal smoke benchmark"
     --search-pipeline-depth 2 \
     --build-pipeline-depth 2 \
     --prebuild off \
+    --api-bind 127.0.0.1:0 \
     --json >/dev/null
 
 if [[ "${RELEASE_MODE}" == notarized ]]; then

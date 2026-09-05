@@ -258,9 +258,20 @@ public final class ErgoStratumClient: @unchecked Sendable {
             else { throw StratumError.invalidJob("pool authorization rejected") }
         } else if pendingShareIDs.remove(id) != nil {
             let accepted = (message["result"] as? Bool) ?? false
-            let errorArray = message["error"] as? [Any]
-            handler(.shareResult(id: id, accepted: accepted, message: errorArray?.dropFirst().first as? String))
+            handler(.shareResult(id: id, accepted: accepted,
+                message: accepted ? nil : Self.shareRejectionDiagnostic(message["error"])))
         }
+    }
+
+    /// Pool-provided prose may echo the authorization parameters. Only a
+    /// numeric protocol code crosses into logs and status diagnostics.
+    static func shareRejectionDiagnostic(_ raw: Any?) -> String {
+        if let array = raw as? [Any], let number = array.first as? NSNumber,
+           CFGetTypeID(number) != CFBooleanGetTypeID(),
+           let code = Int(number.stringValue) {
+            return "pool rejected share (code \(code))"
+        }
+        return "pool rejected share"
     }
 
     private func processJob(_ params: [Any]) throws {

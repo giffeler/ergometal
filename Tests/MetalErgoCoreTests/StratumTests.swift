@@ -3,6 +3,14 @@ import Network
 @testable import MetalErgoCore
 
 final class StratumTests: XCTestCase {
+    func testShareRejectionReportsCodeWithoutEchoingPoolProse() {
+        XCTAssertEqual(ErgoStratumClient.shareRejectionDiagnostic(
+            [23, "wallet=WALLET password=SECRET", NSNull()]), "pool rejected share (code 23)")
+        for raw: Any in [NSNull(), ["SECRET", "wallet=WALLET"], [true, "SECRET"], [23.5, "SECRET"]] {
+            XCTAssertEqual(ErgoStratumClient.shareRejectionDiagnostic(raw), "pool rejected share")
+        }
+    }
+
     func testTCPAndTLSConnectionsEnableKeepalive() throws {
         for useTLS in [false, true] {
             let parameters = ErgoStratumClient.connectionParameters(useTLS: useTLS)

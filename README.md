@@ -49,6 +49,14 @@ Every Stratum socket enables TCP keepalive after 30 seconds of inactivity, with
 three probes at 10-second intervals. This detects silently broken pool paths
 without relying on a pool-specific application-level ping method.
 
+Three M4 production observations against `erg.2miners.com` on 4–5 September
+2026 recorded 12 clean remote closes exactly 1,800 seconds after the most recent
+accepted share or connection, even though new jobs had continued to arrive.
+Every reconnect and authorization completed within one or two seconds, with no
+rejected or stale shares. This observed pool-side share-idle policy is distinct
+from TCP keepalive: keepalive detects a silently dead path but does not prevent
+a server from intentionally closing a live connection.
+
 ## Adaptive GPU configuration
 
 `mine` and `benchmark` classify the selected GPU by device name, Metal architecture name, highest GPU family known to the installed SDK, pipeline limits, SIMD widths, and OS build. This deliberately does not invent a Metal family for hardware newer than the SDK: an M6 is identified by its device and architecture names, starts from the M1-safe configuration, and receives its own cache entry. `efficiency` and `peak` are tuned and cached independently.
@@ -56,6 +64,26 @@ without relying on a pool-specific application-level ping method.
 On a cache miss, the default `--autotune auto` performs a staged preflight for at most 120 seconds. It measures Search and Dataset threadgroups, normal and prebuild batches, cold and prefetch chunks, and Search and Dataset pipeline depths. Candidate changes use thermally guarded ABBA comparisons, remain consensus-checked, and are adopted only at a median improvement of at least 2%. A budget expiry retains only completed comparisons; a thermal or consensus failure falls back safely. `ergometal tune --profile efficiency|peak|all` refreshes entries explicitly. `--autotune-budget 30...600` changes the limit and `--autotune-cache PATH` selects another cache file.
 
 The default cache is `~/Library/Caches/dev.ergometal/autotune-v1.json`. Its key includes the schema and tuning algorithm versions, executable SHA-256, OS build, GPU fingerprint, profile, workload, and normalized overrides. Writes are locked, atomic, and mode `0600`; an absent or corrupt cache never prevents mining. Resolution order is explicit CLI value, matching cache entry, fresh tuning result, then the M1-safe fallback. Use `--autotune off` to prohibit both cache access and tuning. For a fully reproducible benchmark, also specify `--threadgroup-size`, `--dataset-threadgroup-size`, `--batch-nonces`, `--prebuild-batch-nonces`, `--build-chunk-elements`, `--prefetch-chunk-elements`, `--search-pipeline-depth`, and `--build-pipeline-depth`.
+
+### M4 Peak real-pool observation
+
+Three real-pool runs of the same notarized M4 executable compared the default
+prebuild strategy with single-buffer operation. Two `--prebuild off` runs
+totalled 11 h 57 min at 15.405 MH/s active and 11.612 MH/s effective, versus
+10.714 MH/s effective for one 2 h 51 min `--prebuild auto` run. The observed
+effective advantage for `off` was 8.39%. Daytime and overnight `off` results
+differed by only 0.63% effective and 0.25% active hashrate, with nominal thermal
+state throughout.
+
+The pool supplied 29.86–31.80 distinct heights per hour during the `off` runs
+and 34.40 during the `auto` run, so this is a production observation rather
+than an order-balanced A/B result. For the tested M4, `peak` profile, executable,
+and pool, `--prebuild off` is the current evidence-backed choice when maximum
+effective throughput is the priority. `auto` remains the general default until
+the result is reproduced with balanced height cadence and on other Apple GPU
+generations and profiles. See
+[M4 real-pool prebuild observation](Benchmarks/2026-09-05-m4-real-pool-prebuild.md)
+for the complete counters, limitations, and log hashes.
 
 ## Standalone distribution
 

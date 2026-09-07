@@ -671,6 +671,7 @@ enum ErgoMetalCLI {
             do {
                 let build = try solver.buildDataset(
                     height: job.height,
+                    preserveOnCancellation: true,
                     shouldContinue: { coordinator.isHeightCurrent(job.height) })
                 guard coordinator.isCurrent(job) else {
                     if coordinator.isRecipientCurrent(job.recipient),

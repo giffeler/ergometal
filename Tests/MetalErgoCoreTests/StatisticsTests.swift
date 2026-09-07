@@ -208,6 +208,8 @@ final class StatisticsTests: XCTestCase {
         stats.recordDatasetActivation(build)
         var work = DatasetWorkMetrics()
         work.coldBuildsCompleted = 2
+        work.coldBuildsResumed = 1
+        work.coldBuildResumedElements = 128
         work.coldBuildGPUSeconds = 2.5
         work.prefetchBuildsStarted = 3
         work.prefetchBuildsCompleted = 2
@@ -231,6 +233,9 @@ final class StatisticsTests: XCTestCase {
 
         let snapshot = stats.refresh()
         let fields = snapshot.eventFields
+
+        XCTAssertEqual(fields["dataset_cold_builds_resumed_total"], "1")
+        XCTAssertEqual(fields["dataset_cold_build_resumed_elements_total"], "128")
 
         XCTAssertEqual(snapshot.datasetActivations, 1)
         XCTAssertEqual(snapshot.datasetPrefetchedActivations, 1)

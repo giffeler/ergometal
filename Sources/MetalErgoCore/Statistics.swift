@@ -268,6 +268,8 @@ public extension MinerSnapshot {
             "dataset_cold_builds_completed_total": String(datasetWork.coldBuildsCompleted),
             "dataset_cold_builds_cancelled_total": String(datasetWork.coldBuildsCancelled),
             "dataset_cold_builds_failed_total": String(datasetWork.coldBuildsFailed),
+            "dataset_cold_builds_resumed_total": String(datasetWork.coldBuildsResumed),
+            "dataset_cold_build_resumed_elements_total": String(datasetWork.coldBuildResumedElements),
             "dataset_cold_build_wall_seconds_total": String(datasetWork.coldBuildWallSeconds),
             "dataset_cold_build_gpu_seconds_total": String(datasetWork.coldBuildGPUSeconds),
             "dataset_prefetch_builds_started_total": String(datasetWork.prefetchBuildsStarted),
@@ -668,6 +670,10 @@ public final class StatisticsStore: Sendable {
         ergometal_dataset_cold_builds_cancelled_total{\(labels)} \(s.datasetWork.coldBuildsCancelled)
         # TYPE ergometal_dataset_cold_builds_failed_total counter
         ergometal_dataset_cold_builds_failed_total{\(labels)} \(s.datasetWork.coldBuildsFailed)
+        # TYPE ergometal_dataset_cold_builds_resumed_total counter
+        ergometal_dataset_cold_builds_resumed_total{\(labels)} \(s.datasetWork.coldBuildsResumed)
+        # TYPE ergometal_dataset_cold_build_resumed_elements_total counter
+        ergometal_dataset_cold_build_resumed_elements_total{\(labels)} \(s.datasetWork.coldBuildResumedElements)
         # TYPE ergometal_dataset_cold_build_wall_seconds_total counter
         ergometal_dataset_cold_build_wall_seconds_total{\(labels)} \(s.datasetWork.coldBuildWallSeconds)
         # TYPE ergometal_dataset_cold_build_gpu_seconds_total counter

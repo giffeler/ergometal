@@ -66,6 +66,16 @@ final class PerformanceTuningTests: XCTestCase {
 
     func testCandidateSetsRespectSIMDWidthAndImprovementGate() {
         XCTAssertEqual(
+            AutotuningPolicy.buildThreadgroupCandidates(width: 32, limit: 256),
+            [32, 64, 128, 256])
+        XCTAssertEqual(
+            AutotuningPolicy.buildThreadgroupCandidates(width: 64, limit: 128),
+            [64, 128])
+        XCTAssertEqual(
+            AutotuningPolicy.buildThreadgroupCandidates(width: 32, limit: 32), [32])
+        XCTAssertEqual(
+            AutotuningPolicy.buildThreadgroupCandidates(width: 64, limit: 32), [])
+        XCTAssertEqual(
             AutotuningPolicy.threadgroupCandidates(width: 32, limit: 256),
             [64, 128, 256])
         XCTAssertEqual(
@@ -241,6 +251,98 @@ final class PerformanceTuningTests: XCTestCase {
                 metrics.buildCommandGPUSeconds,
                 accuracy: 1e-9)
         }
+    }
+
+    func testCancelledBuildResumesDrainedChunksWithExactConsensusAtEveryDepth() throws {
+        for depth in 1...4 {
+            let solver = try MetalAutolykosSolver(
+                synchronousBuildChunkElements: 64, datasetThreadgroupSize: 32,
+                buildPipelineDepth: depth)
+            try cancelBuild(solver, height: 614_400, tableSize: 1_025, afterChecks: depth)
+            XCTAssertThrowsError(try solver.datasetElements(at: [0]))
+            XCTAssertThrowsError(try solver.search(
+                message: [UInt8](repeating: 0, count: 32), target: .zero,
+                baseNonce: 0, nonceCount: 1))
+            XCTAssertEqual(solver.datasetWorkMetrics().buildCommandsCompleted, depth)
+
+            let build = try solver.buildDataset(
+                height: 614_400, tableSize: 1_025, preserveOnCancellation: true)
+            let indices = [0, 1, 63, 64, depth * 64 - 1, depth * 64, 1_024]
+            XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+                try AutolykosV2.datasetElement(index: $0, height: 614_400)
+            })
+            let metrics = solver.datasetWorkMetrics()
+            XCTAssertEqual(metrics.buildCommandsCompleted, 17, "Recomputed a completed chunk")
+            XCTAssertEqual(metrics.coldBuildsCancelled, 1)
+            XCTAssertEqual(metrics.coldBuildsCompleted, 1)
+            XCTAssertEqual(metrics.coldBuildsFailed, 0)
+            XCTAssertEqual(metrics.coldBuildsResumed, 1)
+            XCTAssertEqual(metrics.coldBuildResumedElements, UInt64(depth * 64))
+            XCTAssertEqual(build.seconds, metrics.coldBuildWallSeconds, accuracy: 1e-9)
+            XCTAssertEqual(build.gpuSeconds, metrics.coldBuildGPUSeconds, accuracy: 1e-9)
+            XCTAssertEqual(build.gpuSeconds, metrics.buildCommandGPUSeconds, accuracy: 1e-9)
+            XCTAssertEqual(try solver.buildDataset(
+                height: 614_400, tableSize: 1_025).source, .cached)
+            XCTAssertEqual(solver.datasetWorkMetrics(), metrics)
+        }
+    }
+
+    func testResumptionRejectsDifferentHeightSizeAndOptOut() throws {
+        for (height, size, preserve) in [(614_401, 257, true), (614_400, 513, true), (614_400, 257, false)] {
+            let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
+            try cancelBuild(solver, height: 614_400, tableSize: 257, afterChecks: 2)
+            _ = try solver.buildDataset(
+                height: height, tableSize: size, preserveOnCancellation: preserve)
+            let metrics = solver.datasetWorkMetrics()
+            XCTAssertEqual(metrics.coldBuildsResumed, 0)
+            XCTAssertEqual(metrics.buildCommandsCompleted, 2 + (size + 63) / 64)
+            let indices = [0, 63, 64, size - 1]
+            XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+                try AutolykosV2.datasetElement(index: $0, height: height)
+            })
+        }
+    }
+
+    func testRepeatedCancellationPreservesOneContiguousPrefix() throws {
+        let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
+        try cancelBuild(solver, height: 614_400, tableSize: 513, afterChecks: 2)
+        try cancelBuild(solver, height: 614_400, tableSize: 513, afterChecks: 2)
+        let build = try solver.buildDataset(
+            height: 614_400, tableSize: 513, preserveOnCancellation: true)
+        let metrics = solver.datasetWorkMetrics()
+        XCTAssertEqual(metrics.buildCommandsCompleted, 9)
+        XCTAssertEqual(metrics.coldBuildsResumed, 2)
+        XCTAssertEqual(metrics.coldBuildResumedElements, 128 + 256)
+        XCTAssertEqual(metrics.coldBuildsCancelled, 2)
+        XCTAssertEqual(build.seconds, metrics.coldBuildWallSeconds, accuracy: 1e-9)
+        let indices = [0, 127, 128, 255, 256, 512]
+        XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+            try AutolykosV2.datasetElement(index: $0, height: 614_400)
+        })
+    }
+
+    func testCancellationBeforeSubmissionDoesNotRetainAnEmptyBuild() throws {
+        let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
+        try cancelBuild(solver, height: 614_400, tableSize: 257, afterChecks: 0)
+        _ = try solver.buildDataset(height: 614_400, tableSize: 257, preserveOnCancellation: true)
+        XCTAssertEqual(solver.datasetWorkMetrics().coldBuildsResumed, 0)
+        XCTAssertEqual(solver.datasetWorkMetrics().buildCommandsCompleted, 5)
+    }
+
+    private func cancelBuild(
+        _ solver: MetalAutolykosSolver, height: Int, tableSize: Int, afterChecks limit: Int
+    ) throws {
+        var checks = 0
+        XCTAssertThrowsError(try solver.buildDataset(
+            height: height, tableSize: tableSize, preserveOnCancellation: true,
+            shouldContinue: {
+                checks += 1
+                return checks <= limit
+            })) { error in
+                guard case MetalSolverError.cancelled = error else {
+                    return XCTFail("Expected cancellation, got \(error)")
+                }
+            }
     }
 
     private func fingerprint(

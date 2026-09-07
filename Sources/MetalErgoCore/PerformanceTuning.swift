@@ -315,7 +315,7 @@ private extension MetalExecutionOverrides {
 
 public struct AutotuneCacheIdentity: Codable, Hashable, Sendable {
     public static let schemaVersion = 1
-    public static let algorithmVersion = 1
+    public static let algorithmVersion = 2
 
     public let binarySHA256: String
     public let fingerprint: GPUArchitectureFingerprint
@@ -470,6 +470,11 @@ public enum AutotuningPolicy {
     public static func threadgroupCandidates(width: Int, limit: Int) -> [Int] {
         let width = max(1, width)
         return [64, 128, 256].filter { $0 <= limit && $0.isMultiple(of: width) }
+    }
+
+    public static func buildThreadgroupCandidates(width: Int, limit: Int) -> [Int] {
+        let width = max(1, width)
+        return [32, 64, 128, 256].filter { $0 <= limit && $0.isMultiple(of: width) }
     }
 
     public static let efficiencyBatchCandidates = [131_072, 262_144, 524_288]

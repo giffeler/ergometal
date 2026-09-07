@@ -63,6 +63,14 @@ a server from intentionally closing a live connection.
 
 On a cache miss, the default `--autotune auto` performs a staged preflight for at most 120 seconds. It measures Search and Dataset threadgroups, normal and prebuild batches, cold and prefetch chunks, and Search and Dataset pipeline depths. Candidate changes use thermally guarded ABBA comparisons, remain consensus-checked, and are adopted only at a median improvement of at least 2%. A budget expiry retains only completed comparisons; a thermal or consensus failure falls back safely. `ergometal tune --profile efficiency|peak|all` refreshes entries explicitly. `--autotune-budget 30...600` changes the limit and `--autotune-cache PATH` selects another cache file.
 
+Dataset threadgroup candidates are 32, 64, 128, and 256, filtered by the GPU's
+SIMD width and pipeline limit. Search candidates remain 64, 128, and 256. Each
+candidate also sets the pipeline descriptor's maximum threadgroup size. The
+bounded startup probe uses 4,194,304 Dataset elements; use the full-table
+campaign below to check sustained production build performance. The candidate
+policy is identified as autotuning algorithm version 2; the executable SHA-256
+keeps the new binary's cache entries separate from those of earlier releases.
+
 The default cache is `~/Library/Caches/dev.ergometal/autotune-v1.json`. Its key includes the schema and tuning algorithm versions, executable SHA-256, OS build, GPU fingerprint, profile, workload, and normalized overrides. Writes are locked, atomic, and mode `0600`; an absent or corrupt cache never prevents mining. Resolution order is explicit CLI value, matching cache entry, fresh tuning result, then the M1-safe fallback. Use `--autotune off` to prohibit both cache access and tuning. For a fully reproducible benchmark, also specify `--threadgroup-size`, `--dataset-threadgroup-size`, `--batch-nonces`, `--prebuild-batch-nonces`, `--build-chunk-elements`, `--prefetch-chunk-elements`, `--search-pipeline-depth`, and `--build-pipeline-depth`.
 
 Cache entries are also checked against numeric ranges, SIMD widths, and device
@@ -196,6 +204,23 @@ The non-distribution `Profile` configuration keeps Release optimization while re
 
 The miner builds datasets in cancellable chunks, discards stale work when the pool advances, and promotes a completed next-height dataset without rebuilding it. Between one and four build command buffers can be kept in flight to remove host submission gaps; cancellation stops further submissions and drains already queued chunks before releasing their resources. The default dataset kernel represents exact BLAKE2b 64-bit values as pairs of 32-bit words, which better matches Apple GPU integer hardware without changing consensus output. Dataset prefetch uses a separate Metal command queue so nonce search can continue while the inactive next-height buffer is built. Search-only BLAKE2b messages use a fixed-block scalar Metal path, while between one and four independent result-buffer sets keep the next GPU search queued during CPU verification and share handling.
 
+An interrupted mining cold build retains at most one incomplete private buffer
+after all submitted chunks have drained successfully. A subsequent job with the
+same height and table size resumes at the first unbuilt element. Different
+heights or sizes discard that buffer, and a new prefetch also replaces it before
+allocating memory. GPU failures never produce a resumable buffer. Partial data
+is unavailable to Search, and reconnection still invalidates the old pool job.
+The solver API opts into this behavior with `preserveOnCancellation`; benchmark
+and autotuning cancellation continue to discard their work.
+
+`dataset_cold_builds_resumed_total` counts resumed attempts and
+`dataset_cold_build_resumed_elements_total` sums the completed prefixes reused
+by those attempts. Repeated interruptions can count the same prefix again.
+Cancelled-attempt counters remain cumulative even when their work is later
+reused. Cold-build totals count each attempt's work once; a completed Dataset's
+build time includes its retained earlier attempts and excludes the reconnect
+pause. Its activation time measures only the final call.
+
 After two interrupted cold builds, catch-up mode deliberately prepares height + 1 so a run cannot remain permanently behind during a burst of short blocks. While prebuilding, search batches are kept short; afterwards, the selected profile's larger batch size is restored. M1-safe defaults are 2,097,152 elements per cold-build slice and 1,048,576 per prefetch slice; `--build-chunk-elements` and `--prefetch-chunk-elements` remain available for reproducible hardware-specific A/B tests. The fallback prebuild search cap is 65,536 nonces and can be overridden with `--prebuild-batch-nonces`. `--dataset-threadgroup-size`, `--dataset-kernel u32pair-inline-m|u32pair-scalar-m|u32pair|baseline`, and `--dataset-scheduling overlap|serialized` expose the build choices for controlled comparisons. `u32pair-inline-m` is the validated default: it derives the fixed Autolykos M words arithmetically and uses two aligned `uint4` stores per element. `u32pair-scalar-m` additionally exposes the repeated BLAKE2b state and message words as named scalars for controlled A/B measurement. `u32pair` retains the buffer-loaded implementation as an A/B reference, while `baseline` uses native 64-bit BLAKE2b arithmetic. Use `--prebuild off` to force single-buffer operation or `--prebuild on` to require enough memory for two buffers.
 
 For balanced multi-run comparisons, the repository includes a campaign driver that uses rotating forward/reverse (ABBA) round pairs and preserves the raw snapshot and JSONL event history of every run:
@@ -224,6 +249,25 @@ DURATION=60 Scripts/benchmark-ab.zsh /tmp/ergometal-occupancy-ab 3 \
 ```
 
 Omit `TABLE_SIZE` for consensus-sized datasets. `BINARY` selects a non-canonical executable, `HEIGHT` defaults to 1,841,500, and `COOLDOWN_SECONDS` inserts an optional pause between runs. `WARMUP_RUNS` runs the first variant without including it in `results.jsonl`; `START_TEMPERATURE_CELSIUS` gates each run on the miner's own SoC telemetry, with `GATE_TIMEOUT_SECONDS` defaulting to 300 seconds. The generated `summary.json` reports minimum, median, and maximum values; performance changes should be judged from several thermally comparable runs rather than a single best result.
+
+For the full-size cold-build threadgroup comparison, use a height representative
+of the production log, disable prebuild, and leave `TABLE_SIZE` unset:
+
+```sh
+HEIGHT=1867794 DURATION=5 WARMUP_RUNS=1 START_TEMPERATURE_CELSIUS=50 \
+Scripts/benchmark-ab.zsh /tmp/ergometal-build-threadgroups 4 \
+  'tg256:--dataset-threadgroup-size 256 --prebuild off' \
+  'tg32:--dataset-threadgroup-size 32 --prebuild off' \
+  'tg64:--dataset-threadgroup-size 64 --prebuild off' \
+  'tg128:--dataset-threadgroup-size 128 --prebuild off'
+```
+
+The duration controls the Search window after each complete build. Compare
+Dataset wall/GPU time across paired rounds, and check that no temperature gate
+timed out. This campaign does not write autotuning settings or contact a pool.
+The [7 September M4 campaign](Benchmarks/2026-09-07-m4-build-threadgroups-and-resume.md)
+found only a 0.212% paired gain for 32 threads and retained the 256-thread
+fallback. Its full-table reconnect test reused 22 completed chunks.
 
 `benchmark --height-interval SECONDS` simulates consecutive pool heights locally. It drains the old search pipeline, promotes the prefetched dataset, starts the following prefetch, and resumes search without contacting a pool. This is the preferred deterministic thermal and scheduler test:
 

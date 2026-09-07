@@ -129,6 +129,9 @@ public struct DatasetWorkMetrics: Codable, Sendable, Equatable {
     public var coldBuildsCompleted = 0
     public var coldBuildsCancelled = 0
     public var coldBuildsFailed = 0
+    public var coldBuildsResumed = 0
+    /// Completed elements reused at the start of each resumed build attempt.
+    public var coldBuildResumedElements: UInt64 = 0
     public var coldBuildWallSeconds = 0.0
     public var coldBuildGPUSeconds = 0.0
     public var prefetchBuildsStarted = 0
@@ -424,6 +427,8 @@ private final class DatasetSlot: @unchecked Sendable {
     let buffer: MTLBuffer
     var buildSeconds: Double = 0
     var buildGPUSeconds: Double = 0
+    /// Contiguous prefix whose command buffers have completed successfully.
+    var completedElements = 0
 
     init(spec: DatasetSpec, buffer: MTLBuffer) {
         self.spec = spec
@@ -501,6 +506,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
     private let datasetThreadgroupSize: Int
     private var activeDataset: DatasetSlot?
     private var prefetchTask: DatasetPrefetchTask?
+    private var incompleteDataset: DatasetSlot?
     private var workMetrics = DatasetWorkMetrics()
 
     public init(
@@ -673,6 +679,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
     public func buildDataset(
         height: Int,
         tableSize override: Int? = nil,
+        preserveOnCancellation: Bool = false,
         shouldContinue: (() -> Bool)? = nil
     ) throws -> DatasetBuild {
         let spec = try datasetSpec(height: height, tableSize: override)
@@ -702,14 +709,38 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
 
         state.lock()
         activeDataset = nil
+        let reusable = preserveOnCancellation &&
+            incompleteDataset?.spec.matches(height: height, tableSize: spec.tableSize) == true
+            ? incompleteDataset : nil
+        incompleteDataset = nil
+        if let reusable {
+            workMetrics.coldBuildsResumed += 1
+            workMetrics.coldBuildResumedElements += UInt64(reusable.completedElements)
+        }
         state.unlock()
-        try validateWorkingSet(bytes: [spec.bytes])
-        guard let buffer = device.makeBuffer(length: Int(spec.bytes), options: .storageModePrivate)
-        else { throw MetalSolverError.allocation(bytes: spec.bytes, available: info.recommendedWorkingSetBytes) }
-        let slot = DatasetSlot(spec: spec, buffer: buffer)
-        let timing = try buildSynchronously(slot: slot, shouldContinue: shouldContinue)
-        slot.buildSeconds = timing.wallSeconds
-        slot.buildGPUSeconds = timing.gpuSeconds
+        let slot: DatasetSlot
+        if let reusable {
+            slot = reusable
+        } else {
+            try validateWorkingSet(bytes: [spec.bytes])
+            guard let buffer = device.makeBuffer(length: Int(spec.bytes), options: .storageModePrivate)
+            else { throw MetalSolverError.allocation(bytes: spec.bytes, available: info.recommendedWorkingSetBytes) }
+            slot = DatasetSlot(spec: spec, buffer: buffer)
+        }
+        do {
+            let timing = try buildSynchronously(slot: slot, shouldContinue: shouldContinue)
+            slot.buildSeconds += timing.wallSeconds
+            slot.buildGPUSeconds += timing.gpuSeconds
+        } catch MetalSolverError.cancelled {
+            // buildSynchronously has drained every queued command. Never expose
+            // this buffer to Search before the entire matching table is ready.
+            if preserveOnCancellation, slot.completedElements > 0 {
+                state.lock()
+                incompleteDataset = slot
+                state.unlock()
+            }
+            throw MetalSolverError.cancelled
+        }
         state.lock()
         activeDataset = slot
         state.unlock()
@@ -728,6 +759,9 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         let spec = try datasetSpec(height: height, tableSize: override)
 
         state.lock()
+        // A new prefetch replaces any suspended cold build. Do not retain an
+        // extra full-size buffer outside the working-set calculation below.
+        incompleteDataset = nil
         if let activeDataset, activeDataset.spec.matches(height: height, tableSize: spec.tableSize) {
             state.unlock()
             return false
@@ -1080,7 +1114,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         shouldContinue: (() -> Bool)?
     ) throws -> DatasetBuildTiming {
         let started = ContinuousClock.now
-        var nextIndex = 0
+        var nextIndex = slot.completedElements
         var gpuSeconds = 0.0
         var pending: [PendingDatasetBuild] = []
         var failure: Error?
@@ -1095,6 +1129,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
                 do {
                     gpuSeconds += try waitForBuildSubmission(
                         pending[0].submission, shouldContinue: shouldContinue)
+                    slot.completedElements += pending[0].elementCount
                     pending.removeFirst()
                 } catch {
                     failure = error
@@ -1120,6 +1155,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
             do {
                 gpuSeconds += try waitForBuildSubmission(
                     pending[0].submission, shouldContinue: shouldContinue)
+                slot.completedElements += pending[0].elementCount
                 pending.removeFirst()
             } catch {
                 failure = error
@@ -1131,13 +1167,18 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
             let chunk = pending.removeFirst()
             do {
                 gpuSeconds += try chunk.submission.wait()
+                slot.completedElements += chunk.elementCount
             } catch {
-                if failure == nil { failure = error }
+                // A GPU failure takes precedence over cancellation: a buffer
+                // with an unsuccessful chunk must never be resumed.
+                failure = error
             }
         }
 
         if let failure {
             let wallSeconds = started.duration(to: .now).seconds
+            slot.buildSeconds += wallSeconds
+            slot.buildGPUSeconds += gpuSeconds
             state.lock()
             if case MetalSolverError.cancelled = failure {
                 workMetrics.coldBuildsCancelled += 1

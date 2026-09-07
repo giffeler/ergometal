@@ -32,6 +32,49 @@ final class MiningCoordinatorTests: XCTestCase {
         XCTAssertEqual(event.fields["search_seconds"], "0.2")
     }
 
+    func testReconnectAtSameHeightResumesBuildButInvalidatesOldJob() throws {
+        let coordinator = makeCoordinator(percent: 0)
+        coordinator.configure(userClient: FakeStratumClient(), donationClient: nil)
+        coordinator.start()
+        defer { coordinator.stop() }
+        coordinator.handle(.job(makeJob(generation: 1)), recipient: .user)
+        let original = try XCTUnwrap(coordinator.nextJob())
+        let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
+        var checks = 0
+        XCTAssertThrowsError(try solver.buildDataset(
+            height: original.height, tableSize: 257, preserveOnCancellation: true,
+            shouldContinue: {
+                checks += 1
+                if checks == 3 {
+                    coordinator.handle(.disconnected("local test"), recipient: .user)
+                }
+                return coordinator.isHeightCurrent(original.height)
+            })) { error in
+                guard case MetalSolverError.cancelled = error else {
+                    return XCTFail("Expected cancellation, got \(error)")
+                }
+            }
+        XCTAssertFalse(coordinator.isCurrent(original))
+        XCTAssertFalse(coordinator.isHeightCurrent(original.height))
+        XCTAssertThrowsError(try solver.datasetElements(at: [0]))
+
+        coordinator.handle(.authorized, recipient: .user)
+        coordinator.handle(.job(makeJob(generation: 2)), recipient: .user)
+        let resumed = try XCTUnwrap(coordinator.nextJob())
+        _ = try solver.buildDataset(
+            height: resumed.height, tableSize: 257, preserveOnCancellation: true,
+            shouldContinue: { coordinator.isHeightCurrent(resumed.height) })
+        XCTAssertFalse(coordinator.isCurrent(original))
+        XCTAssertTrue(coordinator.isCurrent(resumed))
+        XCTAssertEqual(solver.datasetWorkMetrics().buildCommandsCompleted, 5)
+        XCTAssertEqual(solver.datasetWorkMetrics().coldBuildsResumed, 1)
+        XCTAssertEqual(solver.datasetWorkMetrics().coldBuildResumedElements, 128)
+        let indices = [0, 127, 128, 256]
+        XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+            try AutolykosV2.datasetElement(index: $0, height: resumed.height)
+        })
+    }
+
     func testRecipientRoundTripInvalidatesPendingReconnect() {
         let user = FakeStratumClient()
         let coordinator = makeCoordinator(percent: 1, cycleSeconds: 100)

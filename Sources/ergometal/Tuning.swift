@@ -265,7 +265,7 @@ final class LiveMetalAutotuner {
             if fixed.datasetThreadgroupSize == nil {
                 try select(
                     label: "dataset_threadgroup_size",
-                    candidates: AutotuningPolicy.threadgroupCandidates(
+                    candidates: AutotuningPolicy.buildThreadgroupCandidates(
                         width: fingerprint.buildThreadExecutionWidth,
                         limit: min(256, fingerprint.buildMaxThreadsPerThreadgroup)),
                     set: { $0.datasetThreadgroupSize = $1 }, measure: measureBuild)

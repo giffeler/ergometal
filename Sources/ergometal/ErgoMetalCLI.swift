@@ -5,7 +5,6 @@ import MetalErgoCore
 
 @main
 enum ErgoMetalCLI {
-    private static let searchStatisticsBatchCount = 16
     private static let donationPool = "stratum+tls://erg.2miners.com:18888"
     private static let donationWallet = "9emWVfBsLPbV6dvpugpjsjwKwETT7yBBfCyMefXbZDory7kDUVg"
     private static let donationWorker = "ergometal"
@@ -17,64 +16,6 @@ enum ErgoMetalCLI {
     private enum GPUTracePhase: String {
         case build
         case search
-    }
-
-    private struct SearchStatisticsSample {
-        let nonces: Int
-        let gpuSeconds: Double
-        let activeSearchSeconds: Double
-    }
-
-    /// Search command buffers can overlap on Apple GPUs. Aggregate a short
-    /// rolling command window and merge submit-to-completion intervals so
-    /// active time is neither counted twice nor exposed as callback jitter.
-    private struct SearchStatisticsAccumulator {
-        private var nonces = 0
-        private var batchCount = 0
-        private var wallIntervals: [(start: TimeInterval, end: TimeInterval)] = []
-        private var gpuSeconds = 0.0
-        private var accountedWallEnd: TimeInterval?
-
-        mutating func append(
-            _ batch: SearchBatch,
-            flush: Bool = false
-        ) -> SearchStatisticsSample? {
-            nonces += batch.nonceCount
-            batchCount += 1
-            gpuSeconds += max(0, batch.gpuSeconds)
-            if batch.wallEndTime > batch.wallStartTime {
-                wallIntervals.append((batch.wallStartTime, batch.wallEndTime))
-            }
-            return batchCount >= ErgoMetalCLI.searchStatisticsBatchCount || flush ? take() : nil
-        }
-
-        mutating func flush() -> SearchStatisticsSample? {
-            batchCount == 0 ? nil : take()
-        }
-
-        private mutating func take() -> SearchStatisticsSample {
-            let ordered = wallIntervals.sorted { $0.start < $1.start }
-            var activeSearchSeconds = 0.0
-            var cursor = accountedWallEnd
-            for interval in ordered {
-                if let cursor, interval.end <= cursor { continue }
-                let start = cursor.map { max($0, interval.start) } ?? interval.start
-                if interval.end > start {
-                    activeSearchSeconds += interval.end - start
-                }
-                cursor = max(cursor ?? interval.end, interval.end)
-            }
-            accountedWallEnd = cursor
-            let sample = SearchStatisticsSample(
-                nonces: nonces,
-                gpuSeconds: gpuSeconds,
-                activeSearchSeconds: max(0, activeSearchSeconds))
-            nonces = 0
-            batchCount = 0
-            wallIntervals.removeAll(keepingCapacity: true)
-            gpuSeconds = 0
-            return sample
-        }
     }
 
     static func main() {
@@ -338,10 +279,7 @@ enum ErgoMetalCLI {
                 }
             }
             guard let sample else { return }
-            stats.recordBatch(
-                nonces: sample.nonces,
-                gpuSeconds: sample.gpuSeconds,
-                wallSeconds: sample.activeSearchSeconds)
+            sample.record(in: stats)
             let now = Date()
             if now >= nextStatusAt {
                 _ = synchronizeDatasetStatistics(solver: solver, stats: stats)
@@ -394,6 +332,7 @@ enum ErgoMetalCLI {
                 guard heightInterval > 0, Date() >= nextHeightAt, Date() < end else {
                     break
                 }
+                statisticsAccumulator.flush()?.record(in: stats)
                 stats.update { $0.state = .buildingDataset }
                 activeHeight += 1
                 activeBuild = try solver.buildDataset(
@@ -436,10 +375,7 @@ enum ErgoMetalCLI {
             try record(batch)
         }
         if let sample = statisticsAccumulator.flush() {
-            stats.recordBatch(
-                nonces: sample.nonces,
-                gpuSeconds: sample.gpuSeconds,
-                wallSeconds: sample.activeSearchSeconds)
+            sample.record(in: stats)
         }
         solver.cancelPrefetch(waitUntilFinished: true)
         stats.updateDatasetWork(solver.datasetWorkMetrics())
@@ -739,16 +675,14 @@ enum ErgoMetalCLI {
                     for submission in pending {
                         if let batch = try? submission.wait(),
                            let sample = statisticsAccumulator.append(batch) {
-                            stats.recordBatch(
-                                nonces: sample.nonces, gpuSeconds: sample.gpuSeconds,
-                                wallSeconds: sample.activeSearchSeconds,
+                            sample.record(
+                                in: stats,
                                 shareTarget: job.target, recipient: job.recipient)
                         }
                     }
                     if let sample = statisticsAccumulator.flush() {
-                        stats.recordBatch(
-                            nonces: sample.nonces, gpuSeconds: sample.gpuSeconds,
-                            wallSeconds: sample.activeSearchSeconds,
+                        sample.record(
+                            in: stats,
                             shareTarget: job.target, recipient: job.recipient)
                     }
                 }
@@ -790,10 +724,8 @@ enum ErgoMetalCLI {
 
                     let statisticsSample = statisticsAccumulator.append(batch)
                     if let statisticsSample {
-                        stats.recordBatch(
-                            nonces: statisticsSample.nonces,
-                            gpuSeconds: statisticsSample.gpuSeconds,
-                            wallSeconds: statisticsSample.activeSearchSeconds,
+                        statisticsSample.record(
+                            in: stats,
                             shareTarget: job.target,
                             recipient: job.recipient)
                     }

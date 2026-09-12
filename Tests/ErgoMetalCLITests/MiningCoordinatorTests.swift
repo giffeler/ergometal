@@ -3,6 +3,65 @@ import XCTest
 @testable import MetalErgoCore
 
 final class MiningCoordinatorTests: XCTestCase {
+    func testJobChangeDrainsEveryPendingNonceBeforeResettingSearchWindow() throws {
+        for depth in 1...4 {
+            let stats = StatisticsStore(mode: .mining)
+            let coordinator = MiningCoordinator(
+                stats: stats, writer: JSONLEventWriter(path: nil),
+                donationSchedule: try DonationSchedule(percent: 0),
+                automaticallySchedules: false)
+            coordinator.configure(userClient: FakeStratumClient(), donationClient: nil)
+            coordinator.start()
+            defer { coordinator.stop() }
+            coordinator.handle(.job(makeJob(generation: 1)))
+            let oldJob = try XCTUnwrap(coordinator.nextJob())
+            stats.update { $0.state = .searching }
+            var accumulator = SearchStatisticsAccumulator()
+            func batch(_ index: Int) -> SearchBatch {
+                SearchBatch(
+                    baseNonce: UInt64(index * 1_048_576), nonceCount: 1_048_576, candidates: [],
+                    wallStartTime: Double(index), wallEndTime: Double(index + depth),
+                    gpuSeconds: 0.5, wallSeconds: Double(depth))
+            }
+            for index in 0..<16 {
+                accumulator.append(batch(index))?.record(
+                    in: stats, shareTarget: oldJob.target, recipient: oldJob.recipient)
+            }
+            let pending = (16..<(16 + depth)).map(batch)
+            coordinator.handle(.job(makeJob(generation: 2)))
+            XCTAssertFalse(coordinator.isCurrent(oldJob))
+            // The CLI's normal/deferred drain uses the old target and recipient
+            // even though the coordinator already knows about the new job.
+            for completed in pending {
+                accumulator.append(completed)?.record(
+                    in: stats, shareTarget: oldJob.target, recipient: oldJob.recipient)
+            }
+            try XCTUnwrap(accumulator.flush()).record(
+                in: stats, shareTarget: oldJob.target, recipient: oldJob.recipient)
+            XCTAssertNil(accumulator.flush())
+            let completedCount = 16 + depth
+            XCTAssertEqual(stats.snapshot().nonces, UInt64(completedCount * 1_048_576))
+            XCTAssertEqual(stats.snapshot().searchSeconds, Double(15 + 2 * depth))
+            XCTAssertEqual(stats.snapshot().shares.expected, Double(completedCount * 65_536))
+
+            let newJob = try XCTUnwrap(coordinator.nextJob())
+            XCTAssertTrue(coordinator.isCurrent(newJob))
+            XCTAssertEqual(newJob.height, oldJob.height)
+            stats.update { $0.state = .buildingDataset }
+            XCTAssertEqual(stats.refresh().hashrate, 0)
+            stats.update { $0.state = .searching }
+            XCTAssertEqual(stats.snapshot().hashrate, 0)
+            var nextAccumulator = SearchStatisticsAccumulator()
+            let newBatch = batch(40)
+            try XCTUnwrap(nextAccumulator.append(newBatch, flush: true)).record(
+                in: stats, shareTarget: newJob.target, recipient: newJob.recipient)
+            XCTAssertEqual(stats.snapshot().nonces, UInt64((completedCount + 1) * 1_048_576))
+            XCTAssertEqual(stats.snapshot().searchSeconds, Double(15 + 3 * depth))
+            XCTAssertEqual(stats.snapshot().hashrate, 1_048_576 / Double(depth))
+            XCTAssertEqual(stats.snapshot().shares.expected, Double((completedCount + 1) * 65_536))
+        }
+    }
+
     func testStopFinalizesOnlyAfterCompletedSearchIsAccountedFor() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: url) }

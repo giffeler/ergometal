@@ -2,6 +2,79 @@ import XCTest
 @testable import MetalErgoCore
 
 final class StatisticsTests: XCTestCase {
+    func testIndependentHashrateWindowPreservesCumulativeAndDonationAccounting() {
+        let stats = StatisticsStore(mode: .mining)
+        stats.update { $0.state = .searching }
+        let target = UInt256(limbs: [0x8000_0000] + [UInt32](repeating: 0, count: 7))
+        stats.recordBatch(
+            nonces: 100, gpuSeconds: 0.3, wallSeconds: 2,
+            hashrateWindowSeconds: 2, shareTarget: target, recipient: .donation)
+        stats.recordBatch(
+            nonces: 100, gpuSeconds: 0.4, wallSeconds: 0,
+            hashrateWindowSeconds: 1, shareTarget: target, recipient: .donation)
+        let searching = stats.snapshot()
+        XCTAssertEqual(searching.hashrate, 100)
+        XCTAssertEqual(searching.averageHashrate, 100)
+        XCTAssertEqual(searching.nonces, 200)
+        XCTAssertEqual(searching.searchSeconds, 2)
+        XCTAssertEqual(searching.gpuSeconds, 0.7, accuracy: 1e-12)
+        XCTAssertEqual(searching.shares.expected, 100)
+        XCTAssertEqual(searching.donation.nonces, 200)
+        XCTAssertEqual(searching.donation.searchSeconds, 2)
+        XCTAssertEqual(searching.donation.shares.expected, 100)
+
+        // No new completions during dataset work or idle time. The active
+        // average stays fixed; effective rate and duty include the whole gap.
+        stats.update { $0.state = .buildingDataset }
+        let building = stats.refresh(at: searching.startedAt.addingTimeInterval(10))
+        XCTAssertEqual(building.hashrate, 0)
+        XCTAssertEqual(building.averageHashrate, 100)
+        XCTAssertEqual(building.effectiveHashrate, 20)
+        XCTAssertEqual(building.searchDutyCycle, 0.2)
+        stats.update { $0.state = .reconnecting }
+        let idle = stats.refresh(at: searching.startedAt.addingTimeInterval(20))
+        XCTAssertEqual(idle.hashrate, 0)
+        XCTAssertEqual(idle.nonces, 200)
+        XCTAssertEqual(idle.searchSeconds, 2)
+        XCTAssertEqual(idle.averageHashrate, 100)
+        XCTAssertEqual(idle.effectiveHashrate, 10)
+        XCTAssertEqual(idle.searchDutyCycle, 0.1)
+        XCTAssertEqual(idle.averageHashrate * idle.searchDutyCycle, idle.effectiveHashrate)
+        XCTAssertEqual(idle.eventFields["hashrate"], "0.0")
+        XCTAssertEqual(idle.eventFields["effective_hashrate"], "10.0")
+        XCTAssertEqual(idle.eventFields["search_duty_cycle"], "0.1")
+    }
+
+    func testNonSearchStatesClearRateAndLateCompletionsCannotRestoreIt() throws {
+        for nextState: MinerState in [.starting, .buildingDataset, .reconnecting, .stopped, .failed] {
+            let stats = StatisticsStore(mode: .mining)
+            stats.update { $0.state = .searching }
+            stats.recordBatch(nonces: 100, gpuSeconds: 0.1, wallSeconds: 1)
+            XCTAssertEqual(stats.snapshot().hashrate, 100)
+            stats.update { $0.state = nextState }
+            XCTAssertEqual(stats.snapshot().hashrate, 0)
+            // A reconnect or recipient switch can precede the old work's drain.
+            stats.recordBatch(
+                nonces: 100, gpuSeconds: 0.1, wallSeconds: 1, hashrateWindowSeconds: 2)
+            let snapshot = stats.refresh()
+            XCTAssertEqual(snapshot.hashrate, 0)
+            XCTAssertEqual(snapshot.nonces, 200)
+            XCTAssertEqual(snapshot.searchSeconds, 2)
+            XCTAssertEqual(snapshot.averageHashrate, 100)
+            XCTAssertEqual(snapshot.eventFields["hashrate"], "0.0")
+            let json = try XCTUnwrap(JSONSerialization.jsonObject(
+                with: JSONEncoder().encode(snapshot)) as? [String: Any])
+            XCTAssertEqual(json["hashrate"] as? Double, 0)
+            XCTAssertTrue(stats.prometheus().split(separator: "\n").contains {
+                $0.hasPrefix("ergometal_hashrate{") && $0.hasSuffix(" 0.0")
+            })
+            stats.update { $0.state = .searching }
+            XCTAssertEqual(stats.snapshot().hashrate, 0)
+            stats.recordBatch(nonces: 300, gpuSeconds: 0.1, wallSeconds: 1)
+            XCTAssertEqual(stats.snapshot().hashrate, 300)
+        }
+    }
+
     func testStatusAndEventFieldsExposeResolvedTuning() {
         let configuration = MetalExecutionConfiguration.safeFallback(profile: .peak)
         let tuning = MetalTuningResolver.resolve(

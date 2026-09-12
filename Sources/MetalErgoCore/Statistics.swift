@@ -433,6 +433,9 @@ public final class StatisticsStore: Sendable {
     public func update(_ body: @Sendable (inout MinerSnapshot) -> Void) {
         state.withLock { state in
             body(&state.value)
+            // A completed search window is no longer current during dataset
+            // work, reconnects or shutdown. Do not revive it on search restart.
+            if state.value.state != .searching { state.value.hashrate = 0 }
             if let temperature = state.value.socTemperatureMaximumCelsius {
                 state.value.socTemperatureSessionPeakCelsius = max(
                     state.value.socTemperatureSessionPeakCelsius ?? temperature,
@@ -472,10 +475,16 @@ public final class StatisticsStore: Sendable {
         }
     }
 
+    /// Counts completed nonces exactly once. `wallSeconds` is newly accounted
+    /// active time, with overlap across calls removed by the caller. For a
+    /// pipelined measurement, `hashrateWindowSeconds` must instead be the union
+    /// of the full command intervals belonging to these same `nonces`.
+    /// Omitting it is appropriate for standalone, nonoverlapping batches.
     public func recordBatch(
         nonces: Int,
         gpuSeconds: Double,
         wallSeconds: Double,
+        hashrateWindowSeconds: Double? = nil,
         shareTarget: UInt256? = nil,
         recipient: MiningRecipient = .user
     ) {
@@ -495,7 +504,12 @@ public final class StatisticsStore: Sendable {
                 }
             }
             let now = Date()
-            state.value.hashrate = wallSeconds > 0 ? Double(nonces) / wallSeconds : 0
+            let windowSeconds = hashrateWindowSeconds ?? wallSeconds
+            // Late completions still count during a drain, but must not restore
+            // the current rate after search has stopped.
+            state.value.hashrate = state.value.state == .searching && windowSeconds > 0
+                ? Double(nonces) / windowSeconds
+                : 0
             state.value.averageHashrate = state.value.searchSeconds > 0
                 ? Double(state.value.nonces) / state.value.searchSeconds
                 : 0
@@ -599,8 +613,12 @@ public final class StatisticsStore: Sendable {
     /// completing, for example during a long dataset build.
     @discardableResult
     public func refresh() -> MinerSnapshot {
+        refresh(at: Date())
+    }
+
+    @discardableResult
+    func refresh(at now: Date) -> MinerSnapshot {
         state.withLock { state in
-            let now = Date()
             let elapsed = now.timeIntervalSince(state.value.startedAt)
             state.value.effectiveHashrate = elapsed > 0
                 ? Double(state.value.nonces) / elapsed
@@ -629,7 +647,7 @@ public final class StatisticsStore: Sendable {
         let s = snapshot()
         let labels = "session=\"\(s.sessionID.uuidString)\",mode=\"\(s.mode.rawValue)\""
         var output = """
-        # HELP ergometal_hashrate Nonces searched per second.
+        # HELP ergometal_hashrate Nonces per active second in the latest completed command window; zero outside searching.
         # TYPE ergometal_hashrate gauge
         ergometal_hashrate{\(labels)} \(s.hashrate)
         # TYPE ergometal_nonces_total counter

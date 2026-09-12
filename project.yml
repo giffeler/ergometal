@@ -68,6 +68,7 @@ targets:
       - path: Tests/ErgoMetalCLITests
       - path: Sources/ergometal/Arguments.swift
       - path: Sources/ergometal/MiningCoordinator.swift
+      - path: Sources/ergometal/SearchStatistics.swift
       - path: Sources/ergometal/Tuning.swift
       - path: Sources/MetalErgoCore/AutolykosKernels.metal
     dependencies:

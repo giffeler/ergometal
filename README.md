@@ -100,6 +100,16 @@ for the complete counters, limitations, and log hashes.
 
 ## Standalone distribution
 
+The current public preview is **12 September 2026**:
+[notarized Apple Silicon ZIP](https://ios.gekko.de/apps/ergometal/download),
+[SHA-256 checksum](https://ios.gekko.de/apps/ergometal/ergometal-macos-arm64-2026-09-12-notarized.zip.sha256),
+and [release notes](Releases/2026-09-12.md).
+It corrects current-hashrate spikes caused by overlapping statistics windows
+and clears the current rate during foreground Dataset builds and reconnects.
+Cumulative accounting and mining behavior are preserved; 93 Debug and 93
+Release tests passed. The standalone executable has Developer ID signing,
+Hardened Runtime, Apple notarization and no source debugging information.
+
 `Scripts/package-release.zsh` builds the arm64 Release executable in a temporary
 directory, strips local and debug symbols, signs it, verifies that it contains
 the embedded Metal library, no `__DWARF` segment, and no project-local dynamic
@@ -152,6 +162,10 @@ Binary-only redistribution must also provide access to the matching GPLv3
 source and license. The canonical source repository is
 <https://github.com/giffeler/ergometal>; publish or name the exact matching tag
 or commit alongside every distributed archive.
+
+The repository's [release publication skill](.agents/skills/publish-ergometal-release/SKILL.md)
+records the established EmDash MCP, `ssh gekko`, deployment, verification and
+Git workflow for future authorized releases on ios.gekko.de.
 
 ## Optional donation
 
@@ -289,6 +303,33 @@ Long-running modes expose a read-only server on `127.0.0.1:4078` by default:
 - `/healthz` — process and solver health
 
 The terminal shows current, active-average, and effective wall-clock hashrate together with search duty, prebuild progress, current/session-peak temperature, expected shares, and accepted-share luck. Status and metrics also expose dataset activation, source, and prebuild progress. The server refuses non-loopback binds. `--stats-file run.jsonl` adds append-only, ISO-8601 event history. During mining, a `statistics_sample` is written every 60 seconds even while a dataset is building; `--stats-interval SECONDS` changes that cadence. Each sample and the final `session_ended` record contain cumulative nonce, timing, dataset, connection, thermal, and share counters, so a long run can be evaluated directly from the JSONL file.
+
+`hashrate` measures the latest group of 16 completed Search commands, or the
+remaining 1–15 commands when a job, benchmark height, or run ends. The numerator
+is all nonces completed by that group; the denominator is the union of those
+same commands' **full** submission-to-completion intervals. Gaps with no command
+in flight are excluded. Groups contain distinct commands, but their time
+intervals can overlap; each rate is an independent measurement. Queue latency
+is included, so short final groups and deeper pipelines can report lower rates
+than the session's active average. A window with no positive measured duration
+reports zero. This is a command-group rate, not a fixed wall-clock sampling
+interval; `--stats-interval` only controls when snapshots are logged.
+
+Cumulative `nonces` still counts every completed nonce once. `search_seconds`
+adds only the previously unaccounted portion of the interval union across all
+groups. `average_hashrate` is cumulative nonces divided by that active time;
+`effective_hashrate` divides by the whole elapsed session, including dataset
+builds and idle gaps. `search_duty_cycle` divides active time by elapsed session
+time. Never divide a group's full nonce count by only its new contribution to
+the cumulative union: a nearly covered final group can otherwise produce an
+arbitrarily inflated current rate even while cumulative metrics stay correct.
+
+The current rate becomes zero when the miner leaves `searching`, including
+during a foreground dataset build, reconnect, or stop. Drained commands still
+contribute their nonces, active time and expected shares, but cannot restore a
+rate outside `searching`. A resumed search reports zero until its first new
+measurement. Background prebuilding while Search continues retains the Search
+measurement. These rules apply equally to terminal status, JSON and Prometheus.
 
 The HTTP server accepts fragmented request headers, with an 8 KiB header limit
 and a five-second request timeout. Independent log writers coordinate complete

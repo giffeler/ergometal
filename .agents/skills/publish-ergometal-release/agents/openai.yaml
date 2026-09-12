@@ -1,0 +1,4 @@
+interface:
+  display_name: "Publish ErgoMetal Release"
+  short_description: "Notarize ErgoMetal and publish it on ios.gekko.de"
+  default_prompt: "Use $publish-ergometal-release to build and publish the next ErgoMetal release on ios.gekko.de."

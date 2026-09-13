@@ -1,0 +1,17 @@
+{
+  "styleguide": "https://ios.gekko.de/styleguide",
+  "edition": "0.4.1",
+  "approved_for_integration": "2026-09-13",
+  "copyright_holder": "gekko",
+  "copyright_notice": "© 2026 gekko",
+  "drawings": [
+    {
+      "id": "EM-04",
+      "source": "EM-04.png",
+      "source_sha256": "fcbb95ee05d9099fd8866bc4166669e57348d6bf0db2512e274f2f02bc1359c8",
+      "icon_packages": []
+    }
+  ],
+  "source_format": "Original raster PNG; SVG files in Icon Composer are placement wrappers, not vector reconstructions.",
+  "retired_artwork": []
+}

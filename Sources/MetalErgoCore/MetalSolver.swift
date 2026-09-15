@@ -16,7 +16,9 @@ public enum MetalSolverError: Error, LocalizedError {
     case invalidPipelineDepth(Int)
     case invalidDatasetChunkSize(Int)
     case resultOverflow(limit: Int, found: UInt32)
+    #if GPU_CAPTURE
     case capture(String)
+    #endif
     case cancelled
 
     public var errorDescription: String? {
@@ -37,7 +39,9 @@ public enum MetalSolverError: Error, LocalizedError {
             return "Dataset chunk size must be positive, got \(size)"
         case .resultOverflow(let limit, let found):
             return "Metal candidate buffer can hold \(limit) nonces, but the batch found \(found)"
+        #if GPU_CAPTURE
         case .capture(let message): return "Metal GPU capture failed: \(message)"
+        #endif
         case .cancelled: return "Metal dataset build was cancelled"
         }
     }
@@ -644,6 +648,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         }
     }
 
+    #if GPU_CAPTURE
     public func startGPUCapture(path: String) throws {
         let manager = MTLCaptureManager.shared()
         guard !manager.isCapturing else {
@@ -674,6 +679,8 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         let manager = MTLCaptureManager.shared()
         if manager.isCapturing { manager.stopCapture() }
     }
+
+    #endif
 
     @discardableResult
     public func buildDataset(
@@ -907,8 +914,8 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         let dataset = activeDataset
         state.unlock()
         guard let dataset else { throw MetalSolverError.commandEncoding }
-        let messageWords = UInt256(bigEndian: message).limbs
-        let targetWords = target.limbs
+        var messageWords = UInt256(bigEndian: message).words
+        var targetWords = target.words
         let resources = acquireSearchResources()
 
         enterSerializedGate()
@@ -929,12 +936,8 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
         let pipeline = searchPipeline
         encoder.setComputePipelineState(pipeline)
         encoder.setBuffer(dataset.buffer, offset: 0, index: 0)
-        messageWords.withUnsafeBytes {
-            encoder.setBytes($0.baseAddress!, length: $0.count, index: 1)
-        }
-        targetWords.withUnsafeBytes {
-            encoder.setBytes($0.baseAddress!, length: $0.count, index: 2)
-        }
+        encoder.setBytes(&messageWords, length: MemoryLayout.size(ofValue: messageWords), index: 1)
+        encoder.setBytes(&targetWords, length: MemoryLayout.size(ofValue: targetWords), index: 2)
         encoder.setBuffer(resources.resultBuffer, offset: 0, index: 3)
         encoder.setBuffer(resources.resultCountBuffer, offset: 0, index: 4)
         encoder.setBytes(&base, length: MemoryLayout<UInt64>.size, index: 5)

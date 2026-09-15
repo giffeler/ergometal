@@ -3,14 +3,14 @@ import Foundation
 /// Small, dependency-free BLAKE2b implementation used as the consensus oracle.
 /// Autolykos uses the 256-bit digest variant, not a truncated 512-bit digest.
 public enum Blake2b256 {
-    private static let iv: [UInt64] = [
+    private static let iv: InlineArray<8, UInt64> = [
         0x6a09e667f3bcc908, 0xbb67ae8584caa73b,
         0x3c6ef372fe94f82b, 0xa54ff53a5f1d36f1,
         0x510e527fade682d1, 0x9b05688c2b3e6c1f,
         0x1f83d9abfb41bd6b, 0x5be0cd19137e2179
     ]
 
-    private static let sigma: [[Int]] = [
+    private static let sigma: InlineArray<12, InlineArray<16, Int>> = [
         [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
         [14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3],
         [11, 8, 12, 0, 5, 2, 15, 13, 10, 14, 3, 6, 7, 1, 9, 4],
@@ -30,7 +30,7 @@ public enum Blake2b256 {
     }
 
     @inline(__always) private static func g(
-        _ v: inout [UInt64], _ a: Int, _ b: Int, _ c: Int, _ d: Int,
+        _ v: inout InlineArray<16, UInt64>, _ a: Int, _ b: Int, _ c: Int, _ d: Int,
         _ x: UInt64, _ y: UInt64
     ) {
         v[a] = v[a] &+ v[b] &+ x
@@ -43,13 +43,19 @@ public enum Blake2b256 {
         v[b] = rotateRight(v[b] ^ v[c], 63)
     }
 
-    private static func compress(_ h: inout [UInt64], block: ArraySlice<UInt8>, count: UInt64, final: Bool) {
-        var m = [UInt64](repeating: 0, count: 16)
-        for i in 0..<block.count {
-            m[i / 8] |= UInt64(block[block.startIndex + i]) << UInt64((i % 8) * 8)
+    private static func compress(
+        _ h: inout InlineArray<8, UInt64>, block: Span<UInt8>, count: UInt64, final: Bool
+    ) {
+        var m = InlineArray<16, UInt64>(repeating: 0)
+        let wholeWords = block.count / 8
+        for i in 0..<wholeWords {
+            m[i] = UInt64(littleEndian: block.bytes.load(fromByteOffset: i * 8, as: UInt64.self))
+        }
+        for i in (wholeWords * 8)..<block.count {
+            m[i / 8] |= UInt64(block[i]) << UInt64((i % 8) * 8)
         }
 
-        var v = h + iv
+        var v = InlineArray<16, UInt64> { $0 < 8 ? h[$0] : iv[$0 - 8] }
         v[12] ^= count
         if final { v[14] = ~v[14] }
 
@@ -72,24 +78,17 @@ public enum Blake2b256 {
         h[0] ^= 0x0101_0020
 
         if bytes.isEmpty {
-            compress(&h, block: bytes[0..<0], count: 0, final: true)
+            compress(&h, block: bytes.span, count: 0, final: true)
         } else {
             var offset = 0
             while offset < bytes.count {
                 let end = min(offset + 128, bytes.count)
-                compress(&h, block: bytes[offset..<end], count: UInt64(end), final: end == bytes.count)
+                compress(&h, block: bytes.span.extracting(offset..<end), count: UInt64(end), final: end == bytes.count)
                 offset = end
             }
         }
 
-        var result: [UInt8] = []
-        result.reserveCapacity(32)
-        for word in h.prefix(4) {
-            for shift in stride(from: 0, to: 64, by: 8) {
-                result.append(UInt8(truncatingIfNeeded: word >> UInt64(shift)))
-            }
-        }
-        return result
+        return (0..<32).map { UInt8(truncatingIfNeeded: h[$0 / 8] >> (($0 % 8) * 8)) }
     }
 }
 

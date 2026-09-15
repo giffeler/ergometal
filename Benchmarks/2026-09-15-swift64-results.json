@@ -1,0 +1,669 @@
+{
+  "metadata": {
+    "sourceBaseline": "3e024cc4da34ac21c178be3256c08195ab436e0c",
+    "xcode": "Xcode 27.0\nBuild version 27A266a",
+    "swift": "Apple Swift version 6.4 (swiftlang-6.4.0.34.1 clang-2100.3.34.1)\nTarget: arm64-apple-macosx27.0.0",
+    "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0\nBuildVersion:\t\t26A428",
+    "hardware": "Apple M4, Mac16,1, 32 GB unified memory",
+    "cpuHarnessSHA256": "6bc94d708cb57423f495746920453ffbe31c8694ef5705010458fe7ab342e0b5",
+    "cpuBaselineBinarySHA256": "7d9695ae5cfd6be741e603e3d403dcb11dead015862b7116af1baf735a3ef84b",
+    "cpuCandidateBinarySHA256": "0b2c00d02be6a7a0c19b84553346d18e4ee185c5f06182041d24b7f75d795333",
+    "sourceFilesSHA256": {
+      "Sources/MetalErgoCore/Autolykos.swift": "e1dbc548717ff52b7bce8dae9b04c89ee055a085ee2c5a29659eadbefe627fc2",
+      "Sources/MetalErgoCore/AutolykosKernels.metal": "4422fe1d3e370d2a2e176b30943311274caff858d3a9789ea40398504c64a78e",
+      "Sources/MetalErgoCore/Blake2b.swift": "30278e34c3c1b50bb3ef673edac8e4e36e5ea9e5367c0858ba648c78a67636a8",
+      "Sources/MetalErgoCore/Donation.swift": "bb01c57029ba67b29f7bd0dd6fe9fd1cccca62d4fc09ed49809ba88850f5c9e3",
+      "Sources/MetalErgoCore/ErgoAddress.swift": "595139d1513afd2984c474f6e8907de7480402b4e17b354c54b7624cf28c6633",
+      "Sources/MetalErgoCore/MetalSolver.swift": "9e5bce3d073b1987744153d542e277bb7619f3373711f8a8417db4b22070efc8",
+      "Sources/MetalErgoCore/MinerStatusLineFormatter.swift": "82213cd9d90942717d848342a5ccd6b2ef239b10c70780dfcfd76ad8ef40e298",
+      "Sources/MetalErgoCore/PerformanceTuning.swift": "0bda87a508a37454ab0d881d6cc7e53fee49aeda750eea328f850fb821272a63",
+      "Sources/MetalErgoCore/Statistics.swift": "7898a578c99f4a57a5c5a4fe47f45fa0035da184c316207f1979afae80d86c25",
+      "Sources/MetalErgoCore/StatisticsHTTPServer.swift": "3c5e5031cc41fd3b63e9bef0b41b3f68c408e2d76c5a3f3479648c4b7ebcd9b8",
+      "Sources/MetalErgoCore/Stratum.swift": "57fa65bfdc5db6e916b109e1ee2be7a6d9f972729a909a4f553788aef9570dae",
+      "Sources/MetalErgoCore/UInt256.swift": "f768edf1b35415181b57a77504e65b08a49d58f63e8c02a7d1caf945f9ccdfd4",
+      "Sources/ergometal/Arguments.swift": "593b68f457a2c399935ac95548e1fab7bac48da55c45764d015e79813d856b82",
+      "Sources/ergometal/ErgoMetalCLI.swift": "4496d1f6fb8bbbfbaa34e520c82b9b30dde60ab76495b0a2b45245fdb05cf06a",
+      "Sources/ergometal/MiningCoordinator.swift": "73a516c645d5057839a2f55b7143cd6e4b9127bf94473222146884e13626167a",
+      "Sources/ergometal/SearchStatistics.swift": "d170a5042c8dd89d4fde4a7781a87acea57d20899b830fde85e32cdeded9257e",
+      "Sources/ergometal/Tuning.swift": "6ab9949cb5e851ceaa5119e44db2b4efaee2928735be6d1aaa9b94c2391babfb"
+    }
+  },
+  "cpu": [
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.08715224999468774,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.11347637500148267,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.1919660416606348,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.19660487500368617,
+      "checksum": 31350
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.04805800000031013,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.04967420833418146,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.0527752500056522,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.05705899999884423,
+      "checksum": 31350
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.048320666668587364,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.05007737499545328,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.05278729165729601,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 0,
+      "variant": "candidate",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.05684833333361894,
+      "checksum": 31350
+    },
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.08458362500823569,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.11239270832447801,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.19192100000509527,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 0,
+      "variant": "baseline",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.1967106666706968,
+      "checksum": 31350
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.08495762500388082,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.11335420832620002,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.1911531666701194,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.195328875008272,
+      "checksum": 31350
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.04813699999067467,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.04970812500687316,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.05309204167861026,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.056789833324728534,
+      "checksum": 31350
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.04829104166128673,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.04967579165531788,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.052838541669189,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 1,
+      "variant": "candidate",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.05658308333659079,
+      "checksum": 31350
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.08542466667131521,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.11358362500322983,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.1911345833214,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 1,
+      "variant": "baseline",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.19503995834384114,
+      "checksum": 31350
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.0854434166685678,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.11257037500035949,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.19126079166017007,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.1966532500082394,
+      "checksum": 31350
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.04848054166359361,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.049692583343130536,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.05276558332843706,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.0567401666630758,
+      "checksum": 31350
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.04858495832013432,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.04976483332575299,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.05276454167324118,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 2,
+      "variant": "candidate",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.05691533333447296,
+      "checksum": 31350
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "blake2b-32",
+      "iterations": 262144,
+      "seconds": 0.08529158333840314,
+      "checksum": 34008064
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "blake2b-128",
+      "iterations": 262144,
+      "seconds": 0.11391854166868143,
+      "checksum": 33209344
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "blake2b-8200",
+      "iterations": 8192,
+      "seconds": 0.19132591667585075,
+      "checksum": 1039712
+    },
+    {
+      "cycle": 2,
+      "variant": "baseline",
+      "name": "autolykos-hit",
+      "iterations": 256,
+      "seconds": 0.19495158332574647,
+      "checksum": 31350
+    }
+  ],
+  "gpuManifest": {
+    "args": [
+      "benchmark",
+      "--duration",
+      "20",
+      "--height",
+      "1841500",
+      "--profile",
+      "peak",
+      "--autotune",
+      "off",
+      "--prebuild",
+      "off",
+      "--batch-nonces",
+      "1048576",
+      "--prebuild-batch-nonces",
+      "65536",
+      "--threadgroup-size",
+      "128",
+      "--dataset-threadgroup-size",
+      "32",
+      "--build-chunk-elements",
+      "2097152",
+      "--prefetch-chunk-elements",
+      "2097152",
+      "--search-pipeline-depth",
+      "4",
+      "--build-pipeline-depth",
+      "2",
+      "--dataset-kernel",
+      "u32pair-inline-m",
+      "--dataset-scheduling",
+      "overlap",
+      "--search-kernel",
+      "search",
+      "--api-bind",
+      "127.0.0.1:0",
+      "--json"
+    ],
+    "binaries": {
+      "previous": {
+        "path": "/tmp/ergometal-swift64/previous-release/ergometal",
+        "sha256": "b18ed68823c6f1fe9837b057395d722392deef97b91e31c99b1a286573743b64"
+      },
+      "candidate": {
+        "path": "/Users/denis/Developer/ergometal/DerivedData/Build/Products/Release/ergometal",
+        "sha256": "c59625b3aeeb95c71071306f28a821493ea633c660489db600896d2b746e13a7"
+      }
+    }
+  },
+  "gpu": [
+    {
+      "cycle": 0,
+      "position": 0,
+      "variant": "previous",
+      "measured": false,
+      "startTemperature": {
+        "averageCelsius": 41.073734283447266,
+        "maximumCelsius": 46.04450988769531,
+        "sensorCount": 24
+      },
+      "wallSeconds": 51.460396334,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.39195525,
+        "datasetBuildGPUSeconds": 30.111435333295958,
+        "averageHashrate": 15261112.257286599,
+        "effectiveHashrate": 6073159.748141512,
+        "nonces": 308281344,
+        "searchSeconds": 20.200450583331985,
+        "gpuSeconds": 40.356478624918964,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 62.03627014160156,
+        "socTemperatureSessionPeakCelsius": 64.67491149902344
+      }
+    },
+    {
+      "cycle": 0,
+      "position": 1,
+      "variant": "candidate",
+      "measured": false,
+      "startTemperature": {
+        "averageCelsius": 49.2828369140625,
+        "maximumCelsius": 54.440185546875,
+        "sensorCount": 24
+      },
+      "wallSeconds": 51.40198649999999,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.473558084,
+        "datasetBuildGPUSeconds": 30.250824083195766,
+        "averageHashrate": 15102976.99079317,
+        "effectiveHashrate": 6002277.525071626,
+        "nonces": 305135616,
+        "searchSeconds": 20.20367350000015,
+        "gpuSeconds": 40.38640566669346,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 69.39247131347656,
+        "socTemperatureSessionPeakCelsius": 76.82864379882812
+      }
+    },
+    {
+      "cycle": 0,
+      "position": 2,
+      "variant": "candidate",
+      "measured": false,
+      "startTemperature": {
+        "averageCelsius": 50.27565956115723,
+        "maximumCelsius": 54.440185546875,
+        "sensorCount": 24
+      },
+      "wallSeconds": 50.75164508400002,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.335086291,
+        "datasetBuildGPUSeconds": 30.119845624896698,
+        "averageHashrate": 15158294.504149972,
+        "effectiveHashrate": 6039972.490315046,
+        "nonces": 306184192,
+        "searchSeconds": 20.19911883333407,
+        "gpuSeconds": 40.38178124981641,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 68.832763671875,
+        "socTemperatureSessionPeakCelsius": 72.83070373535156
+      }
+    },
+    {
+      "cycle": 0,
+      "position": 3,
+      "variant": "previous",
+      "measured": false,
+      "startTemperature": {
+        "averageCelsius": 50.54885228474935,
+        "maximumCelsius": 54.91993713378906,
+        "sensorCount": 24
+      },
+      "wallSeconds": 50.733611999999994,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.346706833,
+        "datasetBuildGPUSeconds": 30.117452041682554,
+        "averageHashrate": 15297924.939536279,
+        "effectiveHashrate": 6084704.206588143,
+        "nonces": 308281344,
+        "searchSeconds": 20.151840541671845,
+        "gpuSeconds": 40.28266916656867,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 70.43194580078125,
+        "socTemperatureSessionPeakCelsius": 73.55033874511719
+      }
+    },
+    {
+      "cycle": 1,
+      "position": 0,
+      "variant": "previous",
+      "measured": true,
+      "startTemperature": {
+        "averageCelsius": 50.33562723795573,
+        "maximumCelsius": 54.5201416015625,
+        "sensorCount": 24
+      },
+      "wallSeconds": 50.782703458000015,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.336706209,
+        "datasetBuildGPUSeconds": 30.121669083368033,
+        "averageHashrate": 15254294.922610253,
+        "effectiveHashrate": 6077820.848382246,
+        "nonces": 308281344,
+        "searchSeconds": 20.2094784166693,
+        "gpuSeconds": 40.37282041666913,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 70.59185791015625,
+        "socTemperatureSessionPeakCelsius": 73.23049926757812
+      }
+    },
+    {
+      "cycle": 1,
+      "position": 1,
+      "variant": "candidate",
+      "measured": true,
+      "startTemperature": {
+        "averageCelsius": 50.22901725769043,
+        "maximumCelsius": 54.91993713378906,
+        "sensorCount": 24
+      },
+      "wallSeconds": 50.74599254100002,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.330370417,
+        "datasetBuildGPUSeconds": 30.10968633327866,
+        "averageHashrate": 15115545.67586363,
+        "effectiveHashrate": 6020001.003926211,
+        "nonces": 305135616,
+        "searchSeconds": 20.186874000006355,
+        "gpuSeconds": 40.34372424997855,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 69.23255920410156,
+        "socTemperatureSessionPeakCelsius": 72.3509521484375
+      }
+    },
+    {
+      "cycle": 1,
+      "position": 2,
+      "variant": "candidate",
+      "measured": true,
+      "startTemperature": {
+        "averageCelsius": 50.492214838663735,
+        "maximumCelsius": 54.6800537109375,
+        "sensorCount": 24
+      },
+      "wallSeconds": 50.80636504100005,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.333020167,
+        "datasetBuildGPUSeconds": 30.1210515001585,
+        "averageHashrate": 15179593.61330817,
+        "effectiveHashrate": 6054880.733863026,
+        "nonces": 307232768,
+        "searchSeconds": 20.239854625004227,
+        "gpuSeconds": 40.470312083431054,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 70.59185791015625,
+        "socTemperatureSessionPeakCelsius": 73.87016296386719
+      }
+    },
+    {
+      "cycle": 1,
+      "position": 3,
+      "variant": "previous",
+      "measured": true,
+      "startTemperature": {
+        "averageCelsius": 50.40559196472168,
+        "maximumCelsius": 54.6800537109375,
+        "sensorCount": 24
+      },
+      "wallSeconds": 50.73713008300001,
+      "result": {
+        "datasetBytes": 6925769760,
+        "datasetBuildSeconds": 30.337964625,
+        "datasetBuildGPUSeconds": 30.11916100003873,
+        "averageHashrate": 15293433.267466465,
+        "effectiveHashrate": 6083370.343561285,
+        "nonces": 308281344,
+        "searchSeconds": 20.15775912500976,
+        "gpuSeconds": 40.294208083476406,
+        "thermalState": "nominal",
+        "socTemperatureMaximumCelsius": 69.87222290039062,
+        "socTemperatureSessionPeakCelsius": 72.91065979003906
+      }
+    }
+  ]
+}

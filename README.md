@@ -12,7 +12,7 @@ Only a public payout address is required. Private keys and wallet seed phrases a
 
 ## Build
 
-Requirements: Xcode 26.6 with Swift 6.3, macOS 26.5 or later, and an Apple Silicon Mac. The project uses Swift 6 language mode with complete strict-concurrency checking. Builds target arm64 only; Intel Macs and universal builds are not supported.
+Requirements: Xcode 27.0 with Swift 6.4, macOS 26.5 or later, and an Apple Silicon Mac. The project uses Swift 6 language mode with complete strict-concurrency checking. Builds target arm64 only; Intel Macs and universal builds are not supported.
 
 Current mainnet datasets require substantial unified memory. Mining uses one height-specific dataset; the default `--prebuild auto` strategy keeps it active while building the next height in a second buffer. It automatically falls back to a single buffer if Metal's recommended working set cannot hold both datasets plus at least 512 MB or 10% headroom.
 
@@ -31,9 +31,9 @@ xcodebuild -project MetalErgoMiner.xcodeproj -scheme MetalErgoMiner \
 The canonical release executable is `DerivedData/Build/Products/Release/ergometal`.
 It statically links `MetalErgoCore` and embeds the compiled Metal library, so no
 sibling framework or `.metallib` is required at runtime. macOS system libraries
-and Metal remain operating-system dependencies. Release builds always use
-`-derivedDataPath DerivedData`, while disposable test products stay under
-`/tmp`, preventing parallel stale executables inside the repository. From
+and Metal remain operating-system dependencies. Use `-derivedDataPath DerivedData` for ordinary local Release builds and
+`/tmp` for disposable test products. The packaging script uses its own temporary
+build directory, keeping release verification separate from test products. From
 Xcode, select the `MetalErgoMiner` scheme and set one of these argument sets:
 
 ```sh
@@ -100,20 +100,24 @@ for the complete counters, limitations, and log hashes.
 
 ## Standalone distribution
 
-The current public preview is **12 September 2026**:
+The current public preview is **15 September 2026**:
 [notarized Apple Silicon ZIP](https://ios.gekko.de/apps/ergometal/download),
-[SHA-256 checksum](https://ios.gekko.de/apps/ergometal/ergometal-macos-arm64-2026-09-12-notarized.zip.sha256),
-and [release notes](Releases/2026-09-12.md).
-It corrects current-hashrate spikes caused by overlapping statistics windows
-and clears the current rate during foreground Dataset builds and reconnects.
-Cumulative accounting and mining behavior are preserved; 93 Debug and 93
-Release tests passed. The standalone executable has Developer ID signing,
-Hardened Runtime, Apple notarization and no source debugging information.
+[SHA-256 checksum](https://ios.gekko.de/apps/ergometal/ergometal-macos-arm64-2026-09-15-notarized.zip.sha256),
+and [release notes](Releases/2026-09-15.md).
+It uses Xcode 27 and Swift 6.4 to reduce allocation and copying in CPU
+consensus checks and Metal argument preparation. Fixed-size `InlineArray`
+storage, safe `RawSpan.load` byte reads and `borrow` accessors preserve the
+existing consensus outputs and UInt256 JSON representation. GPU capture code
+is compiled out of Release. All 96 Debug and 96 optimized Release tests passed.
+See the [measured comparison](Benchmarks/2026-09-15-swift64.md) for CPU and GPU
+results; a faster CPU verifier does not imply the same gain in mining hashrate.
+The standalone executable has Developer ID signing, Hardened Runtime,
+Apple notarization and no source debugging information.
 
 `Scripts/package-release.zsh` builds the arm64 Release executable in a temporary
 directory, strips local and debug symbols, signs it, verifies that it contains
-the embedded Metal library, no `__DWARF` segment, and no project-local dynamic
-dependencies, and runs an isolated Metal smoke benchmark.
+the embedded Metal library, no `__DWARF` segment, no GPU capture class
+dependencies, and no project-local dynamic dependencies, and runs an isolated Metal smoke benchmark.
 The resulting ZIP contains exactly one root entry named `ergometal`; its SHA-256
 file is written beside the ZIP rather than into it.
 Release compilation disables Swift and Metal debug information; the separate
@@ -203,10 +207,14 @@ wall-clock allocation; `donation_search_seconds` and `donation_nonces` expose
 the actual search work separately. Pool URLs, wallet addresses, and passwords
 are not written to Prometheus or JSONL event fields.
 
-For a replayable Metal GPU trace, enable capture and select either the dataset build or the first search batch:
+For a replayable Metal GPU trace, build the non-distribution `Profile` configuration, enable capture and select either the dataset build or the first search batch. GPU capture code and its CLI options are compiled out of `Release`:
 
 ```sh
-MTL_CAPTURE_ENABLED=1 ergometal benchmark --duration 10 --height 614400 \
+xcodebuild -project MetalErgoMiner.xcodeproj -scheme MetalErgoMiner \
+  -configuration Profile -derivedDataPath /tmp/ergometal-profile \
+  -destination 'platform=macOS,arch=arm64' CODE_SIGNING_ALLOWED=NO build
+MTL_CAPTURE_ENABLED=1 /tmp/ergometal-profile/Build/Products/Profile/ergometal \
+  benchmark --duration 10 --height 614400 \
   --gpu-trace search.gputrace --gpu-trace-phase search
 ```
 

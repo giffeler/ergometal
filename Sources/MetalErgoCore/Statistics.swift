@@ -829,8 +829,8 @@ public final class StatisticsStore: Sendable {
     /// target / 2^256. Limbs are stored most-significant first.
     private static func shareProbability(for target: UInt256) -> Double {
         let radix = 4_294_967_296.0
-        return target.limbs.reversed().reduce(0.0) {
-            ($0 + Double($1)) / radix
+        return (0..<8).reversed().reduce(0.0) {
+            ($0 + Double(target.words[$1])) / radix
         }
     }
 

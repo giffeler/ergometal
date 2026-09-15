@@ -14,12 +14,12 @@ struct MiningWork: Sendable {
     fileprivate let job: ErgoStratumJob
     let recipient: MiningRecipient
 
-    var id: String { job.id }
-    var height: Int { job.height }
-    var message: [UInt8] { job.message }
-    var target: UInt256 { job.target }
-    var extraNoncePrefix: [UInt8] { job.extraNoncePrefix }
-    var extraNonce2Size: Int { job.extraNonce2Size }
+    var id: String { borrow { job.id } }
+    var height: Int { borrow { job.height } }
+    var message: [UInt8] { borrow { job.message } }
+    var target: UInt256 { borrow { job.target } }
+    var extraNoncePrefix: [UInt8] { borrow { job.extraNoncePrefix } }
+    var extraNonce2Size: Int { borrow { job.extraNonce2Size } }
 }
 
 final class MiningCoordinator: @unchecked Sendable {

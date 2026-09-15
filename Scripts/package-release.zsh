@@ -29,7 +29,7 @@ print -r -- "${RELEASE_VERSION}" \
     | /usr/bin/grep -Eq '^[A-Za-z0-9][A-Za-z0-9._-]*$' \
     || fail "version must use only letters, digits, dots, underscores, and hyphens"
 
-for release_tool in xcodebuild codesign otool lipo strip zip unzip shasum; do
+for release_tool in xcodebuild codesign otool lipo nm strip zip unzip shasum; do
     command -v "${release_tool}" >/dev/null \
         || fail "required tool '${release_tool}' was not found"
 done
@@ -96,6 +96,11 @@ readonly BUILT_BINARY="${DERIVED_DATA}/Build/Products/Release/ergometal"
 /bin/cp "${BUILT_BINARY}" "${STAGED_BINARY}"
 /bin/chmod 755 "${STAGED_BINARY}"
 /usr/bin/strip -S -x "${STAGED_BINARY}"
+
+if /usr/bin/nm -u "${STAGED_BINARY}" \
+    | /usr/bin/grep -E 'MTLCapture(Manager|Descriptor)' >/dev/null; then
+    fail "release executable still links GPU capture debugging code"
+fi
 
 if /usr/bin/otool -l "${STAGED_BINARY}" \
     | /usr/bin/awk '$1 == "segname" && $2 == "__DWARF" { found = 1 } END { exit !found }'; then
@@ -184,7 +189,8 @@ if [[ "${RELEASE_MODE}" == notarized ]]; then
     print -- "Notarization accepted as ${notary_id}; verifying Gatekeeper assessment"
     gatekeeper_accepted=false
     for attempt in {1..60}; do
-        gatekeeper_output=$(/usr/sbin/spctl -a -t exec -vv "${VERIFY_DIR}/ergometal" 2>&1) \
+        # Recheck the online ticket instead of reusing a pre-propagation denial.
+        gatekeeper_output=$(/usr/sbin/spctl -a --ignore-cache -t exec -vv "${VERIFY_DIR}/ergometal" 2>&1) \
             && gatekeeper_status=0 \
             || gatekeeper_status=$?
         print -u2 -- "${gatekeeper_output}"

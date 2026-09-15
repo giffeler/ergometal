@@ -108,6 +108,12 @@ enum CLIError: Error, LocalizedError {
     }
 }
 
+#if GPU_CAPTURE
+private let captureUsage = "Benchmark profiling: --gpu-trace path.gputrace --gpu-trace-phase build|search\n"
+#else
+private let captureUsage = ""
+#endif
+
 let usage = """
 MetalErgoMiner research CLI
 
@@ -133,7 +139,6 @@ Usage:
                       [--dataset-kernel u32pair-inline-m|u32pair-scalar-m|u32pair|baseline]
                       [--dataset-scheduling overlap|serialized]
                       [--search-kernel search|gather-only]
-                      [--gpu-trace path.gputrace] [--gpu-trace-phase build|search]
                       [--api-bind 127.0.0.1:4078] [--stats-file path] [--json]
   ergometal replay --fixture path
   ergometal mine --pool stratum+tcp://host:port --wallet address [--worker name]
@@ -151,6 +156,6 @@ Usage:
                  [--api-bind 127.0.0.1:4078] [--stats-file path]
                  [--stats-interval 60] [--donation 0|1...100]
 
-The pool password defaults to ERGOMETAL_POOL_PASSWORD or "x" and is never logged.
+\(captureUsage)The pool password defaults to ERGOMETAL_POOL_PASSWORD or "x" and is never logged.
 Donation is opt-in: no donation is configured unless --donation is supplied with a positive percentage.
 """

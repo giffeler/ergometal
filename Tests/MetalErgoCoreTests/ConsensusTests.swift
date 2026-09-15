@@ -9,6 +9,57 @@ final class ConsensusTests: XCTestCase {
             "bddd813c634239723171ef3fee98579b94964e3bb1cb3e427262c8c068d52319")
     }
 
+    func testBlake2bBlockBoundariesAgainstPythonHashlib() {
+        // Independent BLAKE2b-256 vectors, input byte i = i modulo 256.
+        let vectors: [(Int, String)] = [
+            (1, "03170a2e7597b7b7e3d84c05391d139a62b157e78786d8c082f29dcf4c111314"),
+            (7, "9df14b7248764a869197c35e392d2a6d6fdc5b79d597297920fd3f1491b442d2"),
+            (8, "77065d25b622a8251094d869edf6b4e9ba0708a8db1f239cb68e4eeb45851621"),
+            (9, "8660231b62ce1d61fc8be93bd6acdb43ff61a7ab4cc9494f0cc803362360b07b"),
+            (127, "f2fe67ff342e21b8f45e8f2e0bcd1d9243245d50ee6c78042e9c491388791c72"),
+            (128, "c3582f71ebb2be66fa5dd750f80baae97554f3b015663c8be377cfcb2488c1d1"),
+            (129, "f7f3c46ba2564ff4c4c162da1f5b605f9f1c4aa6a20652a9f9a337c1a2f5b9c9"),
+            (255, "1d0850ee9bca0abc9601e9deabe1418fedec2fb6ac4150bd5302d2430f9be943"),
+            (256, "39a7eb9fedc19aabc83425c6755dd90e6f9d0c804964a1f4aaeea3b9fb599835"),
+            (257, "45f7f084c30bac7cbae2e1963bc6e6b0d8cb227a12927e97fb941d288fb1f9a3"),
+            (8192, "5facd7ce6f94c793e0c9df345cccc272ada6e32ea17be996e512f346eef30652"),
+            (8200, "e79a4315d81b3106c2374a46b3f3424c20232d86e99b890edc9d34392722f9f0"),
+        ]
+        for (count, expected) in vectors {
+            let input = (0..<count).map { UInt8(truncatingIfNeeded: $0) }
+            XCTAssertEqual(Blake2b256.hash(input).hex, expected, "length \(count)")
+        }
+    }
+
+    func testUInt256FixedStoragePreservesBytesAndValueSemantics() {
+        for count in 0...32 {
+            let bytes = (0..<count).map { UInt8($0 + 128) }
+            let value = UInt256(bigEndian: bytes)
+            XCTAssertEqual(value.bigEndianBytes, Array(repeating: 0, count: 32 - count) + bytes)
+            XCTAssertEqual(UInt256(limbs: value.limbs), value)
+            var copy = value
+            copy.limbs[7] ^= 1
+            XCTAssertNotEqual(copy, value)
+            XCTAssertEqual(value.bigEndianBytes.suffix(count), bytes[...])
+        }
+        var overflow = UInt256.max
+        overflow.add(UInt256(bigEndian: [1]))
+        XCTAssertEqual(overflow, .zero)
+        XCTAssertNil(UInt256(encoded: "115792089237316195423570985008687907853269984665640564039457584007913129639936"))
+    }
+
+    func testUInt256CodablePreservesSchemaAndRejectsMalformedWidths() throws {
+        let json = Data(#"{"limbs":[0,1,2,3,4,5,6,4294967295]}"#.utf8)
+        let value = try JSONDecoder().decode(UInt256.self, from: json)
+        XCTAssertEqual(value.limbs, [0, 1, 2, 3, 4, 5, 6, .max])
+        XCTAssertEqual(try JSONSerialization.jsonObject(with: JSONEncoder().encode(value)) as? [String: [UInt32]],
+                       ["limbs": value.limbs])
+        for count in [0, 7, 9] {
+            let malformed = try JSONEncoder().encode(["limbs": Array(repeating: UInt32(0), count: count)])
+            XCTAssertThrowsError(try JSONDecoder().decode(UInt256.self, from: malformed))
+        }
+    }
+
     func testCalcNConsensusBoundaries() {
         XCTAssertEqual(AutolykosV2.calcN(height: 614_399), 67_108_864)
         XCTAssertEqual(AutolykosV2.calcN(height: 614_400), 70_464_240)

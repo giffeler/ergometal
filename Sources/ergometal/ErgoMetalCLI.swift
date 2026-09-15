@@ -13,10 +13,12 @@ enum ErgoMetalCLI {
         case on
         case off
     }
+    #if GPU_CAPTURE
     private enum GPUTracePhase: String {
         case build
         case search
     }
+    #endif
 
     static func main() {
         do {
@@ -131,8 +133,13 @@ enum ErgoMetalCLI {
     }
 
     private static func benchmark(_ args: Arguments) throws {
+        #if GPU_CAPTURE
+        let captureOptions: Set<String> = ["gpu-trace", "gpu-trace-phase"]
+        #else
+        let captureOptions: Set<String> = []
+        #endif
         try args.validate(
-            valueOptions: ["duration", "height", "profile", "table-size", "batch-nonces",
+            valueOptions: Set(["duration", "height", "profile", "table-size", "batch-nonces",
                            "height-interval",
                            "prebuild", "prebuild-batch-nonces", "threadgroup-size",
                            "build-chunk-elements", "prefetch-chunk-elements",
@@ -140,8 +147,7 @@ enum ErgoMetalCLI {
                            "autotune", "autotune-budget", "autotune-cache",
                            "dataset-threadgroup-size",
                            "dataset-kernel", "dataset-scheduling", "search-kernel",
-                           "api-bind", "stats-file",
-                           "gpu-trace", "gpu-trace-phase"],
+                           "api-bind", "stats-file"]).union(captureOptions),
             flagOptions: ["json"])
         let duration = try args.int("duration", default: 60, in: 1...Int.max)
         let height = try args.int("height", default: 614_399, in: 0...Int(UInt32.max))
@@ -182,6 +188,7 @@ enum ErgoMetalCLI {
         let buildChunkElements = execution.synchronousBuildChunkElements
         let prefetchChunkElements = execution.prefetchBuildChunkElements
         let datasetThreadgroupSize = execution.datasetThreadgroupSize
+        #if GPU_CAPTURE
         let tracePath = args.string("gpu-trace")
         let tracePhaseValue = args.string("gpu-trace-phase", default: "search")!
         guard let tracePhase = GPUTracePhase(rawValue: tracePhaseValue) else {
@@ -190,6 +197,7 @@ enum ErgoMetalCLI {
         if tracePath == nil, args.string("gpu-trace-phase") != nil {
             throw CLIError.invalidArgument("--gpu-trace-phase requires --gpu-trace")
         }
+        #endif
         let solver = try MetalAutolykosSolver(
             synchronousBuildChunkElements: buildChunkElements,
             prefetchBuildChunkElements: prefetchChunkElements,
@@ -200,7 +208,9 @@ enum ErgoMetalCLI {
             datasetKernel: datasetKernel,
             datasetScheduling: datasetScheduling,
             searchKernel: searchKernel)
+        #if GPU_CAPTURE
         defer { solver.stopGPUCapture() }
+        #endif
         let stats = StatisticsStore(
             mode: .benchmark, profile: profileName, device: solver.info,
             autotuneMode: tuning.mode, tuning: tuning.resolved)
@@ -233,15 +243,19 @@ enum ErgoMetalCLI {
                 ])))
 
         stats.update { $0.state = .buildingDataset }
+        #if GPU_CAPTURE
         if tracePhase == .build, let tracePath {
             try solver.startGPUCapture(path: tracePath)
         }
+        #endif
         var activeHeight = height
         var activeBuild = try solver.buildDataset(
             height: activeHeight, tableSize: tableOverride)
+        #if GPU_CAPTURE
         if tracePhase == .build, tracePath != nil {
             solver.stopGPUCapture()
         }
+        #endif
         stats.recordDatasetActivation(activeBuild)
         stats.updateDatasetWork(solver.datasetWorkMetrics())
         stats.update { $0.state = .searching }
@@ -264,7 +278,6 @@ enum ErgoMetalCLI {
             : Date.distantFuture
         var nextStatusAt = Date.distantPast
         var verified = 0
-        var searchTracePending = tracePhase == .search && tracePath != nil
         var statisticsAccumulator = SearchStatisticsAccumulator()
 
         func record(_ batch: SearchBatch, flush: Bool = false) throws {
@@ -295,9 +308,10 @@ enum ErgoMetalCLI {
             }
         }
 
+        #if GPU_CAPTURE
         // A trace remains intentionally limited to one command buffer. Normal
         // operation below then keeps two independent search submissions queued.
-        if searchTracePending, let tracePath, Date() < end {
+        if tracePhase == .search, let tracePath, Date() < end {
             thermalPauseIfNeeded(profile: profileName)
             let activeBatchSize = solver.prefetchStatus()?.finished == false
                 ? min(batchSize, prebuildBatchSize)
@@ -307,10 +321,11 @@ enum ErgoMetalCLI {
                 message: message, target: target, baseNonce: nonce,
                 nonceCount: activeBatchSize, threadgroupSize: group)
             solver.stopGPUCapture()
-            searchTracePending = false
             try record(batch, flush: true)
             nonce &+= UInt64(activeBatchSize)
         }
+
+        #endif
 
         var pending: [SearchSubmission] = []
         while Date() < end || !pending.isEmpty {

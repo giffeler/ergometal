@@ -99,7 +99,7 @@ public final class ErgoStratumClient: @unchecked Sendable {
     }
 
     public func connect() {
-        queue.async {
+        queue.async { [self] in
             self.cancelCurrentConnection()
             self.buffer.removeAll(keepingCapacity: true)
             self.extraNoncePrefix = []

@@ -1,0 +1,23 @@
+diff --git a/Sources/ergometal/MiningCoordinator.swift b/Sources/ergometal/MiningCoordinator.swift
+index 7e87b65..65614e2 100644
+--- a/Sources/ergometal/MiningCoordinator.swift
++++ b/Sources/ergometal/MiningCoordinator.swift
+@@ -14,12 +14,12 @@ struct MiningWork: Sendable {
+     fileprivate let job: ErgoStratumJob
+     let recipient: MiningRecipient
+ 
+-    var id: String { borrow { job.id } }
+-    var height: Int { borrow { job.height } }
+-    var message: [UInt8] { borrow { job.message } }
+-    var target: UInt256 { borrow { job.target } }
+-    var extraNoncePrefix: [UInt8] { borrow { job.extraNoncePrefix } }
+-    var extraNonce2Size: Int { borrow { job.extraNonce2Size } }
++    var id: String { get { job.id } }
++    var height: Int { get { job.height } }
++    var message: [UInt8] { get { job.message } }
++    var target: UInt256 { get { job.target } }
++    var extraNoncePrefix: [UInt8] { get { job.extraNoncePrefix } }
++    var extraNonce2Size: Int { get { job.extraNonce2Size } }
+ }
+ 
+ final class MiningCoordinator: @unchecked Sendable {

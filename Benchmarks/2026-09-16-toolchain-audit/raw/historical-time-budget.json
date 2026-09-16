@@ -1,0 +1,22 @@
+{
+  "Distribution/ergometal3.jsonl": {
+    "active_mhs": 15.38585821732251,
+    "effective_mhs": 11.791117650558487,
+    "search_pct": 76.63607375039498,
+    "cold_build_pct": 23.315410335287137,
+    "other_pct": 0.048515914317878384,
+    "activation_pct": 20.58126149376827,
+    "completed_builds_per_hour": 23.63507726301278,
+    "cancelled_builds_per_hour": 5.603143316662512
+  },
+  "Distribution/ergometal4.jsonl": {
+    "active_mhs": 15.124175834808431,
+    "effective_mhs": 11.260410070810796,
+    "search_pct": 74.45304916975942,
+    "cold_build_pct": 25.519084615900052,
+    "other_pct": 0.02786621434052549,
+    "activation_pct": 21.53785453754353,
+    "completed_builds_per_hour": 23.468285789397257,
+    "cancelled_builds_per_hour": 7.202335983642607
+  }
+}

@@ -1,0 +1,22 @@
+DerivedDataToolchainAudit20260916/iterable/Blake2b.swift:62:9: error: for-in loop requires 'InlineArray<12, InlineArray<16, Int>>' to conform to 'Iterable', which is only available in macOS 27.0 or newer
+  3 | /// Small, dependency-free BLAKE2b implementation used as the consensus oracle.
+  4 | /// Autolykos uses the 256-bit digest variant, not a truncated 512-bit digest.
+  5 | public enum Blake2b256 {
+    |             `- note: add '@available' attribute to enclosing enum
+  6 |     private static let iv: InlineArray<8, UInt64> = [
+  7 |         0x6a09e667f3bcc908, 0xbb67ae8584caa73b,
+    :
+ 44 |     }
+ 45 | 
+ 46 |     private static func compress(
+    |                         `- note: add '@available' attribute to enclosing static method
+ 47 |         _ h: inout InlineArray<8, UInt64>, block: Span<UInt8>, count: UInt64, final: Bool
+ 48 |     ) {
+    :
+ 60 |         if final { v[14] = ~v[14] }
+ 61 | 
+ 62 |         for s in sigma {
+    |         |- error: for-in loop requires 'InlineArray<12, InlineArray<16, Int>>' to conform to 'Iterable', which is only available in macOS 27.0 or newer
+    |         `- note: add 'if #available' version check
+ 63 |             g(&v, 0, 4, 8, 12, m[s[0]], m[s[1]])
+ 64 |             g(&v, 1, 5, 9, 13, m[s[2]], m[s[3]])

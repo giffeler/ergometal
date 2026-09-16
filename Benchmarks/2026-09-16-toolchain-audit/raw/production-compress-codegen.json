@@ -1,0 +1,32 @@
+{
+  "C": {
+    "instructions": 362,
+    "code_bytes": 1448,
+    "first_instructions": [
+      "000000010002c7a8\tsub\tsp, sp, #0x150",
+      "000000010002c7ac\tstp\tx28, x27, [sp, #0xf0]",
+      "000000010002c7b0\tstp\tx26, x25, [sp, #0x100]",
+      "000000010002c7b4\tstp\tx24, x23, [sp, #0x110]",
+      "000000010002c7b8\tstp\tx22, x21, [sp, #0x120]"
+    ],
+    "calls": [
+      "000000010002cd4c\tbl\t0x1000711dc ; symbol stub for: ___stack_chk_fail"
+    ],
+    "brk_count": 19
+  },
+  "U": {
+    "instructions": 1599,
+    "code_bytes": 6396,
+    "first_instructions": [
+      "000000010002c7a8\tsub\tsp, sp, #0x1b0",
+      "000000010002c7ac\tstp\tx28, x27, [sp, #0x150]",
+      "000000010002c7b0\tstp\tx26, x25, [sp, #0x160]",
+      "000000010002c7b4\tstp\tx24, x23, [sp, #0x170]",
+      "000000010002c7b8\tstp\tx22, x21, [sp, #0x180]"
+    ],
+    "calls": [
+      "000000010002e0a0\tbl\t0x100072530 ; symbol stub for: ___stack_chk_fail"
+    ],
+    "brk_count": 3
+  }
+}

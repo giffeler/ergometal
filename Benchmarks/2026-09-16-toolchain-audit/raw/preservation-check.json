@@ -1,0 +1,45 @@
+{
+  "original_inputs": {
+    "Distribution/ergometal": {
+      "size": 1171088,
+      "sha256": "e318af94fc52c7764c4476e542c24c98ab851a5a004c6658ac6e46552a252f79"
+    },
+    "Distribution/ergometal-macos-arm64-2026-09-12-notarized.zip": {
+      "size": 499551,
+      "sha256": "b4d0a1ff19676dbe1fff5475710266a5a2ce07b3b41868269820d053a670e4d4"
+    },
+    "Distribution/ergometal-macos-arm64-2026-09-12-notarized.zip.sha256": {
+      "size": 113,
+      "sha256": "746ad60715c438300d05fa76e738be207770ec032e94f8d0c143e6a55a4e3975"
+    },
+    "Distribution/ergometal-macos-arm64-2026-09-15-notarized.zip": {
+      "size": 503995,
+      "sha256": "b8a83c73c615016b9dd8ffe3d50752b9ff397a3d753ca492b6f13d6e67774bf7"
+    },
+    "Distribution/ergometal-macos-arm64-2026-09-15-notarized.zip.sha256": {
+      "size": 113,
+      "sha256": "c6142d33db3af0d9e9c8a34850e31e5ff0e5886b7d76d221468d9f5f5d203e45"
+    },
+    "Distribution/ergometal1.jsonl": {
+      "size": 328392,
+      "sha256": "a5ea8e886b92870e98c19153af2631f8f97bb48eae0d377a687783dba688fc0b"
+    },
+    "Distribution/ergometal2.jsonl": {
+      "size": 1392975,
+      "sha256": "4fd1a172291fea04923748af80331e127eaac90998e0189ad83a9c8bad932481"
+    },
+    "Distribution/ergometal3.jsonl": {
+      "size": 835577,
+      "sha256": "6d4136194e137c21729b415ba688a323e5f64e03dc02ebbfab1fe54496c60fad"
+    },
+    "Distribution/ergometal4.jsonl": {
+      "size": 1055233,
+      "sha256": "1c11c12f77074a2b6d9c75073123b578264411ff461b3c2f6257ffa99879727a"
+    }
+  },
+  "original_cache_sha256": "e187f515bf0771ff9faab7dfef1072c6cfd1e5eb3e55c287720c381cf9320700",
+  "head": "28736760cbab5e62c81c2907062c09ad9da4d599",
+  "selected_xcode": "/Applications/Xcode.app/Contents/Developer",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t27.0\nBuildVersion:\t\t26A428\n",
+  "git_status": "?? Benchmarks/2026-09-16-toolchain-audit/\n"
+}

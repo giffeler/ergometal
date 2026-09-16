@@ -1,0 +1,63 @@
+_$s13MetalErgoCore7UInt256V9bigEndianACSays5UInt8VG_tcfCTf4nd_n:
+10006f8e4:	sub	sp, sp, #0x60
+10006f8e8:	stp	x29, x30, [sp, #0x50]
+10006f8ec:	add	x29, sp, #0x50
+10006f8f0:	adrp	x8, 110 ; 0x1000dd000
+10006f8f4:	ldr	x8, [x8, #0x180] ; literal pool symbol address: ___stack_chk_guard
+10006f8f8:	ldr	x8, [x8]
+10006f8fc:	stur	x8, [x29, #-0x8]
+10006f900:	ldr	x9, [x0, #0x10]
+10006f904:	cmp	x9, #0x20
+10006f908:	b.hi	0x10006f9d4
+10006f90c:	b.ne	0x10006f930
+10006f910:	ldp	q0, q1, [x0, #0x20]
+10006f914:	rev32.16b	v2, v0
+10006f918:	rev32.16b	v0, v1
+10006f91c:	stp	q0, q2, [sp]
+10006f920:	bl	0x100071398 ; symbol stub for: _swift_bridgeObjectRelease
+10006f924:	ldp	q0, q1, [sp]
+10006f928:	stp	q1, q0, [sp, #0x20]
+10006f92c:	b	0x10006f9a8
+10006f930:	movi.2d	v0, #0000000000000000
+10006f934:	stp	q0, q0, [sp, #0x20]
+10006f938:	cbz	x9, 0x10006f9a4
+10006f93c:	mov	w8, #0x20
+10006f940:	sub	x9, x8, x9
+10006f944:	mov	w10, #0x18
+10006f948:	add	x11, sp, #0x20
+10006f94c:	b	0x10006f980
+10006f950:	mov	w12, #0x0
+10006f954:	sxtb	w13, w9
+10006f958:	ubfx	w13, w13, #13, #2
+10006f95c:	add	w13, w9, w13
+10006f960:	sbfx	w13, w13, #2, #6
+10006f964:	ldr	w14, [x11, w13, sxtw #2]
+10006f968:	orr	w12, w14, w12
+10006f96c:	str	w12, [x11, w13, sxtw #2]
+10006f970:	add	x9, x9, #0x1
+10006f974:	add	x8, x8, #0x1
+10006f978:	cmp	x9, #0x20
+10006f97c:	b.eq	0x10006f9a4
+10006f980:	negs	x12, x9
+10006f984:	and	x12, x12, #0x3
+10006f988:	and	x13, x9, #0x3
+10006f98c:	csneg	x12, x13, x12, mi
+10006f990:	tbnz	x12, #0x3f, 0x10006f950
+10006f994:	ldrb	w13, [x0, x8]
+10006f998:	sub	w12, w10, w12, lsl #3
+10006f99c:	lsl	w12, w13, w12
+10006f9a0:	b	0x10006f954
+10006f9a4:	bl	0x100071398 ; symbol stub for: _swift_bridgeObjectRelease
+10006f9a8:	ldp	x0, x1, [sp, #0x20]
+10006f9ac:	ldp	x2, x3, [sp, #0x30]
+10006f9b0:	ldur	x8, [x29, #-0x8]
+10006f9b4:	adrp	x9, 110 ; 0x1000dd000
+10006f9b8:	ldr	x9, [x9, #0x180] ; literal pool symbol address: ___stack_chk_guard
+10006f9bc:	ldr	x9, [x9]
+10006f9c0:	cmp	x9, x8
+10006f9c4:	b.ne	0x10006f9d8
+10006f9c8:	ldp	x29, x30, [sp, #0x50]
+10006f9cc:	add	sp, sp, #0x60
+10006f9d0:	ret
+10006f9d4:	brk	#0x1
+10006f9d8:	bl	0x1000711dc ; symbol stub for: ___stack_chk_fail

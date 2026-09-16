@@ -86,7 +86,7 @@ classified as memory-latency-saturated for the purpose of this optimization
 screen.
 
 The register-pressure and four-way memory-level-parallelism experiments from
-Task 4 are **not worthwhile (`nicht lohnend`) and were not executed**. No
+Task 4 are **not worthwhile and were not executed**. No
 experimental search kernels were added, no consensus or dataset layout was
 changed, and the `search` kernel remains the default.
 

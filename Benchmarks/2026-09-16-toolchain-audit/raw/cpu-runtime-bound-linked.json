@@ -1,0 +1,27 @@
+{
+  "method": "Cost extrapolation from linked production cores, full production table index space; observed valid hits only, not direct profiling or a bound on unlogged invalid candidates. GPU overlaps verification.",
+  "seconds_per_hit_old": 0.0007307821451831842,
+  "seconds_per_hit_new": 0.00021415161131699278,
+  "logs": [
+    {
+      "log": 3,
+      "observed_valid_hits": 23,
+      "elapsed_seconds": 35337.3077949,
+      "old_cpu_seconds": 0.016807989339213236,
+      "new_cpu_seconds": 0.004925487060290834,
+      "saved_seconds": 0.011882502278922402,
+      "saved_elapsed_percent": 3.362594102496208e-05,
+      "additional_U_saved_seconds": 0.00039800968477265997
+    },
+    {
+      "log": 4,
+      "observed_valid_hits": 35,
+      "elapsed_seconds": 44485.567006,
+      "old_cpu_seconds": 0.025577375081411446,
+      "new_cpu_seconds": 0.0074953063960947475,
+      "saved_seconds": 0.0180820686853167,
+      "saved_elapsed_percent": 4.0647045552724725e-05,
+      "additional_U_saved_seconds": 0.0006056669116105695
+    }
+  ]
+}

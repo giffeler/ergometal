@@ -1,0 +1,73 @@
+[
+  {
+    "path": "Benchmarks/2026-09-16-toolchain-audit/raw/sustained-mine/01-C-production-4194304.events.ndjson",
+    "windows": [
+      {
+        "elapsed_start": 40,
+        "elapsed_end": 300,
+        "sampled_intervals": 129,
+        "search_seconds": 260.40918816663907,
+        "nonces": 3959422976,
+        "active_mhs": 15.204620865629044,
+        "sensor_temperature_median": 61.15672302246094,
+        "sensor_temperature_min": 59.31767272949219,
+        "sensor_temperature_max": 62.35609436035156
+      },
+      {
+        "elapsed_start": 340,
+        "elapsed_end": 600,
+        "sampled_intervals": 129,
+        "search_seconds": 260.0108191250183,
+        "nonces": 3959422976,
+        "active_mhs": 15.227916243347673,
+        "sensor_temperature_median": 62.675933837890625,
+        "sensor_temperature_min": 61.8763427734375,
+        "sensor_temperature_max": 67.23358154296875
+      },
+      {
+        "elapsed_start": 640,
+        "elapsed_end": 900,
+        "sampled_intervals": 129,
+        "search_seconds": 261.4503380417009,
+        "nonces": 3959422976,
+        "active_mhs": 15.144072888398709,
+        "sensor_temperature_median": 63.39556884765625,
+        "sensor_temperature_min": 62.19618225097656,
+        "sensor_temperature_max": 66.83380126953125
+      },
+      {
+        "elapsed_start": 240,
+        "elapsed_end": 300,
+        "sampled_intervals": 29,
+        "search_seconds": 57.173338166670874,
+        "nonces": 872415232,
+        "active_mhs": 15.25912706822799,
+        "sensor_temperature_median": 61.5565185546875,
+        "sensor_temperature_min": 61.15672302246094,
+        "sensor_temperature_max": 62.35609436035156
+      },
+      {
+        "elapsed_start": 540,
+        "elapsed_end": 600,
+        "sampled_intervals": 29,
+        "search_seconds": 57.27634533333185,
+        "nonces": 872415232,
+        "active_mhs": 15.231684684537647,
+        "sensor_temperature_median": 62.27613830566406,
+        "sensor_temperature_min": 61.8763427734375,
+        "sensor_temperature_max": 62.516021728515625
+      },
+      {
+        "elapsed_start": 840,
+        "elapsed_end": 900,
+        "sampled_intervals": 29,
+        "search_seconds": 61.95203404167842,
+        "nonces": 939524096,
+        "active_mhs": 15.1653470387741,
+        "sensor_temperature_median": 62.83586120605469,
+        "sensor_temperature_min": 62.19618225097656,
+        "sensor_temperature_max": 63.79536437988281
+      }
+    ]
+  }
+]

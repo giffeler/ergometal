@@ -1,0 +1,3938 @@
+[
+  {
+    "file": "01-Q-search-1048576.metadata.json",
+    "variant": "Q-search",
+    "batch": 1048576,
+    "phases": {
+      "building_dataset": {
+        "gpu_w": null,
+        "cpu_w": null,
+        "gpu_mhz": null,
+        "gpu_active_percent": null,
+        "temperature": null
+      },
+      "searching": {
+        "gpu_w": {
+          "n": 82,
+          "median": 7.2315000000000005,
+          "mean": 7.2683536585365855,
+          "min": 7.084,
+          "max": 7.808
+        },
+        "cpu_w": {
+          "n": 82,
+          "median": 0.2655,
+          "mean": 0.44414634146341464,
+          "min": 0.223,
+          "max": 1.461
+        },
+        "gpu_mhz": {
+          "n": 82,
+          "median": 1578.0,
+          "mean": 1578.0,
+          "min": 1578.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 82,
+          "median": 100.0,
+          "mean": 100.0,
+          "min": 100.0,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 82,
+          "median": 60.19721984863281,
+          "mean": 60.19526449063929,
+          "min": 59.55754089355469,
+          "max": 60.996795654296875
+        }
+      },
+      "transition": {
+        "gpu_w": {
+          "n": 8,
+          "median": 7.237500000000001,
+          "mean": 7.46075,
+          "min": 5.471,
+          "max": 10.868
+        },
+        "cpu_w": {
+          "n": 8,
+          "median": 0.276,
+          "mean": 0.429125,
+          "min": 0.234,
+          "max": 1.143
+        },
+        "gpu_mhz": {
+          "n": 8,
+          "median": 1578.0,
+          "mean": 1577.375,
+          "min": 1573.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 8,
+          "median": 100.0,
+          "mean": 97.35,
+          "min": 78.8,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 8,
+          "median": 60.756927490234375,
+          "mean": 61.05677032470703,
+          "min": 60.43708801269531,
+          "max": 62.99577331542969
+        }
+      }
+    },
+    "gpu_aggregate_energy_joules_approx": 660.46765357,
+    "observed_power_seconds": 90.65528,
+    "session_seconds": 121.8957690000534,
+    "aggregate_million_nonces_per_joule": 2.068677429719414,
+    "samples": [
+      {
+        "timestamp": 1789547816.0,
+        "seconds": 1.00733,
+        "phase": "transition",
+        "temperature": 62.99577331542969,
+        "gpu_w": 10.868,
+        "cpu_w": 0.234,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547817.0,
+        "seconds": 1.00715,
+        "phase": "transition",
+        "temperature": 61.636474609375,
+        "gpu_w": 7.301,
+        "cpu_w": 1.143,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547818.0,
+        "seconds": 1.00759,
+        "phase": "transition",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.107,
+        "cpu_w": 0.255,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547819.0,
+        "seconds": 1.00731,
+        "phase": "transition",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.238,
+        "cpu_w": 0.251,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547820.0,
+        "seconds": 1.00728,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 7.346,
+        "cpu_w": 0.611,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547821.0,
+        "seconds": 1.0075399999999999,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.283,
+        "cpu_w": 0.406,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547822.0,
+        "seconds": 1.00756,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.217,
+        "cpu_w": 0.231,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547823.0,
+        "seconds": 1.00733,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.338,
+        "cpu_w": 0.237,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547824.0,
+        "seconds": 1.00732,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.19,
+        "cpu_w": 0.235,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547825.0,
+        "seconds": 1.00712,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.186,
+        "cpu_w": 0.9,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547826.0,
+        "seconds": 1.0075399999999999,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.131,
+        "cpu_w": 0.247,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547827.0,
+        "seconds": 1.00732,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.353,
+        "cpu_w": 1.101,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547828.0,
+        "seconds": 1.00757,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.197,
+        "cpu_w": 0.244,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547829.0,
+        "seconds": 1.00712,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.173,
+        "cpu_w": 0.248,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547830.0,
+        "seconds": 1.0073400000000001,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.214,
+        "cpu_w": 0.243,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547831.0,
+        "seconds": 1.0072,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.263,
+        "cpu_w": 0.388,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547832.0,
+        "seconds": 1.00735,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.808,
+        "cpu_w": 0.244,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547833.0,
+        "seconds": 1.00723,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.571,
+        "cpu_w": 0.259,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547834.0,
+        "seconds": 1.00746,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.232,
+        "cpu_w": 0.223,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547835.0,
+        "seconds": 1.00711,
+        "phase": "searching",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.266,
+        "cpu_w": 0.889,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547836.0,
+        "seconds": 1.0075800000000001,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.234,
+        "cpu_w": 0.263,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547837.0,
+        "seconds": 1.00736,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.214,
+        "cpu_w": 1.079,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547838.0,
+        "seconds": 1.00755,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.255,
+        "cpu_w": 0.257,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547839.0,
+        "seconds": 1.00724,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.17,
+        "cpu_w": 0.254,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547840.0,
+        "seconds": 1.00715,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.202,
+        "cpu_w": 0.25,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547841.0,
+        "seconds": 1.00705,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.276,
+        "cpu_w": 0.396,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547842.0,
+        "seconds": 1.0074,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.203,
+        "cpu_w": 0.269,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547843.0,
+        "seconds": 1.00739,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.279,
+        "cpu_w": 0.263,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547844.0,
+        "seconds": 1.0072,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.219,
+        "cpu_w": 0.26,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547845.0,
+        "seconds": 1.00729,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.12,
+        "cpu_w": 0.707,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547846.0,
+        "seconds": 1.0075,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.416,
+        "cpu_w": 0.422,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547847.0,
+        "seconds": 1.00743,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.287,
+        "cpu_w": 1.091,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547848.0,
+        "seconds": 1.00756,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.569,
+        "cpu_w": 0.252,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547849.0,
+        "seconds": 1.0072699999999999,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.727,
+        "cpu_w": 0.258,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547850.0,
+        "seconds": 1.00708,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.28,
+        "cpu_w": 0.258,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547851.0,
+        "seconds": 1.00735,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.547,
+        "cpu_w": 0.397,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547852.0,
+        "seconds": 1.00753,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.188,
+        "cpu_w": 0.265,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547853.0,
+        "seconds": 1.00731,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.35,
+        "cpu_w": 0.26,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547854.0,
+        "seconds": 1.00718,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.129,
+        "cpu_w": 0.248,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547855.0,
+        "seconds": 1.0071,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.163,
+        "cpu_w": 0.438,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547856.0,
+        "seconds": 1.00762,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.424,
+        "cpu_w": 0.747,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547857.0,
+        "seconds": 1.00634,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.143,
+        "cpu_w": 0.893,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547858.0,
+        "seconds": 1.00741,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.159,
+        "cpu_w": 0.437,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547859.0,
+        "seconds": 1.00745,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.14,
+        "cpu_w": 0.254,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547860.0,
+        "seconds": 1.0072999999999999,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.303,
+        "cpu_w": 0.255,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547861.0,
+        "seconds": 1.0072,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.397,
+        "cpu_w": 0.403,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547862.0,
+        "seconds": 1.00749,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.346,
+        "cpu_w": 0.25,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547863.0,
+        "seconds": 1.00731,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.337,
+        "cpu_w": 0.259,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547864.0,
+        "seconds": 1.00716,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.224,
+        "cpu_w": 0.311,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547865.0,
+        "seconds": 1.00717,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.278,
+        "cpu_w": 0.628,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547866.0,
+        "seconds": 1.00716,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 7.286,
+        "cpu_w": 1.461,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547867.0,
+        "seconds": 1.0074,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.414,
+        "cpu_w": 0.53,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547868.0,
+        "seconds": 1.00752,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.226,
+        "cpu_w": 1.128,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547869.0,
+        "seconds": 1.00743,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.231,
+        "cpu_w": 0.258,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547870.0,
+        "seconds": 1.0073400000000001,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 7.222,
+        "cpu_w": 0.275,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547871.0,
+        "seconds": 1.00735,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.356,
+        "cpu_w": 0.522,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547872.0,
+        "seconds": 1.00573,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.243,
+        "cpu_w": 0.254,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547873.0,
+        "seconds": 1.00725,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.27,
+        "cpu_w": 0.248,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547874.0,
+        "seconds": 1.00724,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.319,
+        "cpu_w": 0.273,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547875.0,
+        "seconds": 1.00717,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.264,
+        "cpu_w": 0.312,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547876.0,
+        "seconds": 1.0077,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.225,
+        "cpu_w": 0.906,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547877.0,
+        "seconds": 1.0075,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.125,
+        "cpu_w": 0.266,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547878.0,
+        "seconds": 1.0072699999999999,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.593,
+        "cpu_w": 1.119,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547879.0,
+        "seconds": 1.0074400000000001,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.516,
+        "cpu_w": 0.237,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547880.0,
+        "seconds": 1.00716,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.251,
+        "cpu_w": 0.611,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547881.0,
+        "seconds": 1.00739,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.224,
+        "cpu_w": 0.437,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547882.0,
+        "seconds": 1.00749,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.256,
+        "cpu_w": 0.262,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547883.0,
+        "seconds": 1.0054,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.225,
+        "cpu_w": 0.265,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547884.0,
+        "seconds": 1.00745,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.094,
+        "cpu_w": 0.254,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547885.0,
+        "seconds": 1.0072699999999999,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.26,
+        "cpu_w": 0.265,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547886.0,
+        "seconds": 1.00726,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.194,
+        "cpu_w": 0.89,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547887.0,
+        "seconds": 1.00749,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 7.152,
+        "cpu_w": 0.264,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547888.0,
+        "seconds": 1.00733,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.205,
+        "cpu_w": 1.099,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547889.0,
+        "seconds": 1.00747,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.174,
+        "cpu_w": 0.26,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547890.0,
+        "seconds": 1.00729,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.241,
+        "cpu_w": 0.235,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547891.0,
+        "seconds": 1.00718,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.316,
+        "cpu_w": 0.405,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547892.0,
+        "seconds": 1.0075,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.084,
+        "cpu_w": 0.398,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547893.0,
+        "seconds": 1.00749,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.201,
+        "cpu_w": 0.256,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547894.0,
+        "seconds": 1.00741,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.173,
+        "cpu_w": 0.277,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547895.0,
+        "seconds": 1.00733,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.151,
+        "cpu_w": 0.28,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547896.0,
+        "seconds": 1.00731,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 7.261,
+        "cpu_w": 0.888,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547897.0,
+        "seconds": 1.0074400000000001,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.171,
+        "cpu_w": 0.264,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547898.0,
+        "seconds": 1.00726,
+        "phase": "searching",
+        "temperature": 60.916839599609375,
+        "gpu_w": 7.163,
+        "cpu_w": 1.123,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547899.0,
+        "seconds": 1.00752,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.215,
+        "cpu_w": 0.244,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547900.0,
+        "seconds": 1.0071,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.146,
+        "cpu_w": 0.237,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547901.0,
+        "seconds": 1.0070700000000001,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.211,
+        "cpu_w": 0.387,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547902.0,
+        "seconds": 1.0074400000000001,
+        "phase": "transition",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.26,
+        "cpu_w": 0.269,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547903.0,
+        "seconds": 1.00747,
+        "phase": "transition",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.237,
+        "cpu_w": 0.475,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547904.0,
+        "seconds": 1.00753,
+        "phase": "transition",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.204,
+        "cpu_w": 0.283,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789547905.0,
+        "seconds": 1.00599,
+        "phase": "transition",
+        "temperature": 60.996795654296875,
+        "gpu_w": 5.471,
+        "cpu_w": 0.523,
+        "gpu_mhz": 1573.0,
+        "gpu_active_percent": 78.8
+      }
+    ]
+  },
+  {
+    "file": "02-Q-gather-1048576.metadata.json",
+    "variant": "Q-gather",
+    "batch": 1048576,
+    "phases": {
+      "building_dataset": {
+        "gpu_w": null,
+        "cpu_w": null,
+        "gpu_mhz": null,
+        "gpu_active_percent": null,
+        "temperature": null
+      },
+      "searching": {
+        "gpu_w": {
+          "n": 82,
+          "median": 6.666,
+          "mean": 6.7161585365853655,
+          "min": 6.539,
+          "max": 7.636
+        },
+        "cpu_w": {
+          "n": 82,
+          "median": 0.2585,
+          "mean": 0.4748048780487805,
+          "min": 0.217,
+          "max": 1.596
+        },
+        "gpu_mhz": {
+          "n": 82,
+          "median": 1578.0,
+          "mean": 1578.0,
+          "min": 1578.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 82,
+          "median": 100.0,
+          "mean": 100.0,
+          "min": 100.0,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 82,
+          "median": 59.157745361328125,
+          "mean": 59.16847582561214,
+          "min": 58.43812561035156,
+          "max": 60.03729248046875
+        }
+      },
+      "transition": {
+        "gpu_w": {
+          "n": 7,
+          "median": 6.758,
+          "mean": 6.809142857142857,
+          "min": 6.679,
+          "max": 7.233
+        },
+        "cpu_w": {
+          "n": 7,
+          "median": 0.295,
+          "mean": 0.45285714285714285,
+          "min": 0.242,
+          "max": 1.112
+        },
+        "gpu_mhz": {
+          "n": 7,
+          "median": 1578.0,
+          "mean": 1578.0,
+          "min": 1578.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 7,
+          "median": 100.0,
+          "mean": 100.0,
+          "min": 100.0,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 7,
+          "median": 60.43708801269531,
+          "mean": 60.07156590053013,
+          "min": 58.59803771972656,
+          "max": 61.636474609375
+        }
+      }
+    },
+    "gpu_aggregate_energy_joules_approx": 602.72981892,
+    "observed_power_seconds": 89.64556,
+    "session_seconds": 121.98203790187836,
+    "aggregate_million_nonces_per_joule": 2.2633646671811163,
+    "samples": [
+      {
+        "timestamp": 1789548000.0,
+        "seconds": 1.00724,
+        "phase": "transition",
+        "temperature": 61.636474609375,
+        "gpu_w": 7.233,
+        "cpu_w": 0.622,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548001.0,
+        "seconds": 1.00746,
+        "phase": "transition",
+        "temperature": 60.916839599609375,
+        "gpu_w": 6.829,
+        "cpu_w": 1.112,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548002.0,
+        "seconds": 1.00763,
+        "phase": "transition",
+        "temperature": 60.43708801269531,
+        "gpu_w": 6.709,
+        "cpu_w": 0.399,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548003.0,
+        "seconds": 1.00757,
+        "phase": "transition",
+        "temperature": 60.676971435546875,
+        "gpu_w": 6.774,
+        "cpu_w": 0.253,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548004.0,
+        "seconds": 1.00728,
+        "phase": "searching",
+        "temperature": 59.47758483886719,
+        "gpu_w": 6.743,
+        "cpu_w": 0.232,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548005.0,
+        "seconds": 1.00702,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 6.645,
+        "cpu_w": 0.255,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548006.0,
+        "seconds": 1.0074,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 6.848,
+        "cpu_w": 0.249,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548007.0,
+        "seconds": 1.00726,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 6.643,
+        "cpu_w": 0.251,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548008.0,
+        "seconds": 1.00718,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 6.74,
+        "cpu_w": 0.874,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548009.0,
+        "seconds": 1.0074400000000001,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.769,
+        "cpu_w": 0.25,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548010.0,
+        "seconds": 1.00714,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.724,
+        "cpu_w": 0.246,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548011.0,
+        "seconds": 1.00723,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 6.973,
+        "cpu_w": 1.596,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548012.0,
+        "seconds": 1.00735,
+        "phase": "searching",
+        "temperature": 59.47758483886719,
+        "gpu_w": 7.636,
+        "cpu_w": 0.406,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548013.0,
+        "seconds": 1.00746,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 6.706,
+        "cpu_w": 0.776,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548014.0,
+        "seconds": 1.00729,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.69,
+        "cpu_w": 0.38,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548015.0,
+        "seconds": 1.00718,
+        "phase": "searching",
+        "temperature": 59.47758483886719,
+        "gpu_w": 6.761,
+        "cpu_w": 0.255,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548016.0,
+        "seconds": 1.00718,
+        "phase": "searching",
+        "temperature": 58.75794982910156,
+        "gpu_w": 6.678,
+        "cpu_w": 0.245,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548017.0,
+        "seconds": 1.00714,
+        "phase": "searching",
+        "temperature": 58.67799377441406,
+        "gpu_w": 6.771,
+        "cpu_w": 0.241,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548018.0,
+        "seconds": 1.00718,
+        "phase": "searching",
+        "temperature": 58.67799377441406,
+        "gpu_w": 6.743,
+        "cpu_w": 0.916,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548019.0,
+        "seconds": 1.00739,
+        "phase": "searching",
+        "temperature": 58.837921142578125,
+        "gpu_w": 6.686,
+        "cpu_w": 0.247,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548020.0,
+        "seconds": 1.00722,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 6.633,
+        "cpu_w": 0.246,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548021.0,
+        "seconds": 1.00722,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 6.666,
+        "cpu_w": 1.085,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548022.0,
+        "seconds": 1.00746,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.826,
+        "cpu_w": 0.394,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548023.0,
+        "seconds": 1.0075800000000001,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.726,
+        "cpu_w": 0.23,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548024.0,
+        "seconds": 1.0070599999999998,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 6.926,
+        "cpu_w": 0.265,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548025.0,
+        "seconds": 1.00731,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 6.867,
+        "cpu_w": 0.256,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548026.0,
+        "seconds": 1.00718,
+        "phase": "searching",
+        "temperature": 58.67799377441406,
+        "gpu_w": 6.598,
+        "cpu_w": 0.263,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548027.0,
+        "seconds": 1.00714,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.725,
+        "cpu_w": 0.4,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548028.0,
+        "seconds": 1.0075800000000001,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.683,
+        "cpu_w": 0.983,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548029.0,
+        "seconds": 1.00749,
+        "phase": "searching",
+        "temperature": 58.837921142578125,
+        "gpu_w": 6.616,
+        "cpu_w": 0.339,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548030.0,
+        "seconds": 1.00719,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 6.672,
+        "cpu_w": 0.814,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548031.0,
+        "seconds": 1.00633,
+        "phase": "searching",
+        "temperature": 58.67799377441406,
+        "gpu_w": 6.539,
+        "cpu_w": 1.091,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548032.0,
+        "seconds": 1.0075,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 6.615,
+        "cpu_w": 0.398,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548033.0,
+        "seconds": 1.0075,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 6.715,
+        "cpu_w": 0.259,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548034.0,
+        "seconds": 1.00721,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 6.657,
+        "cpu_w": 0.217,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548035.0,
+        "seconds": 1.0071,
+        "phase": "searching",
+        "temperature": 58.997833251953125,
+        "gpu_w": 6.725,
+        "cpu_w": 0.269,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548036.0,
+        "seconds": 1.0074,
+        "phase": "searching",
+        "temperature": 58.997833251953125,
+        "gpu_w": 6.812,
+        "cpu_w": 0.255,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548037.0,
+        "seconds": 1.0070700000000001,
+        "phase": "searching",
+        "temperature": 58.997833251953125,
+        "gpu_w": 6.63,
+        "cpu_w": 0.262,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548038.0,
+        "seconds": 1.00728,
+        "phase": "searching",
+        "temperature": 58.997833251953125,
+        "gpu_w": 6.694,
+        "cpu_w": 0.903,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548039.0,
+        "seconds": 1.00752,
+        "phase": "searching",
+        "temperature": 58.997833251953125,
+        "gpu_w": 6.584,
+        "cpu_w": 0.247,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548040.0,
+        "seconds": 1.00717,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 6.65,
+        "cpu_w": 0.317,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548041.0,
+        "seconds": 1.0070299999999999,
+        "phase": "searching",
+        "temperature": 58.43812561035156,
+        "gpu_w": 6.707,
+        "cpu_w": 0.596,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548042.0,
+        "seconds": 1.00752,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 6.831,
+        "cpu_w": 0.938,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548043.0,
+        "seconds": 1.00748,
+        "phase": "searching",
+        "temperature": 58.75794982910156,
+        "gpu_w": 7.08,
+        "cpu_w": 0.283,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548044.0,
+        "seconds": 1.00721,
+        "phase": "searching",
+        "temperature": 58.837921142578125,
+        "gpu_w": 6.762,
+        "cpu_w": 0.241,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548045.0,
+        "seconds": 1.0070599999999998,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 7.252,
+        "cpu_w": 0.22,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548046.0,
+        "seconds": 1.00711,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 6.76,
+        "cpu_w": 0.246,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548047.0,
+        "seconds": 1.00719,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 6.584,
+        "cpu_w": 1.151,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548048.0,
+        "seconds": 1.00755,
+        "phase": "searching",
+        "temperature": 58.997833251953125,
+        "gpu_w": 6.701,
+        "cpu_w": 0.937,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548049.0,
+        "seconds": 1.00743,
+        "phase": "searching",
+        "temperature": 58.997833251953125,
+        "gpu_w": 6.612,
+        "cpu_w": 0.257,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548050.0,
+        "seconds": 1.00725,
+        "phase": "searching",
+        "temperature": 59.47758483886719,
+        "gpu_w": 6.693,
+        "cpu_w": 0.251,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548051.0,
+        "seconds": 1.00726,
+        "phase": "searching",
+        "temperature": 58.67799377441406,
+        "gpu_w": 6.713,
+        "cpu_w": 0.245,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548052.0,
+        "seconds": 1.0071,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 6.666,
+        "cpu_w": 1.518,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548053.0,
+        "seconds": 1.00738,
+        "phase": "searching",
+        "temperature": 58.67799377441406,
+        "gpu_w": 6.587,
+        "cpu_w": 0.244,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548054.0,
+        "seconds": 1.00723,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 6.665,
+        "cpu_w": 0.252,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548055.0,
+        "seconds": 1.0072,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 6.614,
+        "cpu_w": 0.259,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548056.0,
+        "seconds": 1.00715,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 6.622,
+        "cpu_w": 0.256,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548057.0,
+        "seconds": 1.0072699999999999,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 6.55,
+        "cpu_w": 0.264,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548058.0,
+        "seconds": 1.00584,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 6.601,
+        "cpu_w": 0.997,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548059.0,
+        "seconds": 1.00778,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 6.604,
+        "cpu_w": 0.942,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548060.0,
+        "seconds": 1.00731,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 6.965,
+        "cpu_w": 1.354,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548061.0,
+        "seconds": 1.00745,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 7.023,
+        "cpu_w": 0.289,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548062.0,
+        "seconds": 1.00738,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 6.592,
+        "cpu_w": 1.244,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548063.0,
+        "seconds": 1.0074400000000001,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.628,
+        "cpu_w": 0.247,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548064.0,
+        "seconds": 1.00724,
+        "phase": "searching",
+        "temperature": 58.837921142578125,
+        "gpu_w": 6.635,
+        "cpu_w": 0.246,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548065.0,
+        "seconds": 1.0071,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.131,
+        "cpu_w": 0.353,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548066.0,
+        "seconds": 1.0072,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.796,
+        "cpu_w": 0.246,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548067.0,
+        "seconds": 1.00708,
+        "phase": "searching",
+        "temperature": 58.59803771972656,
+        "gpu_w": 6.574,
+        "cpu_w": 0.226,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548068.0,
+        "seconds": 1.00714,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 6.666,
+        "cpu_w": 0.312,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548069.0,
+        "seconds": 1.00766,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 6.611,
+        "cpu_w": 0.806,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548070.0,
+        "seconds": 1.00747,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 6.683,
+        "cpu_w": 0.234,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548071.0,
+        "seconds": 1.00712,
+        "phase": "searching",
+        "temperature": 58.837921142578125,
+        "gpu_w": 6.625,
+        "cpu_w": 0.243,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548072.0,
+        "seconds": 1.00715,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 6.614,
+        "cpu_w": 1.227,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548073.0,
+        "seconds": 1.00661,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 6.62,
+        "cpu_w": 0.248,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548074.0,
+        "seconds": 1.00715,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 6.571,
+        "cpu_w": 0.239,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548075.0,
+        "seconds": 1.00725,
+        "phase": "searching",
+        "temperature": 58.75794982910156,
+        "gpu_w": 6.753,
+        "cpu_w": 0.249,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548076.0,
+        "seconds": 1.00724,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 6.634,
+        "cpu_w": 0.233,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548077.0,
+        "seconds": 1.00709,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 6.601,
+        "cpu_w": 0.232,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548078.0,
+        "seconds": 1.0070599999999998,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 6.648,
+        "cpu_w": 0.229,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548079.0,
+        "seconds": 1.00711,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 6.598,
+        "cpu_w": 0.909,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548080.0,
+        "seconds": 1.00738,
+        "phase": "searching",
+        "temperature": 58.837921142578125,
+        "gpu_w": 6.635,
+        "cpu_w": 0.241,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548081.0,
+        "seconds": 1.0070599999999998,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 6.651,
+        "cpu_w": 0.246,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548082.0,
+        "seconds": 1.00723,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 6.604,
+        "cpu_w": 1.294,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548083.0,
+        "seconds": 1.00767,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 6.651,
+        "cpu_w": 0.258,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548084.0,
+        "seconds": 1.00743,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 6.653,
+        "cpu_w": 0.262,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548085.0,
+        "seconds": 1.00735,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 6.644,
+        "cpu_w": 0.258,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548086.0,
+        "seconds": 1.00723,
+        "phase": "transition",
+        "temperature": 59.39762878417969,
+        "gpu_w": 6.679,
+        "cpu_w": 0.295,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548087.0,
+        "seconds": 1.00725,
+        "phase": "transition",
+        "temperature": 58.59803771972656,
+        "gpu_w": 6.682,
+        "cpu_w": 0.247,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548088.0,
+        "seconds": 1.00714,
+        "phase": "transition",
+        "temperature": 58.837921142578125,
+        "gpu_w": 6.758,
+        "cpu_w": 0.242,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      }
+    ]
+  },
+  {
+    "file": "03-Q-gather-1048576.metadata.json",
+    "variant": "Q-gather",
+    "batch": 1048576,
+    "phases": {
+      "building_dataset": {
+        "gpu_w": null,
+        "cpu_w": null,
+        "gpu_mhz": null,
+        "gpu_active_percent": null,
+        "temperature": null
+      },
+      "searching": {
+        "gpu_w": {
+          "n": 81,
+          "median": 7.087,
+          "mean": 7.1466666666666665,
+          "min": 6.612,
+          "max": 8.719
+        },
+        "cpu_w": {
+          "n": 81,
+          "median": 0.589,
+          "mean": 0.7891481481481482,
+          "min": 0.256,
+          "max": 4.608
+        },
+        "gpu_mhz": {
+          "n": 81,
+          "median": 1578.0,
+          "mean": 1578.0,
+          "min": 1578.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 81,
+          "median": 100.0,
+          "mean": 100.0,
+          "min": 100.0,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 81,
+          "median": 60.11724853515625,
+          "mean": 60.09257676866319,
+          "min": 58.51808166503906,
+          "max": 61.47654724121094
+        }
+      },
+      "transition": {
+        "gpu_w": {
+          "n": 8,
+          "median": 6.7125,
+          "mean": 6.50725,
+          "min": 3.405,
+          "max": 7.343
+        },
+        "cpu_w": {
+          "n": 8,
+          "median": 0.506,
+          "mean": 0.659,
+          "min": 0.286,
+          "max": 1.587
+        },
+        "gpu_mhz": {
+          "n": 8,
+          "median": 1578.0,
+          "mean": 1575.125,
+          "min": 1555.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 8,
+          "median": 100.0,
+          "mean": 93.9875,
+          "min": 51.9,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 8,
+          "median": 60.15723419189453,
+          "mean": 60.16722869873047,
+          "min": 59.47758483886719,
+          "max": 60.836883544921875
+        }
+      }
+    },
+    "gpu_aggregate_energy_joules_approx": 637.69446897,
+    "observed_power_seconds": 89.95196,
+    "session_seconds": 121.89427101612091,
+    "aggregate_million_nonces_per_joule": 2.112955695187923,
+    "samples": [
+      {
+        "timestamp": 1789548178.0,
+        "seconds": 1.0072999999999999,
+        "phase": "transition",
+        "temperature": 60.756927490234375,
+        "gpu_w": 6.69,
+        "cpu_w": 0.469,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548179.0,
+        "seconds": 1.00721,
+        "phase": "transition",
+        "temperature": 59.95733642578125,
+        "gpu_w": 6.695,
+        "cpu_w": 0.298,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548180.0,
+        "seconds": 1.00716,
+        "phase": "transition",
+        "temperature": 59.63749694824219,
+        "gpu_w": 6.73,
+        "cpu_w": 1.11,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548181.0,
+        "seconds": 1.00759,
+        "phase": "transition",
+        "temperature": 59.47758483886719,
+        "gpu_w": 6.592,
+        "cpu_w": 0.286,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548182.0,
+        "seconds": 1.00741,
+        "phase": "searching",
+        "temperature": 59.47758483886719,
+        "gpu_w": 6.789,
+        "cpu_w": 0.256,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548183.0,
+        "seconds": 1.00716,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 6.691,
+        "cpu_w": 0.377,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548184.0,
+        "seconds": 1.00745,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 6.777,
+        "cpu_w": 0.336,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548185.0,
+        "seconds": 1.00749,
+        "phase": "searching",
+        "temperature": 58.59803771972656,
+        "gpu_w": 6.612,
+        "cpu_w": 1.077,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548186.0,
+        "seconds": 1.00752,
+        "phase": "searching",
+        "temperature": 58.59803771972656,
+        "gpu_w": 6.691,
+        "cpu_w": 0.372,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548187.0,
+        "seconds": 1.00735,
+        "phase": "searching",
+        "temperature": 58.51808166503906,
+        "gpu_w": 7.225,
+        "cpu_w": 1.755,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548188.0,
+        "seconds": 1.00736,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 8.624,
+        "cpu_w": 4.608,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548189.0,
+        "seconds": 1.00787,
+        "phase": "searching",
+        "temperature": 61.47654724121094,
+        "gpu_w": 8.719,
+        "cpu_w": 4.011,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548190.0,
+        "seconds": 1.00878,
+        "phase": "searching",
+        "temperature": 61.31663513183594,
+        "gpu_w": 8.298,
+        "cpu_w": 1.623,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548191.0,
+        "seconds": 1.0068,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 8.02,
+        "cpu_w": 0.902,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548192.0,
+        "seconds": 1.01055,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 7.597,
+        "cpu_w": 0.767,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548193.0,
+        "seconds": 1.01141,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.278,
+        "cpu_w": 0.582,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548194.0,
+        "seconds": 1.00948,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 6.966,
+        "cpu_w": 0.739,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548195.0,
+        "seconds": 1.01071,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.155,
+        "cpu_w": 1.55,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548196.0,
+        "seconds": 1.01122,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.172,
+        "cpu_w": 0.826,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548197.0,
+        "seconds": 1.00946,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.103,
+        "cpu_w": 0.692,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548198.0,
+        "seconds": 1.00992,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.011,
+        "cpu_w": 0.702,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548199.0,
+        "seconds": 1.01336,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 6.941,
+        "cpu_w": 0.964,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548200.0,
+        "seconds": 1.0148,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.024,
+        "cpu_w": 0.491,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548201.0,
+        "seconds": 1.01605,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.333,
+        "cpu_w": 0.834,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548202.0,
+        "seconds": 1.0108300000000001,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.002,
+        "cpu_w": 0.443,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548203.0,
+        "seconds": 1.00975,
+        "phase": "searching",
+        "temperature": 59.237701416015625,
+        "gpu_w": 7.129,
+        "cpu_w": 0.591,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548204.0,
+        "seconds": 1.01268,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.048,
+        "cpu_w": 0.384,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548205.0,
+        "seconds": 1.01071,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.041,
+        "cpu_w": 1.369,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548206.0,
+        "seconds": 1.01054,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.16,
+        "cpu_w": 0.576,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548207.0,
+        "seconds": 1.01269,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 6.935,
+        "cpu_w": 0.589,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548208.0,
+        "seconds": 1.01162,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.097,
+        "cpu_w": 0.704,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548209.0,
+        "seconds": 1.0102200000000001,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 6.955,
+        "cpu_w": 0.734,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548210.0,
+        "seconds": 1.0159,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.001,
+        "cpu_w": 0.712,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548211.0,
+        "seconds": 1.01003,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.304,
+        "cpu_w": 1.276,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548212.0,
+        "seconds": 1.00918,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 6.917,
+        "cpu_w": 0.741,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548214.0,
+        "seconds": 1.00985,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.066,
+        "cpu_w": 0.897,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548215.0,
+        "seconds": 1.01273,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 6.997,
+        "cpu_w": 0.732,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548216.0,
+        "seconds": 1.0132999999999999,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.006,
+        "cpu_w": 1.622,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548217.0,
+        "seconds": 1.01397,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 6.99,
+        "cpu_w": 0.863,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548218.0,
+        "seconds": 1.01488,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 6.946,
+        "cpu_w": 0.407,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548219.0,
+        "seconds": 1.01149,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.116,
+        "cpu_w": 0.405,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548220.0,
+        "seconds": 1.00889,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.099,
+        "cpu_w": 0.427,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548221.0,
+        "seconds": 1.01335,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.129,
+        "cpu_w": 0.425,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548222.0,
+        "seconds": 1.00928,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.269,
+        "cpu_w": 0.978,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548223.0,
+        "seconds": 1.0108,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.228,
+        "cpu_w": 0.512,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548224.0,
+        "seconds": 1.00929,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.228,
+        "cpu_w": 0.672,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548225.0,
+        "seconds": 1.00896,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.287,
+        "cpu_w": 0.516,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548226.0,
+        "seconds": 1.01137,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.169,
+        "cpu_w": 1.36,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548227.0,
+        "seconds": 1.00948,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.199,
+        "cpu_w": 0.542,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548228.0,
+        "seconds": 1.0150299999999999,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.026,
+        "cpu_w": 0.443,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548229.0,
+        "seconds": 1.01317,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 6.945,
+        "cpu_w": 0.421,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548230.0,
+        "seconds": 1.01003,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 6.891,
+        "cpu_w": 0.423,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548231.0,
+        "seconds": 1.00898,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 6.966,
+        "cpu_w": 0.621,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548232.0,
+        "seconds": 1.00947,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.172,
+        "cpu_w": 0.915,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548233.0,
+        "seconds": 1.0128,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 6.917,
+        "cpu_w": 0.433,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548234.0,
+        "seconds": 1.01052,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 6.96,
+        "cpu_w": 0.551,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548235.0,
+        "seconds": 1.01105,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.066,
+        "cpu_w": 0.432,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548236.0,
+        "seconds": 1.0126,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.087,
+        "cpu_w": 1.448,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548237.0,
+        "seconds": 1.00851,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 6.988,
+        "cpu_w": 0.589,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548238.0,
+        "seconds": 1.01204,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.381,
+        "cpu_w": 0.415,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548239.0,
+        "seconds": 1.01604,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.237,
+        "cpu_w": 0.43,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548240.0,
+        "seconds": 1.00986,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.084,
+        "cpu_w": 0.779,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548241.0,
+        "seconds": 1.01329,
+        "phase": "searching",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.142,
+        "cpu_w": 0.681,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548242.0,
+        "seconds": 1.0113400000000001,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 6.928,
+        "cpu_w": 1.256,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548243.0,
+        "seconds": 1.00853,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.009,
+        "cpu_w": 0.41,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548244.0,
+        "seconds": 1.00994,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.205,
+        "cpu_w": 0.584,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548245.0,
+        "seconds": 1.01258,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.284,
+        "cpu_w": 0.415,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548246.0,
+        "seconds": 1.01119,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 6.98,
+        "cpu_w": 1.277,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548247.0,
+        "seconds": 1.0154400000000001,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.238,
+        "cpu_w": 0.508,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548248.0,
+        "seconds": 1.00911,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.336,
+        "cpu_w": 0.462,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548249.0,
+        "seconds": 1.0089,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.027,
+        "cpu_w": 0.418,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548250.0,
+        "seconds": 1.0096100000000001,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.027,
+        "cpu_w": 0.376,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548251.0,
+        "seconds": 1.01227,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.031,
+        "cpu_w": 0.422,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548252.0,
+        "seconds": 1.01038,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 6.984,
+        "cpu_w": 0.937,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548253.0,
+        "seconds": 1.01186,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 6.886,
+        "cpu_w": 0.375,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548254.0,
+        "seconds": 1.0164,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.057,
+        "cpu_w": 0.529,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548255.0,
+        "seconds": 1.01263,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 6.902,
+        "cpu_w": 0.412,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548256.0,
+        "seconds": 1.01005,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.182,
+        "cpu_w": 1.125,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548257.0,
+        "seconds": 1.01026,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.367,
+        "cpu_w": 0.85,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548258.0,
+        "seconds": 1.01102,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.202,
+        "cpu_w": 0.465,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548259.0,
+        "seconds": 1.0121,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.134,
+        "cpu_w": 0.392,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548260.0,
+        "seconds": 1.0094400000000001,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.225,
+        "cpu_w": 0.424,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548261.0,
+        "seconds": 1.01325,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.179,
+        "cpu_w": 0.44,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548262.0,
+        "seconds": 1.00999,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.312,
+        "cpu_w": 0.93,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548263.0,
+        "seconds": 1.0139099999999999,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.179,
+        "cpu_w": 0.392,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548264.0,
+        "seconds": 1.0096100000000001,
+        "phase": "transition",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.285,
+        "cpu_w": 0.549,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548265.0,
+        "seconds": 1.0094400000000001,
+        "phase": "transition",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.343,
+        "cpu_w": 0.43,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548266.0,
+        "seconds": 1.00924,
+        "phase": "transition",
+        "temperature": 60.836883544921875,
+        "gpu_w": 7.318,
+        "cpu_w": 0.543,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548267.0,
+        "seconds": 1.00688,
+        "phase": "transition",
+        "temperature": 60.35713195800781,
+        "gpu_w": 3.405,
+        "cpu_w": 1.587,
+        "gpu_mhz": 1555.0,
+        "gpu_active_percent": 51.9
+      }
+    ]
+  },
+  {
+    "file": "04-Q-search-1048576.metadata.json",
+    "variant": "Q-search",
+    "batch": 1048576,
+    "phases": {
+      "building_dataset": {
+        "gpu_w": null,
+        "cpu_w": null,
+        "gpu_mhz": null,
+        "gpu_active_percent": null,
+        "temperature": null
+      },
+      "searching": {
+        "gpu_w": {
+          "n": 82,
+          "median": 7.593,
+          "mean": 7.606146341463415,
+          "min": 7.374,
+          "max": 7.889
+        },
+        "cpu_w": {
+          "n": 82,
+          "median": 0.47,
+          "mean": 0.6496829268292683,
+          "min": 0.376,
+          "max": 1.948
+        },
+        "gpu_mhz": {
+          "n": 82,
+          "median": 1578.0,
+          "mean": 1578.0,
+          "min": 1578.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 82,
+          "median": 100.0,
+          "mean": 100.0,
+          "min": 100.0,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 82,
+          "median": 60.03729248046875,
+          "mean": 60.14650912401153,
+          "min": 58.837921142578125,
+          "max": 61.39659118652344
+        }
+      },
+      "transition": {
+        "gpu_w": {
+          "n": 6,
+          "median": 7.5495,
+          "mean": 7.549833333333333,
+          "min": 7.435,
+          "max": 7.681
+        },
+        "cpu_w": {
+          "n": 6,
+          "median": 0.4355,
+          "mean": 0.47250000000000003,
+          "min": 0.407,
+          "max": 0.681
+        },
+        "gpu_mhz": {
+          "n": 6,
+          "median": 1578.0,
+          "mean": 1578.0,
+          "min": 1578.0,
+          "max": 1578.0
+        },
+        "gpu_active_percent": {
+          "n": 6,
+          "median": 100.0,
+          "mean": 100.0,
+          "min": 100.0,
+          "max": 100.0
+        },
+        "temperature": {
+          "n": 6,
+          "median": 60.836883544921875,
+          "mean": 60.85020955403646,
+          "min": 60.27717590332031,
+          "max": 61.47654724121094
+        }
+      }
+    },
+    "gpu_aggregate_energy_joules_approx": 676.53860779,
+    "observed_power_seconds": 88.99175,
+    "session_seconds": 122.4376848936081,
+    "aggregate_million_nonces_per_joule": 2.0009377150286696,
+    "samples": [
+      {
+        "timestamp": 1789548377.0,
+        "seconds": 1.01002,
+        "phase": "transition",
+        "temperature": 60.916839599609375,
+        "gpu_w": 7.463,
+        "cpu_w": 0.437,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548378.0,
+        "seconds": 1.00865,
+        "phase": "transition",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.507,
+        "cpu_w": 0.407,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548379.0,
+        "seconds": 1.01056,
+        "phase": "transition",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.592,
+        "cpu_w": 0.456,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548380.0,
+        "seconds": 1.01014,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.586,
+        "cpu_w": 1.276,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548381.0,
+        "seconds": 1.01187,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.638,
+        "cpu_w": 0.42,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548382.0,
+        "seconds": 1.01337,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.621,
+        "cpu_w": 0.421,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548383.0,
+        "seconds": 1.01417,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.45,
+        "cpu_w": 0.405,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548384.0,
+        "seconds": 1.0118099999999999,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.559,
+        "cpu_w": 1.089,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548385.0,
+        "seconds": 1.0089,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.539,
+        "cpu_w": 0.435,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548386.0,
+        "seconds": 1.01025,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 7.732,
+        "cpu_w": 0.571,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548387.0,
+        "seconds": 1.01081,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 7.613,
+        "cpu_w": 0.452,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548388.0,
+        "seconds": 1.00878,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.619,
+        "cpu_w": 0.455,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548389.0,
+        "seconds": 1.0135,
+        "phase": "searching",
+        "temperature": 59.31767272949219,
+        "gpu_w": 7.485,
+        "cpu_w": 0.388,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548390.0,
+        "seconds": 1.01286,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 7.658,
+        "cpu_w": 1.267,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548391.0,
+        "seconds": 1.01341,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.53,
+        "cpu_w": 0.415,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548392.0,
+        "seconds": 1.00897,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.803,
+        "cpu_w": 0.418,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548393.0,
+        "seconds": 1.00921,
+        "phase": "searching",
+        "temperature": 58.917877197265625,
+        "gpu_w": 7.661,
+        "cpu_w": 0.407,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548394.0,
+        "seconds": 1.01371,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 7.775,
+        "cpu_w": 1.128,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548395.0,
+        "seconds": 1.00932,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 7.666,
+        "cpu_w": 0.427,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548396.0,
+        "seconds": 1.01098,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.571,
+        "cpu_w": 0.566,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548397.0,
+        "seconds": 1.01125,
+        "phase": "searching",
+        "temperature": 59.63749694824219,
+        "gpu_w": 7.463,
+        "cpu_w": 0.438,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548398.0,
+        "seconds": 1.01237,
+        "phase": "searching",
+        "temperature": 59.077789306640625,
+        "gpu_w": 7.518,
+        "cpu_w": 0.435,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548399.0,
+        "seconds": 1.0097,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.577,
+        "cpu_w": 0.41,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548400.0,
+        "seconds": 1.01722,
+        "phase": "searching",
+        "temperature": 59.47758483886719,
+        "gpu_w": 7.477,
+        "cpu_w": 1.256,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548401.0,
+        "seconds": 1.01125,
+        "phase": "searching",
+        "temperature": 59.157745361328125,
+        "gpu_w": 7.547,
+        "cpu_w": 0.41,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548402.0,
+        "seconds": 1.00947,
+        "phase": "searching",
+        "temperature": 58.837921142578125,
+        "gpu_w": 7.617,
+        "cpu_w": 0.786,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548403.0,
+        "seconds": 1.00999,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.588,
+        "cpu_w": 0.398,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548404.0,
+        "seconds": 1.01635,
+        "phase": "searching",
+        "temperature": 59.47758483886719,
+        "gpu_w": 7.505,
+        "cpu_w": 1.117,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548405.0,
+        "seconds": 1.00943,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.596,
+        "cpu_w": 0.406,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548406.0,
+        "seconds": 1.01481,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 7.716,
+        "cpu_w": 0.558,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548407.0,
+        "seconds": 1.01282,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 7.448,
+        "cpu_w": 1.401,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548408.0,
+        "seconds": 1.01796,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.507,
+        "cpu_w": 0.421,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548409.0,
+        "seconds": 1.01288,
+        "phase": "searching",
+        "temperature": 59.39762878417969,
+        "gpu_w": 7.449,
+        "cpu_w": 0.457,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548410.0,
+        "seconds": 1.01251,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.584,
+        "cpu_w": 1.613,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548411.0,
+        "seconds": 1.00766,
+        "phase": "searching",
+        "temperature": 59.79742431640625,
+        "gpu_w": 7.577,
+        "cpu_w": 0.465,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548412.0,
+        "seconds": 1.009,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.417,
+        "cpu_w": 0.419,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548413.0,
+        "seconds": 1.01152,
+        "phase": "searching",
+        "temperature": 60.03729248046875,
+        "gpu_w": 7.407,
+        "cpu_w": 0.421,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548414.0,
+        "seconds": 1.0102,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.501,
+        "cpu_w": 1.105,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548415.0,
+        "seconds": 1.0090599999999998,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.538,
+        "cpu_w": 0.462,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548416.0,
+        "seconds": 1.01081,
+        "phase": "searching",
+        "temperature": 59.55754089355469,
+        "gpu_w": 7.651,
+        "cpu_w": 0.573,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548417.0,
+        "seconds": 1.01088,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.427,
+        "cpu_w": 0.421,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548418.0,
+        "seconds": 1.01152,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.575,
+        "cpu_w": 0.434,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548419.0,
+        "seconds": 1.01488,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.374,
+        "cpu_w": 0.419,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548420.0,
+        "seconds": 1.01327,
+        "phase": "searching",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.44,
+        "cpu_w": 1.935,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548421.0,
+        "seconds": 1.0102200000000001,
+        "phase": "searching",
+        "temperature": 59.87738037109375,
+        "gpu_w": 7.543,
+        "cpu_w": 0.44,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548422.0,
+        "seconds": 1.01012,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.656,
+        "cpu_w": 0.403,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548423.0,
+        "seconds": 1.00928,
+        "phase": "searching",
+        "temperature": 59.71746826171875,
+        "gpu_w": 7.554,
+        "cpu_w": 0.432,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548424.0,
+        "seconds": 1.01072,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.587,
+        "cpu_w": 1.125,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548425.0,
+        "seconds": 1.00931,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.682,
+        "cpu_w": 0.61,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548426.0,
+        "seconds": 1.00838,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.674,
+        "cpu_w": 0.603,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548427.0,
+        "seconds": 1.01223,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.646,
+        "cpu_w": 0.527,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548428.0,
+        "seconds": 1.00977,
+        "phase": "searching",
+        "temperature": 60.836883544921875,
+        "gpu_w": 7.771,
+        "cpu_w": 0.534,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548429.0,
+        "seconds": 1.01732,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.688,
+        "cpu_w": 0.57,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548430.0,
+        "seconds": 1.01045,
+        "phase": "searching",
+        "temperature": 60.836883544921875,
+        "gpu_w": 7.788,
+        "cpu_w": 1.948,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548431.0,
+        "seconds": 1.01258,
+        "phase": "searching",
+        "temperature": 61.23667907714844,
+        "gpu_w": 7.73,
+        "cpu_w": 0.567,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548432.0,
+        "seconds": 1.00979,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 7.804,
+        "cpu_w": 0.496,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548433.0,
+        "seconds": 1.01192,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 7.797,
+        "cpu_w": 0.545,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548434.0,
+        "seconds": 1.0098,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.767,
+        "cpu_w": 1.083,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548435.0,
+        "seconds": 1.00921,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.596,
+        "cpu_w": 0.598,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548436.0,
+        "seconds": 1.01291,
+        "phase": "searching",
+        "temperature": 61.15672302246094,
+        "gpu_w": 7.584,
+        "cpu_w": 0.484,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548437.0,
+        "seconds": 1.01233,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 7.542,
+        "cpu_w": 0.418,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548438.0,
+        "seconds": 1.01011,
+        "phase": "searching",
+        "temperature": 60.35713195800781,
+        "gpu_w": 7.573,
+        "cpu_w": 0.412,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548439.0,
+        "seconds": 1.01397,
+        "phase": "searching",
+        "temperature": 60.27717590332031,
+        "gpu_w": 7.453,
+        "cpu_w": 0.399,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548440.0,
+        "seconds": 1.00894,
+        "phase": "searching",
+        "temperature": 60.676971435546875,
+        "gpu_w": 7.517,
+        "cpu_w": 1.295,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548441.0,
+        "seconds": 1.01368,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.61,
+        "cpu_w": 0.415,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548442.0,
+        "seconds": 1.01233,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.553,
+        "cpu_w": 0.421,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548443.0,
+        "seconds": 1.0099,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 7.686,
+        "cpu_w": 0.389,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548444.0,
+        "seconds": 1.0110599999999998,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.638,
+        "cpu_w": 1.024,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548445.0,
+        "seconds": 1.01013,
+        "phase": "searching",
+        "temperature": 60.597015380859375,
+        "gpu_w": 7.632,
+        "cpu_w": 0.59,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548446.0,
+        "seconds": 1.01124,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 7.592,
+        "cpu_w": 0.475,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548447.0,
+        "seconds": 1.0101799999999999,
+        "phase": "searching",
+        "temperature": 60.43708801269531,
+        "gpu_w": 7.605,
+        "cpu_w": 0.411,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548448.0,
+        "seconds": 1.0112999999999999,
+        "phase": "searching",
+        "temperature": 60.11724853515625,
+        "gpu_w": 7.598,
+        "cpu_w": 0.436,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548449.0,
+        "seconds": 1.01435,
+        "phase": "searching",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.889,
+        "cpu_w": 0.437,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548450.0,
+        "seconds": 1.01024,
+        "phase": "searching",
+        "temperature": 59.95733642578125,
+        "gpu_w": 7.666,
+        "cpu_w": 0.757,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548451.0,
+        "seconds": 1.01282,
+        "phase": "searching",
+        "temperature": 60.756927490234375,
+        "gpu_w": 7.553,
+        "cpu_w": 0.834,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548452.0,
+        "seconds": 1.01536,
+        "phase": "searching",
+        "temperature": 60.19721984863281,
+        "gpu_w": 7.487,
+        "cpu_w": 0.398,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548453.0,
+        "seconds": 1.01011,
+        "phase": "searching",
+        "temperature": 60.51704406738281,
+        "gpu_w": 7.705,
+        "cpu_w": 0.376,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548454.0,
+        "seconds": 1.01056,
+        "phase": "searching",
+        "temperature": 61.23667907714844,
+        "gpu_w": 7.409,
+        "cpu_w": 0.994,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548455.0,
+        "seconds": 1.0069299999999999,
+        "phase": "searching",
+        "temperature": 61.23667907714844,
+        "gpu_w": 7.578,
+        "cpu_w": 0.661,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548456.0,
+        "seconds": 1.01175,
+        "phase": "searching",
+        "temperature": 60.836883544921875,
+        "gpu_w": 7.594,
+        "cpu_w": 0.465,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548457.0,
+        "seconds": 1.00946,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 7.797,
+        "cpu_w": 0.524,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548458.0,
+        "seconds": 1.01369,
+        "phase": "searching",
+        "temperature": 61.15672302246094,
+        "gpu_w": 7.751,
+        "cpu_w": 0.539,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548459.0,
+        "seconds": 1.00957,
+        "phase": "searching",
+        "temperature": 61.39659118652344,
+        "gpu_w": 7.855,
+        "cpu_w": 0.508,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548460.0,
+        "seconds": 1.0114,
+        "phase": "searching",
+        "temperature": 60.996795654296875,
+        "gpu_w": 7.82,
+        "cpu_w": 0.485,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548461.0,
+        "seconds": 1.00933,
+        "phase": "searching",
+        "temperature": 61.39659118652344,
+        "gpu_w": 7.729,
+        "cpu_w": 1.346,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548462.0,
+        "seconds": 1.0098799999999999,
+        "phase": "transition",
+        "temperature": 60.836883544921875,
+        "gpu_w": 7.435,
+        "cpu_w": 0.434,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548463.0,
+        "seconds": 1.00978,
+        "phase": "transition",
+        "temperature": 60.836883544921875,
+        "gpu_w": 7.681,
+        "cpu_w": 0.42,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      },
+      {
+        "timestamp": 1789548464.0,
+        "seconds": 1.00924,
+        "phase": "transition",
+        "temperature": 61.47654724121094,
+        "gpu_w": 7.621,
+        "cpu_w": 0.681,
+        "gpu_mhz": 1578.0,
+        "gpu_active_percent": 100.0
+      }
+    ]
+  }
+]

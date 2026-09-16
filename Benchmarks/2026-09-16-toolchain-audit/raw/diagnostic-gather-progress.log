@@ -1,0 +1,8 @@
+START 1 Q-search:1048576:search temperature=43.89
+END 1 Q-search:1048576:search active=15.16871 effective=11.20871 build=31.658654584 peak=62.99577331542969
+START 2 Q-gather:1048576:gather-only temperature=43.41
+END 2 Q-gather:1048576:gather-only active=15.13762 effective=11.18359 build=31.699963417 peak=61.636474609375
+START 3 Q-gather:1048576:gather-only temperature=43.25
+END 3 Q-gather:1048576:gather-only active=14.96457 effective=11.05401 build=31.697041 peak=61.47654724121094
+START 4 Q-search:1048576:search temperature=42.69
+END 4 Q-search:1048576:search active=15.03103 effective=11.05633 build=32.218002917 peak=61.47654724121094

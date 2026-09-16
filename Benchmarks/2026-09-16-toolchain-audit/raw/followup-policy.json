@@ -1,0 +1,8 @@
+{
+  "reason": "Preparation first run started at43.09 C after tests, substantially colder than previous series. Decision made before outcome: retain preparation separately; start new full ABBA sequence with45 C maximum for comparable colder starts.",
+  "excluded_directory": "followup-mine",
+  "included_directory": "followup45-mine",
+  "comparison_duration_seconds": 180,
+  "maximum_temperature_celsius": 45,
+  "sequence": "A,B0-old-metal,B0-old-metal,A,A,C,C,A,C,H-full-simd,H-full-simd,C"
+}

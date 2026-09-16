@@ -1,0 +1,242 @@
+{
+  "A": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/A",
+    "size": 1155408,
+    "sha256": "b18ed68823c6f1fe9837b057395d722392deef97b91e31c99b1a286573743b64",
+    "sections": {
+      "__text": {
+        "size": 443592,
+        "sha256": "196a2aaee281f10ccc0bc05e2dafdf0360b061cf3a036e461180d3ce2bb4960c"
+      },
+      "__metallib": {
+        "size": 307488,
+        "sha256": "e1fbd7fcbe735e96cb3cadc0b1b822eff1b245676ccc675049e519e1179952ea"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "26.5.0"
+    }
+  },
+  "B0-old-metal": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/B0-old-metal",
+    "size": 1530912,
+    "sha256": "ea3be824e2bf15090e7b4679811efdc9e2d3e3ac15ba3f25d83f3b666f618e59",
+    "sections": {
+      "__text": {
+        "size": 455176,
+        "sha256": "5380726c8b47fed0e8ced7f904be043e678d92a3ccc5626f7f777a69dc7aa343"
+      },
+      "__metallib": {
+        "size": 307488,
+        "sha256": "e1fbd7fcbe735e96cb3cadc0b1b822eff1b245676ccc675049e519e1179952ea"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "B": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/B",
+    "size": 1530912,
+    "sha256": "d5478a60e613e1ee6f401042e006b3ed6993dd45abbf3adeb7e19fafbc058670",
+    "sections": {
+      "__text": {
+        "size": 455176,
+        "sha256": "5380726c8b47fed0e8ced7f904be043e678d92a3ccc5626f7f777a69dc7aa343"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "C": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/C",
+    "size": 1530272,
+    "sha256": "f62f424f4b2e204474187fb31b1220e7312bb3a4d0a3e881c5642d25ea12a1a4",
+    "sections": {
+      "__text": {
+        "size": 454268,
+        "sha256": "46d3aaf4efdc5c782dc78969c0f8b234d63544b86a556b9602bd0c53c33b3503"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "C-production": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/C-production",
+    "size": 1171088,
+    "sha256": "e318af94fc52c7764c4476e542c24c98ab851a5a004c6658ac6e46552a252f79",
+    "sections": {
+      "__text": {
+        "size": 454268,
+        "sha256": "71666a272ae08d619880519c09211792a04f88836cf50c116f58b6688d27515d"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "D-old-metal": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/D-old-metal",
+    "size": 1530272,
+    "sha256": "74df77813a6e0c130b7c6c47a7133f2d087a24e816876b0caf4cecd15785ede1",
+    "sections": {
+      "__text": {
+        "size": 454268,
+        "sha256": "46d3aaf4efdc5c782dc78969c0f8b234d63544b86a556b9602bd0c53c33b3503"
+      },
+      "__metallib": {
+        "size": 307488,
+        "sha256": "e1fbd7fcbe735e96cb3cadc0b1b822eff1b245676ccc675049e519e1179952ea"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "E-segmented": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/E-segmented",
+    "size": 1530384,
+    "sha256": "7ee342bfe8d5ae95458890d7f6ab8a8c0e9e29a69886f2b068a94b4514d49cd1",
+    "sections": {
+      "__text": {
+        "size": 455060,
+        "sha256": "7a61a192e46b726c0252487dfc797e390fbebc80fc7a8da8cd63bbe386761e24"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "G-get-accessors": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/G-get-accessors",
+    "size": 1530288,
+    "sha256": "f66ebe8f70024e89da09d70558dfd9d48d807233917699f678811173a38e75aa",
+    "sections": {
+      "__text": {
+        "size": 454268,
+        "sha256": "46d3aaf4efdc5c782dc78969c0f8b234d63544b86a556b9602bd0c53c33b3503"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "H-full-simd": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/H-full-simd",
+    "size": 1530496,
+    "sha256": "ea909eb5f4004cdecf9da93bc5cbf58142e6c04272c75528533198f1d6451c69",
+    "sections": {
+      "__text": {
+        "size": 454516,
+        "sha256": "255ac94d44746ef4ed0a669bc821724fb4e20949e3ca0e9b9d95e7866710763f"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "U-unrolled": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/U-unrolled",
+    "size": 1546560,
+    "sha256": "e514f80763808c2b5a8b0c7194a49f1c24f702a9264f493bba9255f25049debe",
+    "sections": {
+      "__text": {
+        "size": 459216,
+        "sha256": "3857618284cec3573d1aa49e4cad07b97b99783cb5755a4659604e0bdc83f686"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "Q-search": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/Q-search",
+    "size": 1530064,
+    "sha256": "f2d3920277e0bb4d8bbddb43673a8679234ee680db45339904317845ef671435",
+    "sections": {
+      "__text": {
+        "size": 454004,
+        "sha256": "7d89e8e0ce8a5e76cf8a8fa22ef45f8cfd196ee0789369a0badc7ccd99a5d1ef"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  },
+  "Q-gather": {
+    "path": "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/Q-gather",
+    "size": 1530064,
+    "sha256": "f2d3920277e0bb4d8bbddb43673a8679234ee680db45339904317845ef671435",
+    "sections": {
+      "__text": {
+        "size": 454004,
+        "sha256": "7d89e8e0ce8a5e76cf8a8fa22ef45f8cfd196ee0789369a0badc7ccd99a5d1ef"
+      },
+      "__metallib": {
+        "size": 307520,
+        "sha256": "9bf379f1432f617f4a25b6bb98d14a9ba611cef4dae70d9690494fc330355529"
+      }
+    },
+    "build_version": {
+      "platform": 1,
+      "minimum_os": "26.5.0",
+      "sdk": "27.0.0"
+    }
+  }
+}

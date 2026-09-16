@@ -1,0 +1,48 @@
+START 1 A temperature=50.20
+END 1 A active=14.98366 effective=10.93363 build=32.435797666 peak=73.15054321289062
+START 2 B0-old-metal temperature=53.80
+END 2 B0-old-metal active=15.05317 effective=10.99153 build=32.381547959 peak=77.06852722167969
+START 3 B0-old-metal temperature=53.32
+END 3 B0-old-metal active=14.29691 effective=10.44796 build=32.29337025 peak=77.30839538574219
+START 4 A temperature=53.56
+END 4 A active=14.96356 effective=10.93250 build=32.182944209 peak=78.74765014648438
+START 5 B temperature=52.84
+END 5 B active=15.30124 effective=11.21935 build=31.909123875 peak=76.74868774414062
+START 6 C temperature=53.96
+END 6 C active=15.18696 effective=11.14174 build=31.8647935 peak=76.90859985351562
+START 7 C temperature=53.96
+END 7 C active=15.24352 effective=11.12913 build=32.398541792 peak=78.58773803710938
+START 8 B temperature=53.88
+END 8 B active=14.94054 effective=10.95039 build=32.060443 peak=76.98855590820312
+START 9 B0-old-metal temperature=53.80
+END 9 B0-old-metal active=15.03364 effective=11.00212 build=32.124548083 peak=76.74868774414062
+START 10 B temperature=54.12
+END 10 B active=15.02826 effective=11.00568 build=32.084159916 peak=75.38938903808594
+START 11 B temperature=53.48
+END 11 B active=15.01566 effective=10.98790 build=32.087051792 peak=75.62925720214844
+START 12 B0-old-metal temperature=53.00
+END 12 B0-old-metal active=14.95205 effective=10.95536 build=32.106414333 peak=77.14848327636719
+START 13 A temperature=53.48
+END 13 A active=15.07483 effective=11.02972 build=32.136349333 peak=76.029052734375
+START 14 B0-old-metal temperature=53.56
+END 14 B0-old-metal active=14.46175 effective=10.55358 build=32.426847125 peak=75.9490966796875
+START 15 B0-old-metal temperature=54.52
+END 15 B0-old-metal active=14.36064 effective=10.42322 build=32.913597083 peak=76.58876037597656
+START 16 A temperature=53.16
+END 16 A active=14.60707 effective=10.60931 build=32.695907292 peak=74.50984191894531
+START 17 B temperature=52.68
+END 17 B active=14.52730 effective=10.54009 build=32.907768292 peak=74.82968139648438
+START 18 C temperature=52.60
+END 18 C active=14.94437 effective=10.90572 build=32.329494083 peak=74.42988586425781
+START 19 C temperature=53.00
+END 19 C active=15.05863 effective=10.99383 build=32.31249525 peak=75.38938903808594
+START 20 B temperature=52.68
+END 20 B active=14.86338 effective=10.86439 build=32.292214666 peak=75.14950561523438
+START 21 B0-old-metal temperature=52.28
+END 21 B0-old-metal active=15.06884 effective=11.01495 build=32.253234292 peak=75.06954956054688
+START 22 B temperature=53.24
+END 22 B active=14.98480 effective=10.95432 build=32.255474917 peak=75.38938903808594
+START 23 B temperature=52.28
+END 23 B active=14.99611 effective=10.95460 build=32.336314542 peak=74.74971008300781
+START 24 B0-old-metal temperature=51.80
+END 24 B0-old-metal active=14.98536 effective=10.95566 build=32.238297625 peak=73.47036743164062

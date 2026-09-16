@@ -1,0 +1,32 @@
+{
+  "per_hit_seconds": {
+    "cpu-B": 0.000762923746776778,
+    "cpu-C": 0.00022046549480592148
+  },
+  "logs": [
+    {
+      "file": "Distribution/ergometal3.jsonl",
+      "hits": 23,
+      "pool_target_probability": 5.729816621252828e-11,
+      "benchmark_probability": 1.52587890625e-05,
+      "benchmark_to_pool_hit_frequency": 266305.0158691406,
+      "estimated_baseline_verification_seconds": 0.017547246175865894,
+      "estimated_candidate_verification_seconds": 0.005070706380536194,
+      "maximum_eliminable_wall_percent": 4.965643188693677e-05,
+      "maximum_migration_wall_saving_percent": 3.530699018650276e-05,
+      "search_non_gpu_busy_percent": 0.06650756981838855
+    },
+    {
+      "file": "Distribution/ergometal4.jsonl",
+      "hits": 35,
+      "pool_target_probability": 5.729816621252828e-11,
+      "benchmark_probability": 1.52587890625e-05,
+      "benchmark_to_pool_hit_frequency": 266305.0158691406,
+      "estimated_baseline_verification_seconds": 0.02670233113718723,
+      "estimated_candidate_verification_seconds": 0.007716292318207252,
+      "maximum_eliminable_wall_percent": 6.002470674048189e-05,
+      "maximum_migration_wall_saving_percent": 4.267909818126556e-05,
+      "search_non_gpu_busy_percent": 0.01897708059760844
+    }
+  ]
+}

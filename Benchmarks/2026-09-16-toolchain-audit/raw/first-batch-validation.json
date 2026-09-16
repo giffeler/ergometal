@@ -1,0 +1,1237 @@
+[
+  {
+    "path": "Benchmarks/2026-09-16-toolchain-audit/raw/production-batch-mine/06-C-production-4194304.events.ndjson",
+    "sha256": "db481755aab0c358941872727c6d1b0bfec1752d6fbbdcd7877f5412cabce05b",
+    "sessions": [
+      {
+        "sessionID": "F6A6AA18-075A-49AA-B71D-90ABD0BA2118",
+        "first": "2026-09-16T07:33:46Z",
+        "last": "2026-09-16T07:38:46Z",
+        "event_counts": {
+          "session_started": 1,
+          "pool_connected": 1,
+          "pool_authorized": 1,
+          "job_received": 2,
+          "statistics_sample": 150,
+          "dataset_completed": 2,
+          "session_ended": 1
+        },
+        "start_fields": {
+          "prefetch_chunk_elements": "1048576",
+          "gpu_architecture": "applegpu_g16g",
+          "worktree_dirty": "false",
+          "donation_percent": "0",
+          "gpu_family": "apple9",
+          "dataset_scheduling": "overlap",
+          "tuning_provenance": "explicit",
+          "dataset_threadgroup_size": "256",
+          "tuning_source_search_pipeline_depth": "explicit",
+          "os_build": "26A428",
+          "tuning_source_prefetch_chunk_elements": "explicit",
+          "tuning_source_prebuild_batch_nonces": "explicit",
+          "mode": "mining",
+          "tuning_source_batch_nonces": "explicit",
+          "batch_nonces": "4194304",
+          "tuning_source_build_pipeline_depth": "explicit",
+          "tuning_source_search_threadgroup_size": "explicit",
+          "profile": "peak",
+          "executable_sha256": "e318af94fc52c7764c4476e542c24c98ab851a5a004c6658ac6e46552a252f79",
+          "network": "mainnet",
+          "tuning_source_build_chunk_elements": "explicit",
+          "search_pipeline_depth": "2",
+          "tuning_source_dataset_threadgroup_size": "explicit",
+          "dataset_kernel": "u32pair-inline-m",
+          "os_version": "Version 27.0 (Build 26A428)",
+          "threadgroup_size": "64",
+          "gpu_generation": "m4",
+          "donation_cycle_seconds": "6000",
+          "build_chunk_elements": "2097152",
+          "autotune_mode": "off",
+          "worktree_revision": "28736760cbab5e62c81c2907062c09ad9da4d599",
+          "prebuild_batch_nonces": "131072",
+          "prebuild": "off",
+          "architecture": "arm64",
+          "build_pipeline_depth": "2"
+        },
+        "final_fields": {
+          "elapsed_seconds": "300.4119679927826",
+          "gpu_search_command_wall_busy_seconds_total": "236.13400191665278",
+          "share_luck_ratio": "0.0",
+          "donation_shares_rejected": "0",
+          "tuning_provenance": "explicit",
+          "shares_expected": "0.20355606079397776",
+          "dataset_prefetch_build_gpu_seconds_total": "0.0",
+          "dataset_bytes": "7272058080",
+          "average_hashrate": "15044743.48956292",
+          "donation_shares_accepted": "0",
+          "hashrate": "0.0",
+          "prefetch_chunk_elements": "1048576",
+          "gpu_generation": "m4",
+          "shares_found": "0",
+          "donation_shares_stale": "0",
+          "gpu_build_commands_completed_total": "218",
+          "donation_window_seconds": "0.0",
+          "gpu_search_command_non_gpu_busy_seconds_total": "0.018104000089806505",
+          "donation_active_recipient": "user",
+          "shares_accepted": "0",
+          "dataset_cached_activations_total": "0",
+          "threadgroup_size": "64",
+          "dataset_prefetch_builds_cancelled_total": "0",
+          "gpu_build_command_non_gpu_seconds_total": "0.48736208338232245",
+          "donation_shares_submitted": "0",
+          "gpu_seconds": "470.5299687078077",
+          "gpu_search_command_gpu_busy_seconds_total": "236.11589791656297",
+          "dataset_built_activations_total": "2",
+          "tuning_source_prefetch_chunk_elements": "explicit",
+          "tuning_source_search_pipeline_depth": "explicit",
+          "dataset_prefetched_activations_total": "0",
+          "height": "1873776",
+          "dataset_build_seconds": "32.421931583",
+          "build_pipeline_depth": "2",
+          "thermal_state": "nominal",
+          "donation_percent": "0",
+          "dataset_threadgroup_size": "256",
+          "donation_switches": "0",
+          "gpu_search_command_gpu_seconds_total": "470.5299687078077",
+          "prebuild_batch_nonces": "131072",
+          "dataset_activation_seconds_total": "64.107677375",
+          "search_seconds": "236.13400191665278",
+          "dataset_prefetch_waits_total": "0",
+          "soc_temperature_sensor_count": "24",
+          "gpu_build_command_gpu_seconds_total": "63.61979733328917",
+          "donation_shares_expected": "0.0",
+          "soc_temperature_session_peak_celsius": "73.87016296386719",
+          "dataset_cold_build_wall_seconds_total": "64.107186083",
+          "dataset_cold_builds_failed_total": "0",
+          "dataset_prefetch_builds_started_total": "0",
+          "gpu_search_command_non_gpu_seconds_total": "1.4758239586517448",
+          "donation_shares_found": "0",
+          "gpu_build_command_wall_seconds_total": "64.1071594166715",
+          "donation_search_seconds": "0.0",
+          "tuning_source_batch_nonces": "explicit",
+          "gpu_family": "apple9",
+          "dataset_prefetch_builds_discarded_total": "0",
+          "shares_stale": "0",
+          "state": "stopped",
+          "tuning_source_search_threadgroup_size": "explicit",
+          "gpu_search_command_wall_seconds_total": "472.00579266645946",
+          "temperature_source": "iohid_soc_die",
+          "search_pipeline_max_threads": "64",
+          "dataset_prefetch_wasted_gpu_seconds_total": "0.0",
+          "donation_failures": "0",
+          "build_pipeline_max_threads": "256",
+          "tuning_source_build_chunk_elements": "explicit",
+          "dataset_prefetch_build_wall_seconds_total": "0.0",
+          "batch_nonces": "4194304",
+          "job_target_hex": "000000003f00000003f00000003f00000003f00000003f00000003f00000003f",
+          "gpu_architecture": "applegpu_g16g",
+          "tuning_source_build_pipeline_depth": "explicit",
+          "autotune_mode": "off",
+          "dataset_source": "built",
+          "dataset_cold_build_resumed_elements_total": "0",
+          "shares_submitted": "0",
+          "profile": "peak",
+          "donation_scheduled_recipient": "user",
+          "prefetch_progress": "0.0",
+          "gpu_search_commands_completed_total": "847",
+          "dataset_activations_total": "2",
+          "soc_temperature_average_celsius": "55.249762852986656",
+          "tuning_source_dataset_threadgroup_size": "explicit",
+          "dataset_build_gpu_seconds": "32.14489666666486",
+          "job_id": "audit-1",
+          "dataset_prefetch_wait_seconds_total": "0.0",
+          "reconnects": "0",
+          "dataset_cold_build_gpu_seconds_total": "63.61979733328917",
+          "protocol_errors": "0",
+          "shares_rejected": "0",
+          "dataset_cold_builds_completed_total": "2",
+          "search_duty_cycle": "0.7860339369779232",
+          "dataset_prefetch_builds_completed_total": "0",
+          "dataset_cold_builds_resumed_total": "0",
+          "build_chunk_elements": "2097152",
+          "donation_nonces": "0",
+          "dataset_prefetch_wasted_wall_seconds_total": "0.0",
+          "dataset_cold_builds_cancelled_total": "0",
+          "soc_temperature_maximum_celsius": "63.55548095703125",
+          "search_pipeline_depth": "2",
+          "tuning_source_prebuild_batch_nonces": "explicit",
+          "pool_connected": "false",
+          "dataset_activation_seconds": "32.422154834",
+          "effective_hashrate": "11825678.955924122",
+          "dataset_prefetch_builds_failed_total": "0",
+          "nonces": "3552575488"
+        },
+        "chronology_and_monotonicity_issues": [
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.2103240416618064 -> 0.2103221667057369",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.2103221667057369 -> 0.21031945836148225",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21034179170965217 -> 0.21030879170575645",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.2103490417066496 -> 0.21034287502698135",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21034287502698135 -> 0.21034150003106333",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.2104418750241166 -> 0.21036929171532393",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.2103833333676448 -> 0.21037875005276874",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21037875005276874 -> 0.21034520836838055",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0007111250160960481 -> 0.0007084166718414053",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0010317500273231417 -> 0.001031208346830681",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0012765833671437576 -> 0.0012700833613052964",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0012918333522975445 -> 0.0012809583713533357",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.001685916693531908 -> 0.001669166682404466",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.001669166682404466 -> 0.0016560000221943483",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0019840417080558836 -> 0.0019683750288095325",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.002172458349377848 -> 0.0021509166981559247",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.002170083360397257 -> 0.0021644583612214774",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0021832500206073746 -> 0.0021623750362778082",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0024052083754213527 -> 0.0024033333611441776",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.002779958362225443 -> 0.0027381250401958823",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.002766375051578507 -> 0.0027227500395383686",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0030816250218776986 -> 0.003080041686189361",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.003080041686189361 -> 0.0030514583486365154",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0034937500167870894 -> 0.0034121250064345077",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.003846208332106471 -> 0.003763666667509824",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.004138041666010395 -> 0.004118541663046926",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.004414125010953285 -> 0.004406416686833836",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0044521667005028576 -> 0.004427958352607675",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.00479750003432855 -> 0.004789750033523887",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.004789750033523887 -> 0.004786166697158478",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.004786166697158478 -> 0.004775916691869497",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.005111625025165267 -> 0.005073916705441661",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4873863750399323 -> 0.48733287504001055",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.48733287504001055 -> 0.48730575006629806",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4873757916939212 -> 0.4873360416822834",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.48736691668455023 -> 0.48734479167615063",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.48734645833610557 -> 0.4873418333590962",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4874721666710684 -> 0.4873639166908106",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4873639166908106 -> 0.48735195833432954",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.48737966669432353 -> 0.48736208338232245",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.007585333354654722 -> 0.007547958361101337",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.007998916698852554 -> 0.007979666697792709",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.008471833367366344 -> 0.008470375032629818",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.009702791707240976 -> 0.009680750023107976",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.010063125038868748 -> 0.010056583370896988",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.010387333342805505 -> 0.010352250013966113",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.01144079168443568 -> 0.011420333365094848",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0117488750256598 -> 0.011733666688087396",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.012172250033472665 -> 0.012150875030783936",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0132102083589416 -> 0.013156500033801422",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.014364416725584306 -> 0.01430908337351866",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.015320666730985977 -> 0.01519400006509386",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.015854208410019055 -> 0.015850666735786945",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.01673625006515067 -> 0.01668337506998796",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.01733070841873996 -> 0.017319875085377134",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.018120250082574785 -> 0.01811020841705613",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.01811020841705613 -> 0.018104000089806505"
+        ],
+        "monotonic_fields_checked": [
+          "dataset_activation_seconds_total",
+          "dataset_activations_total",
+          "dataset_built_activations_total",
+          "dataset_cached_activations_total",
+          "dataset_cold_build_gpu_seconds_total",
+          "dataset_cold_build_resumed_elements_total",
+          "dataset_cold_build_wall_seconds_total",
+          "dataset_cold_builds_cancelled_total",
+          "dataset_cold_builds_completed_total",
+          "dataset_cold_builds_failed_total",
+          "dataset_cold_builds_resumed_total",
+          "dataset_prefetch_build_gpu_seconds_total",
+          "dataset_prefetch_build_wall_seconds_total",
+          "dataset_prefetch_builds_cancelled_total",
+          "dataset_prefetch_builds_completed_total",
+          "dataset_prefetch_builds_discarded_total",
+          "dataset_prefetch_builds_failed_total",
+          "dataset_prefetch_builds_started_total",
+          "dataset_prefetch_wait_seconds_total",
+          "dataset_prefetch_waits_total",
+          "dataset_prefetch_wasted_gpu_seconds_total",
+          "dataset_prefetch_wasted_wall_seconds_total",
+          "dataset_prefetched_activations_total",
+          "elapsed_seconds",
+          "gpu_build_command_gpu_seconds_total",
+          "gpu_build_command_non_gpu_seconds_total",
+          "gpu_build_command_wall_seconds_total",
+          "gpu_build_commands_completed_total",
+          "gpu_search_command_gpu_busy_seconds_total",
+          "gpu_search_command_gpu_seconds_total",
+          "gpu_search_command_non_gpu_busy_seconds_total",
+          "gpu_search_command_non_gpu_seconds_total",
+          "gpu_search_command_wall_busy_seconds_total",
+          "gpu_search_command_wall_seconds_total",
+          "gpu_search_commands_completed_total",
+          "gpu_seconds",
+          "nonces",
+          "protocol_errors",
+          "reconnects",
+          "search_seconds",
+          "shares_accepted",
+          "shares_found",
+          "shares_rejected",
+          "shares_stale",
+          "shares_submitted"
+        ],
+        "invariant_residuals": {
+          "active_hashrate": 0.0,
+          "effective_hashrate": 0.0,
+          "search_duty": 0.0,
+          "search_wall_busy": 0.0,
+          "search_busy_partition": 0.0,
+          "nonce_command_count": 0
+        },
+        "unaccounted_wall_seconds": 0.17077999312981262,
+        "cold_build_seconds": {
+          "n": 2,
+          "minimum": 31.6852545,
+          "median": 32.0535930415,
+          "maximum": 32.421931583,
+          "mean": 32.0535930415,
+          "stdev": 0.5209093609340276
+        },
+        "cold_build_gpu_seconds": {
+          "n": 2,
+          "minimum": 31.474900666624308,
+          "median": 31.809898666644585,
+          "maximum": 32.14489666666486,
+          "mean": 31.809898666644585,
+          "stdev": 0.4737587149965391
+        },
+        "sampled_sensor_maximum_celsius": {
+          "n": 151,
+          "minimum": 55.559600830078125,
+          "median": 63.63543701171875,
+          "maximum": 73.87016296386719,
+          "mean": 63.15198218743533,
+          "stdev": 3.841589817896856
+        },
+        "intervals": [
+          {
+            "start": "2026-09-16T07:34:22Z",
+            "end": "2026-09-16T07:34:24Z",
+            "active_mhs": 14.585300303304722,
+            "temperature_end": 59.63749694824219
+          },
+          {
+            "start": "2026-09-16T07:34:26Z",
+            "end": "2026-09-16T07:34:28Z",
+            "active_mhs": 14.441189224039165,
+            "temperature_end": 59.47758483886719
+          },
+          {
+            "start": "2026-09-16T07:34:30Z",
+            "end": "2026-09-16T07:34:32Z",
+            "active_mhs": 15.441635933785461,
+            "temperature_end": 59.157745361328125
+          },
+          {
+            "start": "2026-09-16T07:34:34Z",
+            "end": "2026-09-16T07:34:36Z",
+            "active_mhs": 15.2194672247766,
+            "temperature_end": 59.31767272949219
+          },
+          {
+            "start": "2026-09-16T07:34:40Z",
+            "end": "2026-09-16T07:34:42Z",
+            "active_mhs": 14.380646506445295,
+            "temperature_end": 59.47758483886719
+          },
+          {
+            "start": "2026-09-16T07:34:44Z",
+            "end": "2026-09-16T07:34:46Z",
+            "active_mhs": 15.652568669154538,
+            "temperature_end": 59.237701416015625
+          },
+          {
+            "start": "2026-09-16T07:34:48Z",
+            "end": "2026-09-16T07:34:50Z",
+            "active_mhs": 15.575518055437676,
+            "temperature_end": 59.237701416015625
+          },
+          {
+            "start": "2026-09-16T07:34:52Z",
+            "end": "2026-09-16T07:34:54Z",
+            "active_mhs": 14.712569948197737,
+            "temperature_end": 59.39762878417969
+          },
+          {
+            "start": "2026-09-16T07:34:56Z",
+            "end": "2026-09-16T07:34:58Z",
+            "active_mhs": 15.242461159731485,
+            "temperature_end": 59.71746826171875
+          },
+          {
+            "start": "2026-09-16T07:35:02Z",
+            "end": "2026-09-16T07:35:04Z",
+            "active_mhs": 15.344704552964213,
+            "temperature_end": 59.237701416015625
+          },
+          {
+            "start": "2026-09-16T07:35:06Z",
+            "end": "2026-09-16T07:35:08Z",
+            "active_mhs": 15.272208135922934,
+            "temperature_end": 59.55754089355469
+          },
+          {
+            "start": "2026-09-16T07:35:10Z",
+            "end": "2026-09-16T07:35:12Z",
+            "active_mhs": 15.35627902664813,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-16T07:35:14Z",
+            "end": "2026-09-16T07:35:16Z",
+            "active_mhs": 14.37199625555501,
+            "temperature_end": 59.79742431640625
+          },
+          {
+            "start": "2026-09-16T07:35:18Z",
+            "end": "2026-09-16T07:35:20Z",
+            "active_mhs": 15.496292166644029,
+            "temperature_end": 59.55754089355469
+          },
+          {
+            "start": "2026-09-16T07:35:24Z",
+            "end": "2026-09-16T07:35:26Z",
+            "active_mhs": 15.653801376944385,
+            "temperature_end": 59.47758483886719
+          },
+          {
+            "start": "2026-09-16T07:35:28Z",
+            "end": "2026-09-16T07:35:30Z",
+            "active_mhs": 15.204181700318369,
+            "temperature_end": 59.47758483886719
+          },
+          {
+            "start": "2026-09-16T07:35:32Z",
+            "end": "2026-09-16T07:35:34Z",
+            "active_mhs": 14.50610917533184,
+            "temperature_end": 59.71746826171875
+          },
+          {
+            "start": "2026-09-16T07:35:36Z",
+            "end": "2026-09-16T07:35:38Z",
+            "active_mhs": 15.451993928958885,
+            "temperature_end": 60.11724853515625
+          },
+          {
+            "start": "2026-09-16T07:35:40Z",
+            "end": "2026-09-16T07:35:42Z",
+            "active_mhs": 15.561461426709183,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-16T07:35:46Z",
+            "end": "2026-09-16T07:35:48Z",
+            "active_mhs": 14.606774792805913,
+            "temperature_end": 59.63749694824219
+          },
+          {
+            "start": "2026-09-16T07:35:50Z",
+            "end": "2026-09-16T07:35:52Z",
+            "active_mhs": 15.160759550517433,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-16T07:35:54Z",
+            "end": "2026-09-16T07:35:56Z",
+            "active_mhs": 15.798091898651656,
+            "temperature_end": 60.756927490234375
+          },
+          {
+            "start": "2026-09-16T07:35:58Z",
+            "end": "2026-09-16T07:36:00Z",
+            "active_mhs": 14.605936173304974,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-16T07:36:04Z",
+            "end": "2026-09-16T07:36:06Z",
+            "active_mhs": 14.9437705507324,
+            "temperature_end": 60.11724853515625
+          },
+          {
+            "start": "2026-09-16T07:36:08Z",
+            "end": "2026-09-16T07:36:10Z",
+            "active_mhs": 15.60397823309128,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-16T07:36:12Z",
+            "end": "2026-09-16T07:36:14Z",
+            "active_mhs": 15.449467666672554,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-16T07:36:16Z",
+            "end": "2026-09-16T07:36:18Z",
+            "active_mhs": 15.346916232441163,
+            "temperature_end": 66.91375732421875
+          },
+          {
+            "start": "2026-09-16T07:36:52Z",
+            "end": "2026-09-16T07:36:54Z",
+            "active_mhs": 14.016563938675873,
+            "temperature_end": 67.79330444335938
+          },
+          {
+            "start": "2026-09-16T07:36:56Z",
+            "end": "2026-09-16T07:36:58Z",
+            "active_mhs": 14.70464271456339,
+            "temperature_end": 67.31355285644531
+          },
+          {
+            "start": "2026-09-16T07:37:02Z",
+            "end": "2026-09-16T07:37:04Z",
+            "active_mhs": 14.396445384338351,
+            "temperature_end": 66.59391784667969
+          },
+          {
+            "start": "2026-09-16T07:37:06Z",
+            "end": "2026-09-16T07:37:08Z",
+            "active_mhs": 15.616208938224009,
+            "temperature_end": 65.87428283691406
+          },
+          {
+            "start": "2026-09-16T07:37:10Z",
+            "end": "2026-09-16T07:37:12Z",
+            "active_mhs": 14.732068643524737,
+            "temperature_end": 65.39453125
+          },
+          {
+            "start": "2026-09-16T07:37:16Z",
+            "end": "2026-09-16T07:37:18Z",
+            "active_mhs": 14.723269318766624,
+            "temperature_end": 65.4744873046875
+          },
+          {
+            "start": "2026-09-16T07:37:20Z",
+            "end": "2026-09-16T07:37:22Z",
+            "active_mhs": 15.810635437628607,
+            "temperature_end": 65.3145751953125
+          },
+          {
+            "start": "2026-09-16T07:37:24Z",
+            "end": "2026-09-16T07:37:26Z",
+            "active_mhs": 14.269803182324527,
+            "temperature_end": 65.3145751953125
+          },
+          {
+            "start": "2026-09-16T07:37:28Z",
+            "end": "2026-09-16T07:37:30Z",
+            "active_mhs": 15.721925785766043,
+            "temperature_end": 64.83482360839844
+          },
+          {
+            "start": "2026-09-16T07:37:32Z",
+            "end": "2026-09-16T07:37:34Z",
+            "active_mhs": 14.403820092544752,
+            "temperature_end": 64.75486755371094
+          },
+          {
+            "start": "2026-09-16T07:37:38Z",
+            "end": "2026-09-16T07:37:40Z",
+            "active_mhs": 15.373013995457285,
+            "temperature_end": 64.43502807617188
+          },
+          {
+            "start": "2026-09-16T07:37:42Z",
+            "end": "2026-09-16T07:37:44Z",
+            "active_mhs": 15.01978085584677,
+            "temperature_end": 64.27511596679688
+          },
+          {
+            "start": "2026-09-16T07:37:46Z",
+            "end": "2026-09-16T07:37:48Z",
+            "active_mhs": 14.707121944592565,
+            "temperature_end": 64.83482360839844
+          },
+          {
+            "start": "2026-09-16T07:37:50Z",
+            "end": "2026-09-16T07:37:52Z",
+            "active_mhs": 15.586118794578937,
+            "temperature_end": 64.43502807617188
+          },
+          {
+            "start": "2026-09-16T07:37:56Z",
+            "end": "2026-09-16T07:37:58Z",
+            "active_mhs": 14.230714819184968,
+            "temperature_end": 64.51498413085938
+          },
+          {
+            "start": "2026-09-16T07:38:00Z",
+            "end": "2026-09-16T07:38:02Z",
+            "active_mhs": 15.777124150222615,
+            "temperature_end": 63.79536437988281
+          },
+          {
+            "start": "2026-09-16T07:38:04Z",
+            "end": "2026-09-16T07:38:06Z",
+            "active_mhs": 14.742764015540812,
+            "temperature_end": 63.63543701171875
+          },
+          {
+            "start": "2026-09-16T07:38:08Z",
+            "end": "2026-09-16T07:38:10Z",
+            "active_mhs": 14.678865990426614,
+            "temperature_end": 64.11518859863281
+          },
+          {
+            "start": "2026-09-16T07:38:12Z",
+            "end": "2026-09-16T07:38:14Z",
+            "active_mhs": 15.877751937856045,
+            "temperature_end": 63.15568542480469
+          },
+          {
+            "start": "2026-09-16T07:38:18Z",
+            "end": "2026-09-16T07:38:20Z",
+            "active_mhs": 14.436639438633204,
+            "temperature_end": 64.35507202148438
+          },
+          {
+            "start": "2026-09-16T07:38:22Z",
+            "end": "2026-09-16T07:38:24Z",
+            "active_mhs": 14.687389699008177,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-16T07:38:26Z",
+            "end": "2026-09-16T07:38:28Z",
+            "active_mhs": 15.703494319617855,
+            "temperature_end": 63.63543701171875
+          },
+          {
+            "start": "2026-09-16T07:38:32Z",
+            "end": "2026-09-16T07:38:34Z",
+            "active_mhs": 14.206684920134165,
+            "temperature_end": 63.63543701171875
+          },
+          {
+            "start": "2026-09-16T07:38:36Z",
+            "end": "2026-09-16T07:38:38Z",
+            "active_mhs": 15.689653815013974,
+            "temperature_end": 63.39556884765625
+          },
+          {
+            "start": "2026-09-16T07:38:40Z",
+            "end": "2026-09-16T07:38:42Z",
+            "active_mhs": 14.845362256903226,
+            "temperature_end": 64.35507202148438
+          },
+          {
+            "start": "2026-09-16T07:38:44Z",
+            "end": "2026-09-16T07:38:46Z",
+            "active_mhs": 14.588447014106903,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-16T07:38:46Z",
+            "end": "2026-09-16T07:38:46Z",
+            "active_mhs": 22.01598428587643,
+            "temperature_end": 63.55548095703125
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "Benchmarks/2026-09-16-toolchain-audit/raw/production-batch-mine/07-C-production-4194304.events.ndjson",
+    "sha256": "477b83b1089ba0feaf7e36582047cd6c2577267daebfce1f10e47267412d84d1",
+    "sessions": [
+      {
+        "sessionID": "E6EB66CA-7C93-454D-820E-33ECA8AAD915",
+        "first": "2026-09-16T07:40:13Z",
+        "last": "2026-09-16T07:45:13Z",
+        "event_counts": {
+          "session_started": 1,
+          "pool_connected": 1,
+          "pool_authorized": 1,
+          "job_received": 2,
+          "statistics_sample": 149,
+          "dataset_completed": 2,
+          "session_ended": 1
+        },
+        "start_fields": {
+          "gpu_family": "apple9",
+          "network": "mainnet",
+          "tuning_source_batch_nonces": "explicit",
+          "batch_nonces": "4194304",
+          "dataset_scheduling": "overlap",
+          "gpu_architecture": "applegpu_g16g",
+          "build_pipeline_depth": "2",
+          "build_chunk_elements": "2097152",
+          "tuning_source_dataset_threadgroup_size": "explicit",
+          "profile": "peak",
+          "worktree_revision": "28736760cbab5e62c81c2907062c09ad9da4d599",
+          "tuning_source_prebuild_batch_nonces": "explicit",
+          "tuning_source_search_pipeline_depth": "explicit",
+          "architecture": "arm64",
+          "tuning_source_prefetch_chunk_elements": "explicit",
+          "tuning_source_build_pipeline_depth": "explicit",
+          "donation_percent": "0",
+          "gpu_generation": "m4",
+          "tuning_source_build_chunk_elements": "explicit",
+          "donation_cycle_seconds": "6000",
+          "prebuild_batch_nonces": "131072",
+          "worktree_dirty": "false",
+          "dataset_kernel": "u32pair-inline-m",
+          "dataset_threadgroup_size": "256",
+          "tuning_source_search_threadgroup_size": "explicit",
+          "tuning_provenance": "explicit",
+          "prebuild": "off",
+          "os_version": "Version 27.0 (Build 26A428)",
+          "prefetch_chunk_elements": "1048576",
+          "autotune_mode": "off",
+          "os_build": "26A428",
+          "search_pipeline_depth": "2",
+          "mode": "mining",
+          "threadgroup_size": "64",
+          "executable_sha256": "e318af94fc52c7764c4476e542c24c98ab851a5a004c6658ac6e46552a252f79"
+        },
+        "final_fields": {
+          "tuning_source_build_pipeline_depth": "explicit",
+          "dataset_activation_seconds_total": "64.28721175000001",
+          "job_id": "audit-1",
+          "elapsed_seconds": "300.4669209718704",
+          "gpu_build_command_gpu_seconds_total": "63.79929008327599",
+          "dataset_prefetch_wasted_gpu_seconds_total": "0.0",
+          "dataset_cold_build_gpu_seconds_total": "63.79929008327599",
+          "dataset_prefetch_waits_total": "0",
+          "dataset_prefetch_builds_started_total": "0",
+          "shares_expected": "0.20283508301076414",
+          "share_luck_ratio": "0.0",
+          "dataset_cold_build_resumed_elements_total": "0",
+          "prebuild_batch_nonces": "131072",
+          "dataset_prefetch_wasted_wall_seconds_total": "0.0",
+          "soc_temperature_maximum_celsius": "65.39453125",
+          "height": "1873776",
+          "dataset_cold_builds_cancelled_total": "0",
+          "nonces": "3539992576",
+          "state": "stopped",
+          "temperature_source": "iohid_soc_die",
+          "dataset_prefetched_activations_total": "0",
+          "build_chunk_elements": "2097152",
+          "dataset_bytes": "7272058080",
+          "gpu_generation": "m4",
+          "build_pipeline_depth": "2",
+          "dataset_prefetch_builds_failed_total": "0",
+          "dataset_prefetch_wait_seconds_total": "0.0",
+          "build_pipeline_max_threads": "256",
+          "donation_percent": "0",
+          "soc_temperature_average_celsius": "56.76564852396647",
+          "search_pipeline_max_threads": "64",
+          "dataset_prefetch_build_wall_seconds_total": "0.0",
+          "dataset_build_seconds": "32.151878042",
+          "gpu_search_commands_completed_total": "844",
+          "threadgroup_size": "64",
+          "gpu_search_command_wall_seconds_total": "471.72248429141473",
+          "donation_shares_accepted": "0",
+          "search_duty_cycle": "0.7854497549844517",
+          "donation_shares_found": "0",
+          "batch_nonces": "4194304",
+          "profile": "peak",
+          "dataset_prefetch_build_gpu_seconds_total": "0.0",
+          "gpu_build_command_non_gpu_seconds_total": "0.48725887504406273",
+          "job_target_hex": "000000003f00000003f00000003f00000003f00000003f00000003f00000003f",
+          "protocol_errors": "0",
+          "tuning_source_search_pipeline_depth": "explicit",
+          "tuning_source_batch_nonces": "explicit",
+          "dataset_activations_total": "2",
+          "tuning_source_dataset_threadgroup_size": "explicit",
+          "hashrate": "0.0",
+          "dataset_cold_builds_resumed_total": "0",
+          "donation_shares_expected": "0.0",
+          "autotune_mode": "off",
+          "shares_rejected": "0",
+          "shares_found": "0",
+          "dataset_cold_build_wall_seconds_total": "64.28658924999999",
+          "donation_shares_submitted": "0",
+          "dataset_prefetch_builds_cancelled_total": "0",
+          "soc_temperature_sensor_count": "24",
+          "reconnects": "0",
+          "gpu_build_command_wall_seconds_total": "64.28654895832005",
+          "tuning_source_prebuild_batch_nonces": "explicit",
+          "donation_failures": "0",
+          "dataset_threadgroup_size": "256",
+          "shares_accepted": "0",
+          "dataset_prefetch_builds_completed_total": "0",
+          "dataset_activation_seconds": "32.152224959",
+          "gpu_search_command_non_gpu_seconds_total": "1.7432331250311108",
+          "gpu_search_command_gpu_busy_seconds_total": "235.97686949993658",
+          "gpu_seconds": "469.9792511663836",
+          "tuning_source_build_chunk_elements": "explicit",
+          "tuning_source_prefetch_chunk_elements": "explicit",
+          "gpu_search_command_wall_busy_seconds_total": "236.00166945828823",
+          "dataset_cached_activations_total": "0",
+          "tuning_provenance": "explicit",
+          "effective_hashrate": "11781638.273357261",
+          "donation_window_seconds": "0.0",
+          "shares_stale": "0",
+          "dataset_cold_builds_failed_total": "0",
+          "donation_search_seconds": "0.0",
+          "donation_switches": "0",
+          "tuning_source_search_threadgroup_size": "explicit",
+          "average_hashrate": "14999862.433709057",
+          "gpu_search_command_non_gpu_busy_seconds_total": "0.024799958351650275",
+          "donation_active_recipient": "user",
+          "thermal_state": "nominal",
+          "soc_temperature_session_peak_celsius": "74.82968139648438",
+          "gpu_search_command_gpu_seconds_total": "469.9792511663836",
+          "dataset_build_gpu_seconds": "31.877092791590258",
+          "donation_scheduled_recipient": "user",
+          "prefetch_progress": "0.0",
+          "gpu_build_commands_completed_total": "218",
+          "shares_submitted": "0",
+          "gpu_family": "apple9",
+          "donation_shares_rejected": "0",
+          "dataset_cold_builds_completed_total": "2",
+          "gpu_architecture": "applegpu_g16g",
+          "search_seconds": "236.00166945828823",
+          "search_pipeline_depth": "2",
+          "dataset_built_activations_total": "2",
+          "donation_shares_stale": "0",
+          "dataset_prefetch_builds_discarded_total": "0",
+          "dataset_source": "built",
+          "prefetch_chunk_elements": "1048576",
+          "pool_connected": "false",
+          "donation_nonces": "0"
+        },
+        "chronology_and_monotonicity_issues": [
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21251066664990503 -> 0.2124657499807654",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21247679166845046 -> 0.21246612496906891",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21246612496906891 -> 0.2124543749669101",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21260879159672186 -> 0.21250254163169302",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21250254163169302 -> 0.21247845829930156",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21249320832430385 -> 0.21249066664313432",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21251037495676428 -> 0.21248995829955675",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.21250274997146334 -> 0.2124963333044434",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0013667500024894252 -> 0.0013476666645146906",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0031150416762102395 -> 0.0031143333471845835",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.0042571666854200885 -> 0.004250833357218653",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.005005708342650905 -> 0.0049546249938430265",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.005666333338012919 -> 0.0056137500068871304",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.005911791682592593 -> 0.005896625007153489",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.006921041684108786 -> 0.006867833362775855",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.008298583372379653 -> 0.008195791699108668",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.008952125019277446 -> 0.00893850001739338",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.00937291668378748 -> 0.009326416693511419",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4872346249612747 -> 0.4872185832937248",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4872406249633059 -> 0.48722962498140987",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4872447083325824 -> 0.4872404999914579",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.48725095835106913 -> 0.487239958383725",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.4872713333606953 -> 0.4872535833710572",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 0.48726729172631167 -> 0.48725887504406273",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.01284329166810494 -> 0.012782333345967345",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.013291750015923753 -> 0.013256083344458602",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.014980541644035839 -> 0.014967624985729344",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.015323708314099349 -> 0.015320249993237667",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.01565483331796713 -> 0.015606166663928889",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.016826624982059002 -> 0.016761749982833862",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.017509958313894458 -> 0.017481958318967372",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.018017791633610614 -> 0.017989666637731716",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.01944112496857997 -> 0.01943408331135288",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.019831208293908276 -> 0.01977979163348209",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.020565499959047884 -> 0.020542874961392954",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.021468708306201734 -> 0.02145570832362864",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.021866249982849695 -> 0.021839083317900077",
+          "nonmonotonic gpu_search_command_non_gpu_busy_seconds_total: 0.02248883330321405 -> 0.022482791639049537"
+        ],
+        "monotonic_fields_checked": [
+          "dataset_activation_seconds_total",
+          "dataset_activations_total",
+          "dataset_built_activations_total",
+          "dataset_cached_activations_total",
+          "dataset_cold_build_gpu_seconds_total",
+          "dataset_cold_build_resumed_elements_total",
+          "dataset_cold_build_wall_seconds_total",
+          "dataset_cold_builds_cancelled_total",
+          "dataset_cold_builds_completed_total",
+          "dataset_cold_builds_failed_total",
+          "dataset_cold_builds_resumed_total",
+          "dataset_prefetch_build_gpu_seconds_total",
+          "dataset_prefetch_build_wall_seconds_total",
+          "dataset_prefetch_builds_cancelled_total",
+          "dataset_prefetch_builds_completed_total",
+          "dataset_prefetch_builds_discarded_total",
+          "dataset_prefetch_builds_failed_total",
+          "dataset_prefetch_builds_started_total",
+          "dataset_prefetch_wait_seconds_total",
+          "dataset_prefetch_waits_total",
+          "dataset_prefetch_wasted_gpu_seconds_total",
+          "dataset_prefetch_wasted_wall_seconds_total",
+          "dataset_prefetched_activations_total",
+          "elapsed_seconds",
+          "gpu_build_command_gpu_seconds_total",
+          "gpu_build_command_non_gpu_seconds_total",
+          "gpu_build_command_wall_seconds_total",
+          "gpu_build_commands_completed_total",
+          "gpu_search_command_gpu_busy_seconds_total",
+          "gpu_search_command_gpu_seconds_total",
+          "gpu_search_command_non_gpu_busy_seconds_total",
+          "gpu_search_command_non_gpu_seconds_total",
+          "gpu_search_command_wall_busy_seconds_total",
+          "gpu_search_command_wall_seconds_total",
+          "gpu_search_commands_completed_total",
+          "gpu_seconds",
+          "nonces",
+          "protocol_errors",
+          "reconnects",
+          "search_seconds",
+          "shares_accepted",
+          "shares_found",
+          "shares_rejected",
+          "shares_stale",
+          "shares_submitted"
+        ],
+        "invariant_residuals": {
+          "active_hashrate": 0.0,
+          "effective_hashrate": 0.0,
+          "search_duty": 0.0,
+          "search_wall_busy": 0.0,
+          "search_busy_partition": 0.0,
+          "nonce_command_count": 0
+        },
+        "unaccounted_wall_seconds": 0.17866226358219706,
+        "cold_build_seconds": {
+          "n": 2,
+          "minimum": 32.134711208,
+          "median": 32.143294624999996,
+          "maximum": 32.151878042,
+          "mean": 32.143294624999996,
+          "stdev": 0.012138784732904544
+        },
+        "cold_build_gpu_seconds": {
+          "n": 2,
+          "minimum": 31.877092791590258,
+          "median": 31.899645041637996,
+          "maximum": 31.922197291685734,
+          "mean": 31.899645041637996,
+          "stdev": 0.03189369787954064
+        },
+        "sampled_sensor_maximum_celsius": {
+          "n": 150,
+          "minimum": 55.23976135253906,
+          "median": 64.63493347167969,
+          "maximum": 74.82968139648438,
+          "mean": 64.2276703898112,
+          "stdev": 3.690776924499918
+        },
+        "intervals": [
+          {
+            "start": "2026-09-16T07:40:49Z",
+            "end": "2026-09-16T07:40:51Z",
+            "active_mhs": 14.183830411492695,
+            "temperature_end": 61.7164306640625
+          },
+          {
+            "start": "2026-09-16T07:40:53Z",
+            "end": "2026-09-16T07:40:55Z",
+            "active_mhs": 15.482505805553581,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-16T07:40:57Z",
+            "end": "2026-09-16T07:40:59Z",
+            "active_mhs": 14.931032137025994,
+            "temperature_end": 60.11724853515625
+          },
+          {
+            "start": "2026-09-16T07:41:03Z",
+            "end": "2026-09-16T07:41:05Z",
+            "active_mhs": 14.633771246046098,
+            "temperature_end": 60.597015380859375
+          },
+          {
+            "start": "2026-09-16T07:41:07Z",
+            "end": "2026-09-16T07:41:09Z",
+            "active_mhs": 15.861802933599247,
+            "temperature_end": 60.597015380859375
+          },
+          {
+            "start": "2026-09-16T07:41:11Z",
+            "end": "2026-09-16T07:41:13Z",
+            "active_mhs": 14.375104964159876,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-16T07:41:15Z",
+            "end": "2026-09-16T07:41:17Z",
+            "active_mhs": 15.141134696988148,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-16T07:41:19Z",
+            "end": "2026-09-16T07:41:21Z",
+            "active_mhs": 15.367569353318041,
+            "temperature_end": 60.996795654296875
+          },
+          {
+            "start": "2026-09-16T07:41:25Z",
+            "end": "2026-09-16T07:41:27Z",
+            "active_mhs": 14.344208953082463,
+            "temperature_end": 60.996795654296875
+          },
+          {
+            "start": "2026-09-16T07:41:29Z",
+            "end": "2026-09-16T07:41:31Z",
+            "active_mhs": 15.900266137331716,
+            "temperature_end": 60.916839599609375
+          },
+          {
+            "start": "2026-09-16T07:41:33Z",
+            "end": "2026-09-16T07:41:35Z",
+            "active_mhs": 14.750102769548507,
+            "temperature_end": 60.597015380859375
+          },
+          {
+            "start": "2026-09-16T07:41:37Z",
+            "end": "2026-09-16T07:41:39Z",
+            "active_mhs": 14.964516843070875,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-16T07:41:43Z",
+            "end": "2026-09-16T07:41:45Z",
+            "active_mhs": 15.378961758160017,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-16T07:41:47Z",
+            "end": "2026-09-16T07:41:49Z",
+            "active_mhs": 14.340142024511323,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-16T07:41:51Z",
+            "end": "2026-09-16T07:41:53Z",
+            "active_mhs": 15.867606764528174,
+            "temperature_end": 61.79638671875
+          },
+          {
+            "start": "2026-09-16T07:41:55Z",
+            "end": "2026-09-16T07:41:57Z",
+            "active_mhs": 14.670025862851721,
+            "temperature_end": 60.836883544921875
+          },
+          {
+            "start": "2026-09-16T07:42:01Z",
+            "end": "2026-09-16T07:42:03Z",
+            "active_mhs": 14.914262982339615,
+            "temperature_end": 61.39659118652344
+          },
+          {
+            "start": "2026-09-16T07:42:05Z",
+            "end": "2026-09-16T07:42:07Z",
+            "active_mhs": 15.697676333457785,
+            "temperature_end": 61.23667907714844
+          },
+          {
+            "start": "2026-09-16T07:42:09Z",
+            "end": "2026-09-16T07:42:11Z",
+            "active_mhs": 14.35405606184252,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-16T07:42:13Z",
+            "end": "2026-09-16T07:42:15Z",
+            "active_mhs": 15.627969473862663,
+            "temperature_end": 61.07676696777344
+          },
+          {
+            "start": "2026-09-16T07:42:17Z",
+            "end": "2026-09-16T07:42:19Z",
+            "active_mhs": 14.65807930496815,
+            "temperature_end": 61.23667907714844
+          },
+          {
+            "start": "2026-09-16T07:42:23Z",
+            "end": "2026-09-16T07:42:25Z",
+            "active_mhs": 15.215330326440444,
+            "temperature_end": 61.636474609375
+          },
+          {
+            "start": "2026-09-16T07:42:27Z",
+            "end": "2026-09-16T07:42:29Z",
+            "active_mhs": 15.087117211922573,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-16T07:42:31Z",
+            "end": "2026-09-16T07:42:33Z",
+            "active_mhs": 14.701078809320132,
+            "temperature_end": 62.19618225097656
+          },
+          {
+            "start": "2026-09-16T07:42:35Z",
+            "end": "2026-09-16T07:42:37Z",
+            "active_mhs": 15.87014043483661,
+            "temperature_end": 61.39659118652344
+          },
+          {
+            "start": "2026-09-16T07:42:41Z",
+            "end": "2026-09-16T07:42:43Z",
+            "active_mhs": 14.475997317173066,
+            "temperature_end": 62.35609436035156
+          },
+          {
+            "start": "2026-09-16T07:42:43Z",
+            "end": "2026-09-16T07:42:45Z",
+            "active_mhs": 16.400287174793835,
+            "temperature_end": 67.07366943359375
+          },
+          {
+            "start": "2026-09-16T07:43:19Z",
+            "end": "2026-09-16T07:43:21Z",
+            "active_mhs": 14.129071654455963,
+            "temperature_end": 67.63337707519531
+          },
+          {
+            "start": "2026-09-16T07:43:23Z",
+            "end": "2026-09-16T07:43:25Z",
+            "active_mhs": 15.811715742732877,
+            "temperature_end": 67.63337707519531
+          },
+          {
+            "start": "2026-09-16T07:43:29Z",
+            "end": "2026-09-16T07:43:31Z",
+            "active_mhs": 14.519886791249997,
+            "temperature_end": 66.35403442382812
+          },
+          {
+            "start": "2026-09-16T07:43:33Z",
+            "end": "2026-09-16T07:43:35Z",
+            "active_mhs": 15.139744736112613,
+            "temperature_end": 66.59391784667969
+          },
+          {
+            "start": "2026-09-16T07:43:37Z",
+            "end": "2026-09-16T07:43:39Z",
+            "active_mhs": 15.229631314001741,
+            "temperature_end": 66.03421020507812
+          },
+          {
+            "start": "2026-09-16T07:43:41Z",
+            "end": "2026-09-16T07:43:43Z",
+            "active_mhs": 14.815055973613505,
+            "temperature_end": 65.4744873046875
+          },
+          {
+            "start": "2026-09-16T07:43:45Z",
+            "end": "2026-09-16T07:43:47Z",
+            "active_mhs": 15.149467712467468,
+            "temperature_end": 65.63441467285156
+          },
+          {
+            "start": "2026-09-16T07:43:51Z",
+            "end": "2026-09-16T07:43:53Z",
+            "active_mhs": 14.554390627162748,
+            "temperature_end": 65.3145751953125
+          },
+          {
+            "start": "2026-09-16T07:43:55Z",
+            "end": "2026-09-16T07:43:57Z",
+            "active_mhs": 15.94179187669947,
+            "temperature_end": 65.55445861816406
+          },
+          {
+            "start": "2026-09-16T07:43:59Z",
+            "end": "2026-09-16T07:44:01Z",
+            "active_mhs": 14.299949628278558,
+            "temperature_end": 64.83482360839844
+          },
+          {
+            "start": "2026-09-16T07:44:03Z",
+            "end": "2026-09-16T07:44:05Z",
+            "active_mhs": 15.707785307202359,
+            "temperature_end": 65.4744873046875
+          },
+          {
+            "start": "2026-09-16T07:44:09Z",
+            "end": "2026-09-16T07:44:11Z",
+            "active_mhs": 14.602147889588553,
+            "temperature_end": 64.51498413085938
+          },
+          {
+            "start": "2026-09-16T07:44:13Z",
+            "end": "2026-09-16T07:44:15Z",
+            "active_mhs": 15.0626407780283,
+            "temperature_end": 65.234619140625
+          },
+          {
+            "start": "2026-09-16T07:44:17Z",
+            "end": "2026-09-16T07:44:19Z",
+            "active_mhs": 15.468442667260785,
+            "temperature_end": 65.07470703125
+          },
+          {
+            "start": "2026-09-16T07:44:21Z",
+            "end": "2026-09-16T07:44:23Z",
+            "active_mhs": 14.348191270052938,
+            "temperature_end": 65.63441467285156
+          },
+          {
+            "start": "2026-09-16T07:44:27Z",
+            "end": "2026-09-16T07:44:29Z",
+            "active_mhs": 15.059450521028696,
+            "temperature_end": 65.39453125
+          },
+          {
+            "start": "2026-09-16T07:44:31Z",
+            "end": "2026-09-16T07:44:33Z",
+            "active_mhs": 15.067180336310603,
+            "temperature_end": 65.1546630859375
+          },
+          {
+            "start": "2026-09-16T07:44:35Z",
+            "end": "2026-09-16T07:44:37Z",
+            "active_mhs": 14.55741467276811,
+            "temperature_end": 65.63441467285156
+          },
+          {
+            "start": "2026-09-16T07:44:39Z",
+            "end": "2026-09-16T07:44:41Z",
+            "active_mhs": 15.364212873865746,
+            "temperature_end": 66.27407836914062
+          },
+          {
+            "start": "2026-09-16T07:44:45Z",
+            "end": "2026-09-16T07:44:47Z",
+            "active_mhs": 14.37688870129566,
+            "temperature_end": 64.83482360839844
+          },
+          {
+            "start": "2026-09-16T07:44:49Z",
+            "end": "2026-09-16T07:44:51Z",
+            "active_mhs": 15.872391475467834,
+            "temperature_end": 64.59495544433594
+          },
+          {
+            "start": "2026-09-16T07:44:53Z",
+            "end": "2026-09-16T07:44:55Z",
+            "active_mhs": 13.993850747814218,
+            "temperature_end": 67.87326049804688
+          },
+          {
+            "start": "2026-09-16T07:44:57Z",
+            "end": "2026-09-16T07:44:59Z",
+            "active_mhs": 15.60225729724688,
+            "temperature_end": 65.87428283691406
+          },
+          {
+            "start": "2026-09-16T07:45:03Z",
+            "end": "2026-09-16T07:45:05Z",
+            "active_mhs": 14.448145843248724,
+            "temperature_end": 66.19412231445312
+          },
+          {
+            "start": "2026-09-16T07:45:07Z",
+            "end": "2026-09-16T07:45:09Z",
+            "active_mhs": 15.24462884035869,
+            "temperature_end": 65.63441467285156
+          },
+          {
+            "start": "2026-09-16T07:45:11Z",
+            "end": "2026-09-16T07:45:13Z",
+            "active_mhs": 15.182621682941111,
+            "temperature_end": 65.39453125
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -15,6 +15,14 @@ CMS publication and site build/restart. Reuse that authorization throughout
 the task. Commit/push when requested; a local code fix alone does not authorize
 a release. Preserve unrelated changes, especially `Artwork/` and mining logs.
 
+## Documentation language
+
+Write all documentation in English, including release notes, benchmark reports,
+agent and skill instructions, explanatory comments, and chart labels. Translate
+existing German documentation while preserving technical meaning, measurements,
+identifiers, and commands. Keep original logs and raw measurement records unchanged.
+This rule applies regardless of the conversation language.
+
 ## Established locations
 
 | Item | Location |

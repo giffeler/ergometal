@@ -1,0 +1,14 @@
+diff --git a/Sources/ergometal/ErgoMetalCLI.swift b/Sources/ergometal/ErgoMetalCLI.swift
+index efe97c8..980f30c 100644
+--- a/Sources/ergometal/ErgoMetalCLI.swift
++++ b/Sources/ergometal/ErgoMetalCLI.swift
+@@ -270,7 +270,8 @@ enum ErgoMetalCLI {
+         }
+ 
+         let message = Blake2b256.hash(Array("ergometal-autolykos-v2-benchmark".utf8))
+-        let target = UInt256(limbs: [0x0000ffff] + [UInt32](repeating: .max, count: 7))
++        // Diagnostic-only control: avoid CPU verification for both GPU kernels.
++        let target = UInt256.zero
+         var nonce: UInt64 = 0
+         let end = Date(timeIntervalSinceNow: Double(duration))
+         var nextHeightAt = heightInterval > 0

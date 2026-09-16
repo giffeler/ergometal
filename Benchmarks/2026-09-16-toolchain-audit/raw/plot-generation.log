@@ -1,0 +1,13 @@
+Downloading pillow (4.6MiB)
+Downloading numpy (5.1MiB)
+Downloading fonttools (2.9MiB)
+Downloading matplotlib (8.9MiB)
+ Downloaded fonttools
+ Downloaded pillow
+ Downloaded numpy
+ Downloaded matplotlib
+Installed 11 packages in 23ms
+Matplotlib is building the font cache; this may take a moment.
+Saved sustained-profile.svg and sustained-profile.png
+Matplotlib 3.11.2
+Saved sustained-profile.svg and sustained-profile.png

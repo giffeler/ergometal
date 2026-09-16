@@ -1,0 +1,24 @@
+START 1 A temperature=42.29
+END 1 A active=15.10510 effective=11.90373 build=31.76211375 peak=72.3509521484375
+START 2 C-production temperature=43.73
+END 2 C-production active=15.17348 effective=11.96325 build=31.746901583 peak=72.91065979003906
+START 3 C-production temperature=43.25
+END 3 C-production active=15.18119 effective=11.96490 build=31.738974 peak=72.5108642578125
+START 4 A temperature=43.33
+END 4 A active=15.17862 effective=11.96747 build=31.75768725 peak=72.1910400390625
+START 5 C-production:1048576 temperature=43.17
+END 5 C-production:1048576 active=15.21847 effective=11.99665 build=31.751279084 peak=72.67079162597656
+START 6 C-production:4194304 temperature=43.41
+END 6 C-production:4194304 active=15.04474 effective=11.82568 build=32.421931583 peak=73.87016296386719
+START 7 C-production:4194304 temperature=43.89
+END 7 C-production:4194304 active=14.99986 effective=11.78164 build=32.151878042 peak=74.82968139648438
+START 8 C-production:1048576 temperature=44.61
+END 8 C-production:1048576 active=15.12117 effective=11.86796 build=32.122749791 peak=75.22946166992188
+START 9 C-production:1048576 temperature=43.97
+END 9 C-production:1048576 active=14.81821 effective=11.63127 build=32.229567083 peak=75.06954956054688
+START 10 C-production:4194304 temperature=43.81
+END 10 C-production:4194304 active=14.50252 effective=11.33763 build=32.844299334 peak=75.869140625
+START 11 C-production:4194304 temperature=43.73
+END 11 C-production:4194304 active=15.16903 effective=11.96270 build=31.720909458 peak=75.22946166992188
+START 12 C-production:1048576 temperature=42.69
+END 12 C-production:1048576 active=15.15087 effective=11.94048 build=31.75311775 peak=73.31045532226562

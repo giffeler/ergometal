@@ -1,0 +1,183 @@
+diff --git a/Sources/MetalErgoCore/Blake2b.swift b/Sources/MetalErgoCore/Blake2b.swift
+index e91c05c..03c5e1d 100644
+--- a/Sources/MetalErgoCore/Blake2b.swift
++++ b/Sources/MetalErgoCore/Blake2b.swift
+@@ -10,21 +10,6 @@ public enum Blake2b256 {
+         0x1f83d9abfb41bd6b, 0x5be0cd19137e2179
+     ]
+ 
+-    private static let sigma: InlineArray<12, InlineArray<16, Int>> = [
+-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+-        [14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3],
+-        [11, 8, 12, 0, 5, 2, 15, 13, 10, 14, 3, 6, 7, 1, 9, 4],
+-        [7, 9, 3, 1, 13, 12, 11, 14, 2, 6, 5, 10, 4, 0, 15, 8],
+-        [9, 0, 5, 7, 2, 4, 10, 15, 14, 1, 11, 12, 6, 8, 3, 13],
+-        [2, 12, 6, 10, 0, 11, 8, 3, 4, 13, 7, 5, 15, 14, 1, 9],
+-        [12, 5, 1, 15, 14, 13, 4, 10, 0, 7, 6, 3, 9, 2, 8, 11],
+-        [13, 11, 7, 14, 12, 1, 3, 9, 5, 0, 15, 4, 8, 6, 2, 10],
+-        [6, 15, 14, 9, 11, 3, 0, 8, 12, 2, 13, 7, 1, 4, 10, 5],
+-        [10, 2, 8, 4, 7, 6, 1, 5, 15, 11, 9, 14, 3, 12, 13, 0],
+-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+-        [14, 10, 4, 8, 9, 15, 13, 6, 1, 12, 0, 2, 11, 7, 5, 3]
+-    ]
+-
+     @inline(__always) private static func rotateRight(_ x: UInt64, _ n: UInt64) -> UInt64 {
+         (x >> n) | (x << (64 - n))
+     }
+@@ -59,17 +44,115 @@ public enum Blake2b256 {
+         v[12] ^= count
+         if final { v[14] = ~v[14] }
+ 
+-        for r in 0..<12 {
+-            let s = sigma[r]
+-            g(&v, 0, 4, 8, 12, m[s[0]], m[s[1]])
+-            g(&v, 1, 5, 9, 13, m[s[2]], m[s[3]])
+-            g(&v, 2, 6, 10, 14, m[s[4]], m[s[5]])
+-            g(&v, 3, 7, 11, 15, m[s[6]], m[s[7]])
+-            g(&v, 0, 5, 10, 15, m[s[8]], m[s[9]])
+-            g(&v, 1, 6, 11, 12, m[s[10]], m[s[11]])
+-            g(&v, 2, 7, 8, 13, m[s[12]], m[s[13]])
+-            g(&v, 3, 4, 9, 14, m[s[14]], m[s[15]])
+-        }
++        // Fixed BLAKE2b permutations make every word index visible to the optimizer.
++        // Round 1.
++        g(&v, 0, 4, 8, 12, m[0], m[1])
++        g(&v, 1, 5, 9, 13, m[2], m[3])
++        g(&v, 2, 6, 10, 14, m[4], m[5])
++        g(&v, 3, 7, 11, 15, m[6], m[7])
++        g(&v, 0, 5, 10, 15, m[8], m[9])
++        g(&v, 1, 6, 11, 12, m[10], m[11])
++        g(&v, 2, 7, 8, 13, m[12], m[13])
++        g(&v, 3, 4, 9, 14, m[14], m[15])
++        // Round 2.
++        g(&v, 0, 4, 8, 12, m[14], m[10])
++        g(&v, 1, 5, 9, 13, m[4], m[8])
++        g(&v, 2, 6, 10, 14, m[9], m[15])
++        g(&v, 3, 7, 11, 15, m[13], m[6])
++        g(&v, 0, 5, 10, 15, m[1], m[12])
++        g(&v, 1, 6, 11, 12, m[0], m[2])
++        g(&v, 2, 7, 8, 13, m[11], m[7])
++        g(&v, 3, 4, 9, 14, m[5], m[3])
++        // Round 3.
++        g(&v, 0, 4, 8, 12, m[11], m[8])
++        g(&v, 1, 5, 9, 13, m[12], m[0])
++        g(&v, 2, 6, 10, 14, m[5], m[2])
++        g(&v, 3, 7, 11, 15, m[15], m[13])
++        g(&v, 0, 5, 10, 15, m[10], m[14])
++        g(&v, 1, 6, 11, 12, m[3], m[6])
++        g(&v, 2, 7, 8, 13, m[7], m[1])
++        g(&v, 3, 4, 9, 14, m[9], m[4])
++        // Round 4.
++        g(&v, 0, 4, 8, 12, m[7], m[9])
++        g(&v, 1, 5, 9, 13, m[3], m[1])
++        g(&v, 2, 6, 10, 14, m[13], m[12])
++        g(&v, 3, 7, 11, 15, m[11], m[14])
++        g(&v, 0, 5, 10, 15, m[2], m[6])
++        g(&v, 1, 6, 11, 12, m[5], m[10])
++        g(&v, 2, 7, 8, 13, m[4], m[0])
++        g(&v, 3, 4, 9, 14, m[15], m[8])
++        // Round 5.
++        g(&v, 0, 4, 8, 12, m[9], m[0])
++        g(&v, 1, 5, 9, 13, m[5], m[7])
++        g(&v, 2, 6, 10, 14, m[2], m[4])
++        g(&v, 3, 7, 11, 15, m[10], m[15])
++        g(&v, 0, 5, 10, 15, m[14], m[1])
++        g(&v, 1, 6, 11, 12, m[11], m[12])
++        g(&v, 2, 7, 8, 13, m[6], m[8])
++        g(&v, 3, 4, 9, 14, m[3], m[13])
++        // Round 6.
++        g(&v, 0, 4, 8, 12, m[2], m[12])
++        g(&v, 1, 5, 9, 13, m[6], m[10])
++        g(&v, 2, 6, 10, 14, m[0], m[11])
++        g(&v, 3, 7, 11, 15, m[8], m[3])
++        g(&v, 0, 5, 10, 15, m[4], m[13])
++        g(&v, 1, 6, 11, 12, m[7], m[5])
++        g(&v, 2, 7, 8, 13, m[15], m[14])
++        g(&v, 3, 4, 9, 14, m[1], m[9])
++        // Round 7.
++        g(&v, 0, 4, 8, 12, m[12], m[5])
++        g(&v, 1, 5, 9, 13, m[1], m[15])
++        g(&v, 2, 6, 10, 14, m[14], m[13])
++        g(&v, 3, 7, 11, 15, m[4], m[10])
++        g(&v, 0, 5, 10, 15, m[0], m[7])
++        g(&v, 1, 6, 11, 12, m[6], m[3])
++        g(&v, 2, 7, 8, 13, m[9], m[2])
++        g(&v, 3, 4, 9, 14, m[8], m[11])
++        // Round 8.
++        g(&v, 0, 4, 8, 12, m[13], m[11])
++        g(&v, 1, 5, 9, 13, m[7], m[14])
++        g(&v, 2, 6, 10, 14, m[12], m[1])
++        g(&v, 3, 7, 11, 15, m[3], m[9])
++        g(&v, 0, 5, 10, 15, m[5], m[0])
++        g(&v, 1, 6, 11, 12, m[15], m[4])
++        g(&v, 2, 7, 8, 13, m[8], m[6])
++        g(&v, 3, 4, 9, 14, m[2], m[10])
++        // Round 9.
++        g(&v, 0, 4, 8, 12, m[6], m[15])
++        g(&v, 1, 5, 9, 13, m[14], m[9])
++        g(&v, 2, 6, 10, 14, m[11], m[3])
++        g(&v, 3, 7, 11, 15, m[0], m[8])
++        g(&v, 0, 5, 10, 15, m[12], m[2])
++        g(&v, 1, 6, 11, 12, m[13], m[7])
++        g(&v, 2, 7, 8, 13, m[1], m[4])
++        g(&v, 3, 4, 9, 14, m[10], m[5])
++        // Round 10.
++        g(&v, 0, 4, 8, 12, m[10], m[2])
++        g(&v, 1, 5, 9, 13, m[8], m[4])
++        g(&v, 2, 6, 10, 14, m[7], m[6])
++        g(&v, 3, 7, 11, 15, m[1], m[5])
++        g(&v, 0, 5, 10, 15, m[15], m[11])
++        g(&v, 1, 6, 11, 12, m[9], m[14])
++        g(&v, 2, 7, 8, 13, m[3], m[12])
++        g(&v, 3, 4, 9, 14, m[13], m[0])
++        // Round 11.
++        g(&v, 0, 4, 8, 12, m[0], m[1])
++        g(&v, 1, 5, 9, 13, m[2], m[3])
++        g(&v, 2, 6, 10, 14, m[4], m[5])
++        g(&v, 3, 7, 11, 15, m[6], m[7])
++        g(&v, 0, 5, 10, 15, m[8], m[9])
++        g(&v, 1, 6, 11, 12, m[10], m[11])
++        g(&v, 2, 7, 8, 13, m[12], m[13])
++        g(&v, 3, 4, 9, 14, m[14], m[15])
++        // Round 12.
++        g(&v, 0, 4, 8, 12, m[14], m[10])
++        g(&v, 1, 5, 9, 13, m[4], m[8])
++        g(&v, 2, 6, 10, 14, m[9], m[15])
++        g(&v, 3, 7, 11, 15, m[13], m[6])
++        g(&v, 0, 5, 10, 15, m[1], m[12])
++        g(&v, 1, 6, 11, 12, m[0], m[2])
++        g(&v, 2, 7, 8, 13, m[11], m[7])
++        g(&v, 3, 4, 9, 14, m[5], m[3])
+         for i in 0..<8 { h[i] ^= v[i] ^ v[i + 8] }
+     }
+ 
+diff --git a/Tests/MetalErgoCoreTests/ConsensusTests.swift b/Tests/MetalErgoCoreTests/ConsensusTests.swift
+index dd9065b..bea1fa1 100644
+--- a/Tests/MetalErgoCoreTests/ConsensusTests.swift
++++ b/Tests/MetalErgoCoreTests/ConsensusTests.swift
+@@ -2,6 +2,25 @@ import XCTest
+ @testable import MetalErgoCore
+ 
+ final class ConsensusTests: XCTestCase {
++    func testBlakeRoundExpansionAtBlockBoundaries() {
++        // Independent expected digests generated by Python hashlib.blake2b(digest_size=32).
++        let vectors: [(Int, String)] = [
++            (127, "5eb453fad3aba4ac0184f3b63d4add77c7453e1c1c413a5971d5e060b650696a"),
++            (128, "f311c43d2c881a0dff6e7516bdc2922d6eb48aadf92b92c56ddb0aa9178d218d"),
++            (129, "02d9758eca269ae56a704405b250c7a3884bc1251acb213e22f730df43e8d960"),
++            (255, "cb5bff403cd53e49be5a23918a28b2301b6b90a1d4b73d0b2a845811f536812a"),
++            (256, "b604b8d9f273736daebea660e7e6e55f82cb70961943a3dfc35fe679ca88e997"),
++            (257, "564a558c409d211eb25454f1b7289a770f14cf1338169f5edb129b0c67490011"),
++            (8199, "684e0e64ee6c0a12a7e727763e9e56c5f50c2ffc9af692fb5dabb0b754652f69"),
++            (8200, "598ccc177bc37dec7d7ecb9989ebc1e09be17d6ae155d55208e75ac6df54e917"),
++            (8201, "5f8f2419e96e9d3b0f724aa730ea1654f393285d346e0d2415e4ffcb7ecf0790"),
++        ]
++        for (count, expected) in vectors {
++            let input = (0..<count).map { UInt8(truncatingIfNeeded: $0 * 17 + count) }
++            XCTAssertEqual(Blake2b256.hash(input).hex, expected, "count=\(count)")
++        }
++    }
++
+     func testBlake2b256Vectors() {
+         XCTAssertEqual(Blake2b256.hash([]).hex,
+             "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8")

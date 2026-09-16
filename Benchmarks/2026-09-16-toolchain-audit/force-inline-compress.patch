@@ -1,0 +1,11 @@
+--- a/Sources/MetalErgoCore/Blake2b.swift
++++ b/Sources/MetalErgoCore/Blake2b.swift
+@@ -43,7 +43,7 @@
+         v[b] = rotateRight(v[b] ^ v[c], 63)
+     }
+ 
+-    private static func compress(
++    @inline(always) private static func compress(
+         _ h: inout InlineArray<8, UInt64>, block: Span<UInt8>, count: UInt64, final: Bool
+     ) {
+         var m = InlineArray<16, UInt64>(repeating: 0)

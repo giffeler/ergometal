@@ -1,0 +1,91 @@
+diff --git a/Sources/MetalErgoCore/MetalSolver.swift b/Sources/MetalErgoCore/MetalSolver.swift
+index c3b6672..14f0315 100644
+--- a/Sources/MetalErgoCore/MetalSolver.swift
++++ b/Sources/MetalErgoCore/MetalSolver.swift
+@@ -496,6 +496,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
+     private let buildCommandQueue: MTLCommandQueue
+     private let buildPipeline: MTLComputePipelineState
+     private let searchPipeline: MTLComputePipelineState
++    private let fullSIMDSearchPipeline: MTLComputePipelineState
+     private let constantMBuffer: MTLBuffer
+     private let searchResources: [SearchResources]
+     private let searchResourceState = NSCondition()
+@@ -605,6 +606,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
+         }
+         let buildPipeline: MTLComputePipelineState
+         let searchPipeline: MTLComputePipelineState
++        let fullSIMDSearchPipeline: MTLComputePipelineState
+         do {
+             let buildDescriptor = MTLComputePipelineDescriptor()
+             buildDescriptor.computeFunction = build
+@@ -616,11 +618,15 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
+             searchDescriptor.maxTotalThreadsPerThreadgroup = searchThreadgroupSize
+             searchPipeline = try device.makeComputePipelineState(
+                 descriptor: searchDescriptor, options: [], reflection: nil)
++            searchDescriptor.threadGroupSizeIsMultipleOfThreadExecutionWidth = true
++            fullSIMDSearchPipeline = try device.makeComputePipelineState(
++                descriptor: searchDescriptor, options: [], reflection: nil)
+         } catch {
+             throw MetalSolverError.pipeline(error.localizedDescription)
+         }
+         self.buildPipeline = buildPipeline
+         self.searchPipeline = searchPipeline
++        self.fullSIMDSearchPipeline = fullSIMDSearchPipeline
+         self.info = MetalDeviceInfo(
+             name: device.name,
+             registryID: device.registryID,
+@@ -933,7 +939,12 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
+         var base = baseNonce
+         var n = UInt32(dataset.spec.tableSize)
+         var modulo = dataset.spec.searchModulo
+-        let pipeline = searchPipeline
++        // The optimization promise is valid only for complete, SIMD-aligned
++        // groups. Keep the ordinary pipeline for all partial or odd groups.
++        let fullWidth = min(requested ?? 128, fullSIMDSearchPipeline.maxTotalThreadsPerThreadgroup)
++        let useFullSIMD = fullWidth.isMultiple(of: fullSIMDSearchPipeline.threadExecutionWidth)
++            && nonceCount.isMultiple(of: fullWidth)
++        let pipeline = useFullSIMD ? fullSIMDSearchPipeline : searchPipeline
+         encoder.setComputePipelineState(pipeline)
+         encoder.setBuffer(dataset.buffer, offset: 0, index: 0)
+         encoder.setBytes(&messageWords, length: MemoryLayout.size(ofValue: messageWords), index: 1)
+@@ -944,7 +955,7 @@ public final class MetalAutolykosSolver: @unchecked Sendable {
+         encoder.setBytes(&n, length: MemoryLayout<UInt32>.size, index: 6)
+         encoder.setBytes(
+             &modulo, length: MemoryLayout<SearchModuloParameters>.stride, index: 7)
+-        let width = min(requested ?? 128, searchPipeline.maxTotalThreadsPerThreadgroup)
++        let width = min(requested ?? 128, pipeline.maxTotalThreadsPerThreadgroup)
+         encoder.dispatchThreads(MTLSize(width: nonceCount, height: 1, depth: 1),
+             threadsPerThreadgroup: MTLSize(width: width, height: 1, depth: 1))
+         encoder.endEncoding()
+diff --git a/Tests/MetalErgoCoreTests/ConsensusTests.swift b/Tests/MetalErgoCoreTests/ConsensusTests.swift
+index dd9065b..02094d1 100644
+--- a/Tests/MetalErgoCoreTests/ConsensusTests.swift
++++ b/Tests/MetalErgoCoreTests/ConsensusTests.swift
+@@ -2,6 +2,27 @@ import XCTest
+ @testable import MetalErgoCore
+ 
+ final class ConsensusTests: XCTestCase {
++    func testFullSIMDAndPartialSearchGroupsMatchCPU() throws {
++        let solver = try MetalAutolykosSolver(searchThreadgroupSize: 128)
++        let height = 614_401, tableSize = 257
++        _ = try solver.buildDataset(height: height, tableSize: tableSize)
++        let message = [UInt8](repeating: 0x53, count: 32)
++        let hits = try (0..<129).map { i in
++            try AutolykosV2.hit(message: message,
++                nonce: [UInt8](repeating: 0, count: 7) + [UInt8(i)],
++                height: height, tableSize: tableSize)
++        }
++        let target = hits[31]
++        for group in [1, 33, 64, 128] {
++            for count in [1, 31, 32, 33, 63, 64, 65, 127, 128, 129] {
++                let expected = (0..<count).filter { hits[$0] < target }.map(UInt64.init)
++                let batch = try solver.search(message: message, target: target,
++                    baseNonce: 0, nonceCount: count, threadgroupSize: group)
++                XCTAssertEqual(batch.candidates, expected, "group=\(group), count=\(count)")
++            }
++        }
++    }
++
+     func testBlake2b256Vectors() {
+         XCTAssertEqual(Blake2b256.hash([]).hex,
+             "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8")

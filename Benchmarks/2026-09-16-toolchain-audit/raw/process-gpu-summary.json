@@ -1,0 +1,2257 @@
+[
+  {
+    "path": "Benchmarks/2026-09-16-toolchain-audit/raw/sustained-mine/01-C-production-4194304.power.txt",
+    "processes": {
+      "1Password": {
+        "samples": 511,
+        "cpu_ms_per_second_mean": 0.29786692759295497,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "1Password Browser Helper": {
+        "samples": 9,
+        "cpu_ms_per_second_mean": 0.1688888888888889,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "1Password Helper": {
+        "samples": 741,
+        "cpu_ms_per_second_mean": 0.08784075573549258,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ALL_TASKS": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 1101.151433408578,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AMPArtworkAgent": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.042666666666666665,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AMPLibraryAgent": {
+        "samples": 71,
+        "cpu_ms_per_second_mean": 0.5112676056338028,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AOUMonitor": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.09925507900677201,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "APFSUserAgent": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.07333333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AccessibilityUIServer": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.07666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AddressBookManager": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 603.51,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AddressBookSourceSync": {
+        "samples": 16,
+        "cpu_ms_per_second_mean": 34.483125,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AppleIntelligenceReportingSELFIn": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 1.8133333333333332,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AppleSpell": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 3.705,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AquaAppearanceHelper": {
+        "samples": 15,
+        "cpu_ms_per_second_mean": 1.0493333333333332,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AssetCacheLocatorService": {
+        "samples": 17,
+        "cpu_ms_per_second_mean": 0.14823529411764708,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "AuthenticationServicesAgent": {
+        "samples": 44,
+        "cpu_ms_per_second_mean": 0.08818181818181818,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "BackgroundTaskManagementAgent": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.32,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "BiomeAgent": {
+        "samples": 23,
+        "cpu_ms_per_second_mean": 6.873913043478261,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "BiomeSELFIngestor": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 5.123333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "C-production": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 2.5253498871331828,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CMFSyncAgent": {
+        "samples": 7,
+        "cpu_ms_per_second_mean": 7.632857142857143,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CallHistoryPluginHelper": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 4.2775,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CallHistorySyncHelper": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 5.08875,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "Carousel": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.6381828442437923,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CategoriesService": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ClockFace": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.235,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CommCenter": {
+        "samples": 16,
+        "cpu_ms_per_second_mean": 0.211875,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ContextStoreAgent": {
+        "samples": 15,
+        "cpu_ms_per_second_mean": 0.10466666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ContinuityCaptureAgent": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 0.3,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ControlCenter": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 3.4454401805869073,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CoreLocationAgent": {
+        "samples": 20,
+        "cpu_ms_per_second_mean": 0.14,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CoreServicesUIAgent": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.14,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "CredentialProviderExtensionHelpe": {
+        "samples": 29,
+        "cpu_ms_per_second_mean": 0.12758620689655173,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "DEAD_TASKS": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 85.72720090293454,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "DeepL": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 1.2994018058690744,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "DeviceFS": {
+        "samples": 63,
+        "cpu_ms_per_second_mean": 0.2806349206349206,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "Dock": {
+        "samples": 13,
+        "cpu_ms_per_second_mean": 0.4461538461538461,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "DockHelper": {
+        "samples": 300,
+        "cpu_ms_per_second_mean": 0.0444,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "FeatureAccessAgent": {
+        "samples": 40,
+        "cpu_ms_per_second_mean": 0.09,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "Finder": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.6343905191873589,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "FinderSyncExtension": {
+        "samples": 90,
+        "cpu_ms_per_second_mean": 0.29688888888888887,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "FireWally": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 2.338487584650113,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "GMSSELFIngestor": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 1.68,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "GSSCred": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.06,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "Google Drive": {
+        "samples": 1033,
+        "cpu_ms_per_second_mean": 0.3485575992255566,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "GoogleUpdater": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 37.422,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "GravityDigits": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 55.445665914221216,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "HubbleBlastDoorService": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.08166666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "IFTelemetrySELFIngestor": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 1.2966666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "IFTranscriptSELFIngestor": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 2.043333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "IMDPersistenceAgent": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 9.906666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "IMTransferAgent": {
+        "samples": 40,
+        "cpu_ms_per_second_mean": 0.1225,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ManagedClient": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 61.21,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ManagedSettingsAgent": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.9425,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "MenuBarAgent": {
+        "samples": 11,
+        "cpu_ms_per_second_mean": 0.9736363636363637,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ModelCatalogAgent": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.03833333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "NTKFaceSnapshotService": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.27686230248307,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "NordVPN": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 5.902471783295711,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "NotificationCenter": {
+        "samples": 307,
+        "cpu_ms_per_second_mean": 0.14074918566775244,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "PasswordBreachAgent": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.058333333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "PerfPowerServices": {
+        "samples": 212,
+        "cpu_ms_per_second_mean": 7.4209433962264155,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "Python": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.3902370203160271,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "RemoteManagementAgent": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.065,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ReportCrash": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 0.20333333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ReportCrashService": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 404.66,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SAExtensionOrchestrator": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 4.788333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SafariBookmarksSyncAgent": {
+        "samples": 332,
+        "cpu_ms_per_second_mean": 0.09003012048192771,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ScopedBookmarkAgent": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06333333333333332,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ScreenTimeAgent": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 1.17375,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SetStoreUpdateService": {
+        "samples": 908,
+        "cpu_ms_per_second_mean": 0.5129735682819383,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SimMetalHost": {
+        "samples": 2372,
+        "cpu_ms_per_second_mean": 7.040320404721753,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SimRenderServer": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 12.460079006772009,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SimStreamProcessorService": {
+        "samples": 300,
+        "cpu_ms_per_second_mean": 0.0413,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "Siri": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 1.4849999999999999,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "Siri AI": {
+        "samples": 307,
+        "cpu_ms_per_second_mean": 0.22035830618892507,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SiriAUSP": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.975,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SiriNCService": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.2733333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "StatusKitAgent": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.385,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "StocksKitService": {
+        "samples": 10,
+        "cpu_ms_per_second_mean": 0.142,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SubmitDiagInfo": {
+        "samples": 37,
+        "cpu_ms_per_second_mean": 0.04918918918918919,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "SystemUIServer": {
+        "samples": 47,
+        "cpu_ms_per_second_mean": 12.95127659574468,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "TrialArchivingService": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.41500000000000004,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "UIKitSystem": {
+        "samples": 21,
+        "cpu_ms_per_second_mean": 0.4961904761904762,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "UniversalControl": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.15625,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "UsageTrackingAgent": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 5.015,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "UserEventAgent": {
+        "samples": 146,
+        "cpu_ms_per_second_mean": 1.2513698630136987,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ValidUpdater": {
+        "samples": 32,
+        "cpu_ms_per_second_mean": 0.058125,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WallpaperMacintoshExtension": {
+        "samples": 300,
+        "cpu_ms_per_second_mean": 0.04836666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WeatherWidget": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 51.13333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WiFiAgent": {
+        "samples": 27,
+        "cpu_ms_per_second_mean": 2.0733333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WidgetRenderer_Snapshots": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.16999999999999998,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WindowManager": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 27.588024830699773,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WindowServer": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 24.79672686230248,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WireGuard": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.07333333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "WirelessRadioManagerd": {
+        "samples": 186,
+        "cpu_ms_per_second_mean": 0.28478494623655914,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "XPCTimeStampingService": {
+        "samples": 9,
+        "cpu_ms_per_second_mean": 0.16555555555555557,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "accountsd": {
+        "samples": 18,
+        "cpu_ms_per_second_mean": 2.273888888888889,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "adid": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 4.58,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "adprivacyd": {
+        "samples": 39,
+        "cpu_ms_per_second_mean": 0.07871794871794872,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "agentstored": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.065,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "airportd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 1.983058690744921,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "akd": {
+        "samples": 75,
+        "cpu_ms_per_second_mean": 0.35173333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "amfid": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06333333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "amsaccountsd": {
+        "samples": 270,
+        "cpu_ms_per_second_mean": 0.12896296296296297,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "amsengagementd": {
+        "samples": 171,
+        "cpu_ms_per_second_mean": 0.10350877192982456,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "amsondevicestoraged": {
+        "samples": 265,
+        "cpu_ms_per_second_mean": 0.10328301886792453,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "analyticsagent": {
+        "samples": 20,
+        "cpu_ms_per_second_mean": 0.4885,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "analyticsd": {
+        "samples": 62,
+        "cpu_ms_per_second_mean": 0.9506451612903226,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "appleaccountd": {
+        "samples": 36,
+        "cpu_ms_per_second_mean": 0.04972222222222222,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "appleeventsd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "appstoreagent": {
+        "samples": 153,
+        "cpu_ms_per_second_mean": 0.10594771241830066,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "appstored": {
+        "samples": 263,
+        "cpu_ms_per_second_mean": 0.10220532319391636,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "apsd": {
+        "samples": 136,
+        "cpu_ms_per_second_mean": 0.5973529411764705,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "askpermissiond": {
+        "samples": 119,
+        "cpu_ms_per_second_mean": 0.10369747899159665,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "assetsubscriptiond": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.04,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "assistant_service": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 3.0016666666666665,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "assistantd": {
+        "samples": 983,
+        "cpu_ms_per_second_mean": 0.5892878942014242,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "audioaccessoryd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.39,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "audioanalyticsd": {
+        "samples": 169,
+        "cpu_ms_per_second_mean": 0.13230769230769232,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "authd": {
+        "samples": 49,
+        "cpu_ms_per_second_mean": 11.589591836734694,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "axassetsd": {
+        "samples": 583,
+        "cpu_ms_per_second_mean": 0.2399656946826758,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "backboardd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 19.71510158013544,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "backgroundtaskmanagementd": {
+        "samples": 18,
+        "cpu_ms_per_second_mean": 4.088888888888889,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "backupd": {
+        "samples": 34,
+        "cpu_ms_per_second_mean": 0.5320588235294118,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "backupd-helper": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 1.44,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "betaenrollmentagent": {
+        "samples": 9,
+        "cpu_ms_per_second_mean": 0.17666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "biomed": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 2.996,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "biomesyncd": {
+        "samples": 7,
+        "cpu_ms_per_second_mean": 182.82142857142858,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "bluetoothd": {
+        "samples": 212,
+        "cpu_ms_per_second_mean": 0.4831132075471698,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "businessservicesd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.045,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "calaccessd": {
+        "samples": 63,
+        "cpu_ms_per_second_mean": 0.520952380952381,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "callservicesd": {
+        "samples": 27,
+        "cpu_ms_per_second_mean": 2.477777777777778,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "cameracaptured": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.06975169300225734,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "cfprefsd": {
+        "samples": 1959,
+        "cpu_ms_per_second_mean": 2.717912200102093,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "chronod": {
+        "samples": 20,
+        "cpu_ms_per_second_mean": 1.7135,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ciphermld": {
+        "samples": 33,
+        "cpu_ms_per_second_mean": 0.059393939393939395,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "cksharingmanagementd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.05,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "clocksyncd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 2.6966365688487586,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "cloudd": {
+        "samples": 94,
+        "cpu_ms_per_second_mean": 0.53,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "cloudtelemetryd": {
+        "samples": 42,
+        "cpu_ms_per_second_mean": 0.11166666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "codex": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 8.815835214446953,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "codex-code-mode-host": {
+        "samples": 67,
+        "cpu_ms_per_second_mean": 0.7713432835820896,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.CodeSigningHelper": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 2.6487923250564336,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.CommerceKit.Transactio": {
+        "samples": 9,
+        "cpu_ms_per_second_mean": 0.19111111111111112,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.DriverKit-AppleBCMWLAN": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 4.840011286681715,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.MobileAsset.DownloadSe": {
+        "samples": 120,
+        "cpu_ms_per_second_mean": 0.07816666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.Safari.SafeBrowsing.Se": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.05733333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.SafariPlatformSupport.": {
+        "samples": 18,
+        "cpu_ms_per_second_mean": 1.3666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.WebKit.GPU": {
+        "samples": 906,
+        "cpu_ms_per_second_mean": 0.04565121412803532,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.WebKit.Networking": {
+        "samples": 339,
+        "cpu_ms_per_second_mean": 0.27716814159292036,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.WebKit.WebContent": {
+        "samples": 12,
+        "cpu_ms_per_second_mean": 3.0508333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.audio.Core-Audio-Drive": {
+        "samples": 802,
+        "cpu_ms_per_second_mean": 0.019925187032418953,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.cmio.registerassistant": {
+        "samples": 9,
+        "cpu_ms_per_second_mean": 0.5633333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.dock.extra": {
+        "samples": 300,
+        "cpu_ms_per_second_mean": 0.04646666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.geod": {
+        "samples": 536,
+        "cpu_ms_per_second_mean": 0.32274253731343283,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.iCloudHelper": {
+        "samples": 36,
+        "cpu_ms_per_second_mean": 9.21861111111111,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.apple.sbd": {
+        "samples": 10,
+        "cpu_ms_per_second_mean": 0.175,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.nektony.Firewall.NetworkMoni": {
+        "samples": 548,
+        "cpu_ms_per_second_mean": 0.8017335766423358,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.nordvpn.macos.Shield": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 20.89757336343115,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "com.nordvpn.macos.helper": {
+        "samples": 65,
+        "cpu_ms_per_second_mean": 2.038923076923077,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "commerce": {
+        "samples": 10,
+        "cpu_ms_per_second_mean": 0.145,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "communicationtrustd": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 6.75,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "configd": {
+        "samples": 245,
+        "cpu_ms_per_second_mean": 0.4097142857142857,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "configd_sim": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 6.025,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "contactsd": {
+        "samples": 23,
+        "cpu_ms_per_second_mean": 76.70217391304348,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "contactsdonationagent": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 8.466666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "containermanagerd": {
+        "samples": 20,
+        "cpu_ms_per_second_mean": 1.113,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "containermanagerd_system": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 2.0575,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "contextstored": {
+        "samples": 294,
+        "cpu_ms_per_second_mean": 0.33714285714285713,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "coreaudiod": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 120.00469525959367,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "coreautha": {
+        "samples": 32,
+        "cpu_ms_per_second_mean": 0.16999999999999998,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "coreauthd": {
+        "samples": 15,
+        "cpu_ms_per_second_mean": 0.23933333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "corebrightnessd": {
+        "samples": 22,
+        "cpu_ms_per_second_mean": 0.36636363636363634,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "coreduetd": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.10875,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "coreservicesd": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.14166666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "corespeechd": {
+        "samples": 1772,
+        "cpu_ms_per_second_mean": 30.828493227990972,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "corespotlightd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 50.0008690744921,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "coresymbolicationd": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 16.02,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "crashpad_handler": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 0.5,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ctkd": {
+        "samples": 7,
+        "cpu_ms_per_second_mean": 1.3042857142857143,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "dasd": {
+        "samples": 290,
+        "cpu_ms_per_second_mean": 3.6564137931034484,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "dataaccessd": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 4.926,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "dbtelemetryd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.065,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "diagnosticd": {
+        "samples": 1772,
+        "cpu_ms_per_second_mean": 9.044655756207675,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "diagnosticservicesd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 2.92,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "diskarbitrationd": {
+        "samples": 42,
+        "cpu_ms_per_second_mean": 2.2835714285714284,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "distnoted": {
+        "samples": 4268,
+        "cpu_ms_per_second_mean": 0.15858247422680413,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "donotdisturbd": {
+        "samples": 11,
+        "cpu_ms_per_second_mean": 1.5745454545454545,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "duetexpertd": {
+        "samples": 11,
+        "cpu_ms_per_second_mean": 3.0945454545454547,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "endpointsecurityd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "facetimemessagestored": {
+        "samples": 21,
+        "cpu_ms_per_second_mean": 771.1128571428571,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "familycircled": {
+        "samples": 35,
+        "cpu_ms_per_second_mean": 1.042857142857143,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "feedbackd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.035,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "fileproviderd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.4650112866817156,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "filevaultd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.065,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "financed": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.026666666666666665,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "findmybeaconingd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 9.075000000000001,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "findmydevice-user-agent": {
+        "samples": 7,
+        "cpu_ms_per_second_mean": 0.42142857142857143,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "findmydeviced": {
+        "samples": 37,
+        "cpu_ms_per_second_mean": 0.07864864864864865,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "findmylocateagent": {
+        "samples": 12,
+        "cpu_ms_per_second_mean": 0.27,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "fseventsd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 1.242471783295711,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "fskitd": {
+        "samples": 88,
+        "cpu_ms_per_second_mean": 0.26829545454545456,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "gamecontrolleragentd": {
+        "samples": 181,
+        "cpu_ms_per_second_mean": 0.17756906077348067,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "gamecontrollerd": {
+        "samples": 180,
+        "cpu_ms_per_second_mean": 0.17400000000000002,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "gamed": {
+        "samples": 18,
+        "cpu_ms_per_second_mean": 3.8377777777777777,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "gamepolicyd": {
+        "samples": 227,
+        "cpu_ms_per_second_mean": 0.2503083700440529,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "generativeexperiencesd": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.04,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "geoanalyticsd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.425,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "geod": {
+        "samples": 62,
+        "cpu_ms_per_second_mean": 0.21596774193548388,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "healthd": {
+        "samples": 105,
+        "cpu_ms_per_second_mean": 0.2805714285714286,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "heard": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.152686230248307,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "homed": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 3.1803333333333335,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "hybridsearchd": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 3.468,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "iCloudNotificationAgent": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.07666666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "iTerm2": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 395.2611286681716,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "icloudmailagent": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 0.05333333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "iconservicesagent": {
+        "samples": 600,
+        "cpu_ms_per_second_mean": 0.03991666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "idcredd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.065,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "identityservicesd": {
+        "samples": 39,
+        "cpu_ms_per_second_mean": 2.4233333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "imagent": {
+        "samples": 172,
+        "cpu_ms_per_second_mean": 0.41424418604651164,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "imageplaygroundd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.13,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "inputanalyticsd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.07500000000000001,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "installd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "intelligenceflowd": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 4.33,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "intelligencetasksd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.14,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "intelligentroutingd": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.645,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "itunescloudd": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.049666666666666665,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "jetpackassetd": {
+        "samples": 238,
+        "cpu_ms_per_second_mean": 0.105,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "kdc": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06333333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "kernel_task": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 38.72259593679458,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "keyboardservicesd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 1.425,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "knowledge-agent": {
+        "samples": 22,
+        "cpu_ms_per_second_mean": 12.973181818181818,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "launchd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 7.212031602708803,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "launchd_sim": {
+        "samples": 326,
+        "cpu_ms_per_second_mean": 2.094110429447853,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "launchservicesd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.1769977426636569,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "linkd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.03833333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "localizationswitcherd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.030000000000000002,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "locationd": {
+        "samples": 1772,
+        "cpu_ms_per_second_mean": 0.3983972911963883,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "lockdownmoded": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 3.9,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "logd": {
+        "samples": 1772,
+        "cpu_ms_per_second_mean": 1.6587584650112868,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "logind": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.18625,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "loginwindow": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 5.03969525959368,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "lsd": {
+        "samples": 64,
+        "cpu_ms_per_second_mean": 1.00828125,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "lskdd": {
+        "samples": 176,
+        "cpu_ms_per_second_mean": 0.04329545454545455,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mDNSResponder": {
+        "samples": 306,
+        "cpu_ms_per_second_mean": 0.7052941176470588,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mDNSResponderHelper": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.023860045146726863,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "managedcorespotlightd": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.135,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mapssyncd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.14500000000000002,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mdbulkimport": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.21666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mdmclient": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 22.514999999999997,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mds": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.6586681715575621,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mds_stores": {
+        "samples": 412,
+        "cpu_ms_per_second_mean": 2.4649029126213593,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mdworker_shared": {
+        "samples": 103,
+        "cpu_ms_per_second_mean": 37.0204854368932,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mediaanalysisd": {
+        "samples": 337,
+        "cpu_ms_per_second_mean": 5.501216617210683,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mediaremoted": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 0.25666666666666665,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "milod": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 0.04,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mlhostd": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.04125,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mobileactivationd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.42000000000000004,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mobileassetd": {
+        "samples": 87,
+        "cpu_ms_per_second_mean": 4.84103448275862,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "mobiletimerd": {
+        "samples": 360,
+        "cpu_ms_per_second_mean": 0.10805555555555556,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "modelmanagerd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.03666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "nanotimekitd": {
+        "samples": 26,
+        "cpu_ms_per_second_mean": 0.5523076923076923,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "neagent": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 0.6880000000000001,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "nearbyd": {
+        "samples": 423,
+        "cpu_ms_per_second_mean": 0.2792434988179669,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "nehelper": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.80875,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "nesessionmanager": {
+        "samples": 55,
+        "cpu_ms_per_second_mean": 0.536,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "netbiosd": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.3275,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "networkserviceproxy": {
+        "samples": 43,
+        "cpu_ms_per_second_mean": 0.08186046511627906,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "newsd": {
+        "samples": 12,
+        "cpu_ms_per_second_mean": 0.16416666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "node_repl": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.06333333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "notifyd": {
+        "samples": 1223,
+        "cpu_ms_per_second_mean": 1.5857236304170073,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "nsurlsessiond": {
+        "samples": 670,
+        "cpu_ms_per_second_mean": 0.23986567164179104,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "online-auth-agent": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.805,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "opendirectoryd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 2.0485778781038375,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "osanalyticshelper": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 4.095000000000001,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ospredictiond": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.07500000000000001,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "parsec-fbf": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 85.335,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "parsecd": {
+        "samples": 47,
+        "cpu_ms_per_second_mean": 0.09808510638297872,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "passd": {
+        "samples": 32,
+        "cpu_ms_per_second_mean": 0.1275,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "pboard": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.04,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "peakpowermanagerd": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 0.8200000000000001,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "peopled": {
+        "samples": 11,
+        "cpu_ms_per_second_mean": 3.170909090909091,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "photoanalysisd": {
+        "samples": 213,
+        "cpu_ms_per_second_mean": 0.24629107981220658,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "photolibraryd": {
+        "samples": 301,
+        "cpu_ms_per_second_mean": 0.04843853820598007,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "photosfaced": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.645,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "pidinfo": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 6.12155756207675,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "pkd": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 0.2866666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "postersyncd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 10.371666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "powerd": {
+        "samples": 235,
+        "cpu_ms_per_second_mean": 0.42519148936170215,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "powerdatad": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.9425,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "powermetrics": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 13.8591309255079,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "privatecloudcomputed": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.052333333333333336,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "proactived": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.03666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "proactiveeventtrackerd": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 1035.708,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "promotedcontentd": {
+        "samples": 36,
+        "cpu_ms_per_second_mean": 0.065,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "ps": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 1474.56,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "rapportd": {
+        "samples": 77,
+        "cpu_ms_per_second_mean": 0.5423376623376623,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "recentsd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.15,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "relevanced": {
+        "samples": 10,
+        "cpu_ms_per_second_mean": 1.502,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "remindd": {
+        "samples": 471,
+        "cpu_ms_per_second_mean": 0.08492569002123143,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "remoted": {
+        "samples": 3,
+        "cpu_ms_per_second_mean": 0.17333333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "remotemanagementd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.07,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "replayd": {
+        "samples": 300,
+        "cpu_ms_per_second_mean": 0.044500000000000005,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "replicatord": {
+        "samples": 50,
+        "cpu_ms_per_second_mean": 0.3204,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "routined": {
+        "samples": 14,
+        "cpu_ms_per_second_mean": 3.19,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "rtcreportingd": {
+        "samples": 36,
+        "cpu_ms_per_second_mean": 0.06583333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "runningboardd": {
+        "samples": 191,
+        "cpu_ms_per_second_mean": 9.752094240837696,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "sandboxd": {
+        "samples": 5,
+        "cpu_ms_per_second_mean": 0.318,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "searchpartyd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 3.8400000000000003,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "searchpartyuseragent": {
+        "samples": 189,
+        "cpu_ms_per_second_mean": 0.4595238095238095,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "secd": {
+        "samples": 41,
+        "cpu_ms_per_second_mean": 1.7148780487804878,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "secinitd": {
+        "samples": 10,
+        "cpu_ms_per_second_mean": 0.138,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "securityd": {
+        "samples": 277,
+        "cpu_ms_per_second_mean": 1.2501083032490974,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "securityd_system": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.13,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "seld": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.055,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "seputil": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.8350000000000001,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "servicetowerd": {
+        "samples": 180,
+        "cpu_ms_per_second_mean": 0.11605555555555555,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "sharedfilelistd": {
+        "samples": 10,
+        "cpu_ms_per_second_mean": 0.147,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "sharingd": {
+        "samples": 895,
+        "cpu_ms_per_second_mean": 0.14059217877094973,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "shazameventsd": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.043666666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "siriactionsd": {
+        "samples": 306,
+        "cpu_ms_per_second_mean": 0.0477124183006536,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "siriinferenced": {
+        "samples": 14,
+        "cpu_ms_per_second_mean": 1.4942857142857142,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "siriknowledged": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 59.00166666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "sirittsd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 14.095,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "smd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.28833333333333333,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "sociallayerd": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 0.46,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "softwareupdated": {
+        "samples": 42,
+        "cpu_ms_per_second_mean": 0.05666666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "spindump": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.07833333333333334,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "spotlightknowledged.importer": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 7.1033333333333335,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "spotlightknowledged.updater": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 26.317133182844245,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "stickersd": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.0375,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "storagekitd": {
+        "samples": 33,
+        "cpu_ms_per_second_mean": 4.545454545454546,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "storekitagent": {
+        "samples": 10,
+        "cpu_ms_per_second_mean": 0.14400000000000002,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "studentd": {
+        "samples": 12,
+        "cpu_ms_per_second_mean": 3.2258333333333336,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "suggestd": {
+        "samples": 28,
+        "cpu_ms_per_second_mean": 10.486428571428572,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "suhelperd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.051666666666666666,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "swtransparencyd": {
+        "samples": 39,
+        "cpu_ms_per_second_mean": 0.07794871794871795,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "symptomsd": {
+        "samples": 369,
+        "cpu_ms_per_second_mean": 0.7300542005420054,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "sysextd": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 1.6219074492099324,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "syslogd": {
+        "samples": 29,
+        "cpu_ms_per_second_mean": 0.3548275862068966,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "sysmond": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 62.21,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "syspolicyd": {
+        "samples": 73,
+        "cpu_ms_per_second_mean": 0.6705479452054794,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "system_installd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.060000000000000005,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "systemextensionsctl": {
+        "samples": 13,
+        "cpu_ms_per_second_mean": 750.5992307692308,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "systemsoundserverd": {
+        "samples": 52,
+        "cpu_ms_per_second_mean": 0.06807692307692308,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "systemstats": {
+        "samples": 56,
+        "cpu_ms_per_second_mean": 1.467857142857143,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "systemstatusd": {
+        "samples": 18,
+        "cpu_ms_per_second_mean": 0.4638888888888889,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "talagentd": {
+        "samples": 7,
+        "cpu_ms_per_second_mean": 8.215714285714286,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "taskgated": {
+        "samples": 8,
+        "cpu_ms_per_second_mean": 0.89125,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "tccd": {
+        "samples": 36,
+        "cpu_ms_per_second_mean": 2.093611111111111,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "textcomposerd": {
+        "samples": 6,
+        "cpu_ms_per_second_mean": 0.03,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "textunderstandingd": {
+        "samples": 321,
+        "cpu_ms_per_second_mean": 0.10950155763239876,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "thermalmonitord": {
+        "samples": 886,
+        "cpu_ms_per_second_mean": 0.10102708803611739,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "time": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 0.06,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "timed": {
+        "samples": 4,
+        "cpu_ms_per_second_mean": 2.98,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "tipsd": {
+        "samples": 30,
+        "cpu_ms_per_second_mean": 0.054,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "translationd": {
+        "samples": 90,
+        "cpu_ms_per_second_mean": 0.08122222222222222,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "transparencyd": {
+        "samples": 50,
+        "cpu_ms_per_second_mean": 0.4278,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "triald_system": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 30.685,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "trustd": {
+        "samples": 1146,
+        "cpu_ms_per_second_mean": 2.7485340314136124,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "universalaccessd": {
+        "samples": 180,
+        "cpu_ms_per_second_mean": 0.12711111111111112,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "usbmuxd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.13,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "useractivityd": {
+        "samples": 9,
+        "cpu_ms_per_second_mean": 0.26555555555555554,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "usernoted": {
+        "samples": 21,
+        "cpu_ms_per_second_mean": 0.8766666666666667,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "usernotificationsd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.545,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "visualintelligenced": {
+        "samples": 301,
+        "cpu_ms_per_second_mean": 0.04222591362126246,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "voicebankingd": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 0.21,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "watchdogd": {
+        "samples": 90,
+        "cpu_ms_per_second_mean": 0.295,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "watchgesturesd": {
+        "samples": 180,
+        "cpu_ms_per_second_mean": 0.108,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "weatherd": {
+        "samples": 50,
+        "cpu_ms_per_second_mean": 1.2884,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "webprivacyd": {
+        "samples": 40,
+        "cpu_ms_per_second_mean": 0.07275,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "wifianalyticsd": {
+        "samples": 14,
+        "cpu_ms_per_second_mean": 6.531428571428571,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "wifip2pd": {
+        "samples": 716,
+        "cpu_ms_per_second_mean": 0.07865921787709497,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "xpcproxy_sim": {
+        "samples": 1,
+        "cpu_ms_per_second_mean": 1871.66,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      },
+      "zsh": {
+        "samples": 2,
+        "cpu_ms_per_second_mean": 1821.3049999999998,
+        "gpu_ms_per_second_mean": 0.0,
+        "gpu_ms_per_second_max": 0.0
+      }
+    }
+  }
+]

@@ -1,0 +1,32 @@
+{
+  "A": {
+    "exit_code": 0,
+    "stdout": "Replay valid: height=614400 nonce=000000000000002a hit=2d9b2daa19cba01c595881ed4cc12eb24f3417d4b2e76f062ae1f355464deede\n",
+    "stderr": ""
+  },
+  "B0-old-metal": {
+    "exit_code": 0,
+    "stdout": "Replay valid: height=614400 nonce=000000000000002a hit=2d9b2daa19cba01c595881ed4cc12eb24f3417d4b2e76f062ae1f355464deede\n",
+    "stderr": ""
+  },
+  "B": {
+    "exit_code": 0,
+    "stdout": "Replay valid: height=614400 nonce=000000000000002a hit=2d9b2daa19cba01c595881ed4cc12eb24f3417d4b2e76f062ae1f355464deede\n",
+    "stderr": ""
+  },
+  "C": {
+    "exit_code": 0,
+    "stdout": "Replay valid: height=614400 nonce=000000000000002a hit=2d9b2daa19cba01c595881ed4cc12eb24f3417d4b2e76f062ae1f355464deede\n",
+    "stderr": ""
+  },
+  "D-old-metal": {
+    "exit_code": 0,
+    "stdout": "Replay valid: height=614400 nonce=000000000000002a hit=2d9b2daa19cba01c595881ed4cc12eb24f3417d4b2e76f062ae1f355464deede\n",
+    "stderr": ""
+  },
+  "E-segmented": {
+    "exit_code": 0,
+    "stdout": "Replay valid: height=614400 nonce=000000000000002a hit=2d9b2daa19cba01c595881ed4cc12eb24f3417d4b2e76f062ae1f355464deede\n",
+    "stderr": ""
+  }
+}

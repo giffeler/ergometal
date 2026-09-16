@@ -1,0 +1,15 @@
+--- a/Sources/MetalErgoCore/Blake2b.swift
++++ b/Sources/MetalErgoCore/Blake2b.swift
+@@ -47,11 +47,7 @@
+         _ h: inout InlineArray<8, UInt64>, block: Span<UInt8>, count: UInt64, final: Bool
+     ) {
+         var m = InlineArray<16, UInt64>(repeating: 0)
+-        let wholeWords = block.count / 8
+-        for i in 0..<wholeWords {
+-            m[i] = UInt64(littleEndian: block.bytes.load(fromByteOffset: i * 8, as: UInt64.self))
+-        }
+-        for i in (wholeWords * 8)..<block.count {
++        for i in 0..<block.count {
+             m[i / 8] |= UInt64(block[i]) << UInt64((i % 8) * 8)
+         }
+ 

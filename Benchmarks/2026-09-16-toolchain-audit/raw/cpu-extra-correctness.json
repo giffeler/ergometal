@@ -1,0 +1,22 @@
+{
+  "force-inline": {
+    "independent_blake_vectors": 307,
+    "passed": true
+  },
+  "unrolled": {
+    "independent_blake_vectors": 307,
+    "passed": true
+  },
+  "manual-load": {
+    "independent_blake_vectors": 307,
+    "passed": true
+  },
+  "old-uint": {
+    "independent_blake_vectors": 307,
+    "passed": true
+  },
+  "segmented-independent-buffers": {
+    "independent_blake_vectors": 307,
+    "passed": true
+  }
+}

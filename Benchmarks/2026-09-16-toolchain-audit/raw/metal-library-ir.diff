@@ -1,0 +1,91 @@
+--- old
++++ new
+@@ -1,2 +1,2 @@
+-DerivedDataToolchainAudit20260916/artifacts/A.__metallib:
++DerivedDataToolchainAudit20260916/artifacts/C-production.__metallib:
+ Disassembly of section MODULE_LIST:
+@@ -1957,3 +1957,3 @@
+ 
+-!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 26, i32 5]}
++!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 27, i32 0]}
+ !1 = !{i32 1, !"wchar_size", i32 4}
+@@ -1966,3 +1966,3 @@
+ !8 = !{i32 7, !"air.max_samplers", i32 16}
+-!9 = !{!"Apple metal version 32023.883 (metalfe-32023.883)"}
++!9 = !{!"Apple metal version 32023.921 (metalfe-32023.921.6)"}
+ !10 = !{i32 2, i32 8, i32 0}
+@@ -2011,3 +2011,3 @@
+ 
+-0x000000000048e9 -- buildDatasetU32Pair:
++0x000000000048f9 -- buildDatasetU32Pair:
+ source_filename = "buildDatasetU32Pair"
+@@ -9465,3 +9465,3 @@
+ 
+-!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 26, i32 5]}
++!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 27, i32 0]}
+ !1 = !{i32 1, !"wchar_size", i32 4}
+@@ -9474,3 +9474,3 @@
+ !8 = !{i32 7, !"air.max_samplers", i32 16}
+-!9 = !{!"Apple metal version 32023.883 (metalfe-32023.883)"}
++!9 = !{!"Apple metal version 32023.921 (metalfe-32023.921.6)"}
+ !10 = !{i32 2, i32 8, i32 0}
+@@ -9522,3 +9522,3 @@
+ 
+-0x0000000000fdd9 -- buildDatasetU32PairInlineM:
++0x0000000000fde9 -- buildDatasetU32PairInlineM:
+ source_filename = "buildDatasetU32PairInlineM"
+@@ -23291,3 +23291,3 @@
+ 
+-!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 26, i32 5]}
++!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 27, i32 0]}
+ !1 = !{i32 1, !"wchar_size", i32 4}
+@@ -23300,3 +23300,3 @@
+ !8 = !{i32 7, !"air.max_samplers", i32 16}
+-!9 = !{!"Apple metal version 32023.883 (metalfe-32023.883)"}
++!9 = !{!"Apple metal version 32023.921 (metalfe-32023.921.6)"}
+ !10 = !{i32 2, i32 8, i32 0}
+@@ -23345,3 +23345,3 @@
+ 
+-0x00000000023cc9 -- buildDatasetU32PairScalarM:
++0x00000000023ce9 -- buildDatasetU32PairScalarM:
+ source_filename = "buildDatasetU32PairScalarM"
+@@ -41005,3 +41005,3 @@
+ 
+-!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 26, i32 5]}
++!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 27, i32 0]}
+ !1 = !{i32 1, !"wchar_size", i32 4}
+@@ -41014,3 +41014,3 @@
+ !8 = !{i32 7, !"air.max_samplers", i32 16}
+-!9 = !{!"Apple metal version 32023.883 (metalfe-32023.883)"}
++!9 = !{!"Apple metal version 32023.921 (metalfe-32023.921.6)"}
+ !10 = !{i32 2, i32 8, i32 0}
+@@ -41054,3 +41054,3 @@
+ 
+-0x0000000003cbe9 -- searchNonces:
++0x0000000003cc09 -- searchNonces:
+ source_filename = "searchNonces"
+@@ -45258,3 +45258,3 @@
+ 
+-!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 26, i32 5]}
++!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 27, i32 0]}
+ !1 = !{i32 1, !"wchar_size", i32 4}
+@@ -45267,3 +45267,3 @@
+ !8 = !{i32 7, !"air.max_samplers", i32 16}
+-!9 = !{!"Apple metal version 32023.883 (metalfe-32023.883)"}
++!9 = !{!"Apple metal version 32023.921 (metalfe-32023.921.6)"}
+ !10 = !{i32 2, i32 8, i32 0}
+@@ -45316,3 +45316,3 @@
+ 
+-0x00000000044339 -- gatherOnlyNonces:
++0x00000000044359 -- gatherOnlyNonces:
+ source_filename = "gatherOnlyNonces"
+@@ -48220,3 +48220,3 @@
+ 
+-!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 26, i32 5]}
++!0 = !{i32 2, !"SDK Version", [2 x i32] [i32 27, i32 0]}
+ !1 = !{i32 1, !"wchar_size", i32 4}
+@@ -48229,3 +48229,3 @@
+ !8 = !{i32 7, !"air.max_samplers", i32 16}
+-!9 = !{!"Apple metal version 32023.883 (metalfe-32023.883)"}
++!9 = !{!"Apple metal version 32023.921 (metalfe-32023.921.6)"}
+ !10 = !{i32 2, i32 8, i32 0}

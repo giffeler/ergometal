@@ -1,0 +1,375 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment/MetalErgoMiner.xcodeproj -scheme MetalErgoMiner -configuration Debug -derivedDataPath /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E -destination platform=macOS,arch=arm64 CODE_SIGNING_ALLOWED=NO ENABLE_TESTABILITY=YES test
+
+Build settings from command line:
+    CODE_SIGNING_ALLOWED = NO
+    ENABLE_TESTABILITY = YES
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (4 targets)
+    Target 'ErgoMetalCLITests' in project 'MetalErgoMiner'
+        ➜ Explicit dependency on target 'MetalErgoCore' in project 'MetalErgoMiner'
+    Target 'ergometal' in project 'MetalErgoMiner'
+        ➜ Explicit dependency on target 'MetalErgoCore' in project 'MetalErgoMiner'
+    Target 'MetalErgoCoreTests' in project 'MetalErgoMiner'
+        ➜ Explicit dependency on target 'MetalErgoCore' in project 'MetalErgoMiner'
+    Target 'MetalErgoCore' in project 'MetalErgoMiner' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -V
+
+Build description signature: ebefd271027228eedd062de1de77bc6c
+Build description path: /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/XCBuildData/ebefd271027228eedd062de1de77bc6c.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKStatCaches.noindex/macosx27.0-26A425-e829b21a6f8c9b70876ba0858053c0447231f6df4def33e022ae2eb8f782df1a.sdkstatcache
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment/MetalErgoMiner.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -o /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKStatCaches.noindex/macosx27.0-26A425-e829b21a6f8c9b70876ba0858053c0447231f6df4def33e022ae2eb8f782df1a.sdkstatcache
+
+SwiftDriver MetalErgoCoreTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name MetalErgoCoreTests -Onone @/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.SwiftFileList -DDEBUG -DGPU_CAPTURE -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target arm64-apple-macos26.5 -g -module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKStatCaches.noindex/macosx27.0-26A425-e829b21a6f8c9b70876ba0858053c0447231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex -sdk-module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-generated-files.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-own-target-headers.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoMiner-aa793337b2fe920c75a6f6c1d4d6a751-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-project-headers.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/include -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources/arm64 -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-Swift.h -working-directory /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment -experimental-emit-module-separately -disable-cmo
+
+CopySwiftLibs /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest (in target 'ErgoMetalCLITests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/MacOS/ErgoMetalCLITests --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/Frameworks --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/PlugIns --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/Extensions --platform macosx --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.1.266.1.61vmOm/Metal.xctoolchain --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/ErgoMetalCLITests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+ProcessInfoPlistFile /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/Info.plist /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/ErgoMetalCLITests.build/empty-ErgoMetalCLITests.plist (in target 'ErgoMetalCLITests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-infoPlistUtility /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/ErgoMetalCLITests.build/empty-ErgoMetalCLITests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -platform macosx -o /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/ErgoMetalCLITests.xctest/Contents/Info.plist
+
+SwiftCompile normal arm64 Compiling\ ConsensusTests.swift /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment/Tests/MetalErgoCoreTests/ConsensusTests.swift (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+
+SwiftCompile normal arm64 /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment/Tests/MetalErgoCoreTests/ConsensusTests.swift (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-SwiftPerFileCompile ConsensusTests.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ MetalErgoCoreTests (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+
+SwiftCompile normal arm64 (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for MetalErgoCoreTests (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+
+SwiftDriver\ Compilation\ Requirements MetalErgoCoreTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name MetalErgoCoreTests -Onone @/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.SwiftFileList -DDEBUG -DGPU_CAPTURE -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target arm64-apple-macos26.5 -g -module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKStatCaches.noindex/macosx27.0-26A425-e829b21a6f8c9b70876ba0858053c0447231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex -sdk-module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-generated-files.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-own-target-headers.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoMiner-aa793337b2fe920c75a6f6c1d4d6a751-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-project-headers.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/include -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources/arm64 -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-Swift.h -working-directory /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment -experimental-emit-module-separately -disable-cmo
+
+Copy /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.swiftsourceinfo (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.swiftsourceinfo /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+Copy /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.swiftmodule/arm64-apple-macos.abi.json /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.abi.json (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -resolve-src-symlinks -rename /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.abi.json /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.swiftmodule/arm64-apple-macos.abi.json
+
+SwiftDriverJobDiscovery normal arm64 Compiling ConsensusTests.swift (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+
+SwiftDriver\ Compilation MetalErgoCoreTests normal arm64 com.apple.xcode.tools.swift.compiler (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name MetalErgoCoreTests -Onone @/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.SwiftFileList -DDEBUG -DGPU_CAPTURE -plugin-path /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target arm64-apple-macos26.5 -g -module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Index.noindex/DataStore -Xcc -D_LIBCPP_HARDENING_MODE\=_LIBCPP_HARDENING_MODE_DEBUG -swift-version 6 -I /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -Isystem /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -F /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKStatCaches.noindex/macosx27.0-26A425-e829b21a6f8c9b70876ba0858053c0447231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex -sdk-module-cache-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests_const_extract_protocols.json -Xcc -iquote -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-generated-files.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-own-target-headers.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoMiner-aa793337b2fe920c75a6f6c1d4d6a751-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests-project-headers.hmap -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/include -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources-normal/arm64 -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources/arm64 -Xcc -I/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/DerivedSources -Xcc -DDEBUG\=1 -emit-objc-header -emit-objc-header-path /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests-Swift.h -working-directory /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/MacOS/MetalErgoCoreTests normal (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos26.5 -bundle -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -O0 -Xlinker -no_warn_duplicate_libraries -L/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -L/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib -F/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug -iframework /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks -filelist /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.LinkFileList -Xlinker -rpath -Xlinker @loader_path/../Frameworks -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests_lto.o -rdynamic -Xlinker -no_deduplicate -Xlinker -dependency_info -Xlinker /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.swiftmodule -ObjC -Xlinker -needed_framework -Xlinker XCTest -framework XCTest -Xlinker -needed-lXCTestSwiftSupport -lXCTestSwiftSupport -lMetalErgoCore -o /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/MacOS/MetalErgoCoreTests
+
+CopySwiftLibs /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/MacOS/MetalErgoCoreTests --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/Frameworks --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/PlugIns --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/Extensions --platform macosx --toolchain /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.1.266.1.61vmOm/Metal.xctoolchain --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os
+Ignoring --strip-bitcode because --sign was not passed
+
+ExtractAppIntentsMetadata (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /var/run/com.apple.security.cryptexd/mnt/com.apple.MobileAsset.MetalToolchain-v27.1.266.1.61vmOm/Metal.xctoolchain --module-name MetalErgoCoreTests --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk --xcode-version 27A266a --platform-family macOS --deployment-target 26.5 --bundle-identifier dev.ergometal.tests --output /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/Resources --target-triple arm64-apple-macos26.5 --binary-file /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/MacOS/MetalErgoCoreTests --dependency-file /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests_dependency_info.dat --stringsdata-file /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.SwiftFileList --metadata-file-list /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests.DependencyMetadataFileList --static-metadata-file-list /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/MetalErgoCoreTests.DependencyStaticMetadataFileList --swift-const-vals-list /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/Objects-normal/arm64/MetalErgoCoreTests.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-09-16 08:00:55.721 appintentsmetadataprocessor[12406:1790679] Starting appintentsmetadataprocessor export
+2026-09-16 08:00:55.723 appintentsmetadataprocessor[12406:1790679] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+ProcessInfoPlistFile /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/Info.plist /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/empty-MetalErgoCoreTests.plist (in target 'MetalErgoCoreTests' from project 'MetalErgoMiner')
+    cd /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment
+    builtin-infoPlistUtility /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/MetalErgoMiner.build/Debug/MetalErgoCoreTests.build/empty-MetalErgoCoreTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -platform macosx -o /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Products/Debug/MetalErgoCoreTests.xctest/Contents/Info.plist
+
+PruneExplicitPrecompiledModules /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/SDKExplicitPrecompiledModules
+
+2026-09-16 08:00:55.759 xcodebuild[12385:1790500]  DVTAssertions: Warning in IDEFrameworks/IDEFoundation/Execution/LaunchSystem/IDELaunchSession.m:395
+Details:  setRunnablePIDWithDiagnostics:logSection:andCompletionHandler: called without a completion handler - blocking until diagnostics setup completes. Callers should migrate to using a completion handler for better performance.
+Object:   <IDELaunchSession: 0x7c460d5080>
+Method:   -setRunnablePIDWithDiagnostics:logSection:andCompletionHandler:
+Thread:   <NSThread: 0x7c44f18240>{number = 13, name = (null)}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+Test Suite 'All tests' started at 2026-09-16 08:00:55.921.
+Test Suite 'MetalErgoCoreTests.xctest' started at 2026-09-16 08:00:55.921.
+Test Suite 'ConsensusTests' started at 2026-09-16 08:00:55.921.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testBlake2b256Vectors]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testBlake2b256Vectors]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testBlake2bBlockBoundariesAgainstPythonHashlib]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testBlake2bBlockBoundariesAgainstPythonHashlib]' passed (0.003 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testCalcNConsensusBoundaries]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testCalcNConsensusBoundaries]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testCPUConsensusRejectsOutOfRangeHeightAndDatasetIndex]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testCPUConsensusRejectsOutOfRangeHeightAndDatasetIndex]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDatasetBuildPipelinesChunksAndPreservesMetrics]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDatasetBuildPipelinesChunksAndPreservesMetrics]' passed (0.039 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDatasetElementReadbackRejectsInvalidIndices]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDatasetElementReadbackRejectsInvalidIndices]' passed (0.004 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDatasetKernelsMatchCPUElementsExactly]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDatasetKernelsMatchCPUElementsExactly]' passed (0.040 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDecimalUInt256ParsingAndAddition]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testDecimalUInt256ParsingAndAddition]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testErgoAddressValidationForNetworkAndType]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testErgoAddressValidationForNetworkAndType]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testGatherOnlySearchKernelExecutesOnlyWhenSelected]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testGatherOnlySearchKernelExecutesOnlyWhenSelected]' passed (0.005 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testIndependentAutolykosFixture]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testIndependentAutolykosFixture]' passed (0.020 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalMatchesCPUForFixture]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalMatchesCPUForFixture]' passed (0.025 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalMatchesCPUForNontrivialNonceBytePatterns]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalMatchesCPUForNontrivialNonceBytePatterns]' passed (0.066 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalPrefetchAndSearchBothMakeProgress]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalPrefetchAndSearchBothMakeProgress]' passed (0.093 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalPrefetchPromotesNextHeightAndCanCancelBuild]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalPrefetchPromotesNextHeightAndCanCancelBuild]' passed (0.025 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalQueuesTwoSearchesWithIndependentResults]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalQueuesTwoSearchesWithIndependentResults]' passed (0.004 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalRejectsUnsafeInputsAndCandidateOverflow]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testMetalRejectsUnsafeInputsAndCandidateOverflow]' passed (0.004 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testNonceSpaceHandlesUInt64BoundaryWithoutOverflow]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testNonceSpaceHandlesUInt64BoundaryWithoutOverflow]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testOfficialMainnetAutolykosVector]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testOfficialMainnetAutolykosVector]' passed (0.019 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testOverlappedDatasetSchedulingPreservesConsensusAndProgress]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testOverlappedDatasetSchedulingPreservesConsensusAndProgress]' passed (0.054 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testPipelinedBuildCancellationDrainsSubmittedCommands]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testPipelinedBuildCancellationDrainsSubmittedCommands]' passed (0.013 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testPipelinedPrefetchCancellationDrainsSubmittedCommands]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testPipelinedPrefetchCancellationDrainsSubmittedCommands]' passed (0.019 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testQueuedSearchKeepsUnretainedCommandResourcesAlive]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testQueuedSearchKeepsUnretainedCommandResourcesAlive]' passed (0.006 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testSegmentedBlake2bAtEveryBoundary]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testSegmentedBlake2bAtEveryBoundary]' passed (0.017 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testUInt256CodablePreservesSchemaAndRejectsMalformedWidths]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testUInt256CodablePreservesSchemaAndRejectsMalformedWidths]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.ConsensusTests testUInt256FixedStoragePreservesBytesAndValueSemantics]' started.
+Test Case '-[MetalErgoCoreTests.ConsensusTests testUInt256FixedStoragePreservesBytesAndValueSemantics]' passed (0.001 seconds).
+Test Suite 'ConsensusTests' passed at 2026-09-16 08:00:56.389.
+	 Executed 26 tests, with 0 failures (0 unexpected) in 0.463 (0.468) seconds
+Test Suite 'DonationTests' started at 2026-09-16 08:00:56.390.
+Test Case '-[MetalErgoCoreTests.DonationTests testDisabledScheduleAlwaysSelectsUser]' started.
+Test Case '-[MetalErgoCoreTests.DonationTests testDisabledScheduleAlwaysSelectsUser]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.DonationTests testHundredPercentRetriesAtEachCycleBoundary]' started.
+Test Case '-[MetalErgoCoreTests.DonationTests testHundredPercentRetriesAtEachCycleBoundary]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.DonationTests testOnePercentUsesLastMinuteOfHundredMinuteCycle]' started.
+Test Case '-[MetalErgoCoreTests.DonationTests testOnePercentUsesLastMinuteOfHundredMinuteCycle]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.DonationTests testRejectsInvalidConfiguration]' started.
+Test Case '-[MetalErgoCoreTests.DonationTests testRejectsInvalidConfiguration]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.DonationTests testRepresentativePercentagesAndCycleRollover]' started.
+Test Case '-[MetalErgoCoreTests.DonationTests testRepresentativePercentagesAndCycleRollover]' passed (0.000 seconds).
+Test Suite 'DonationTests' passed at 2026-09-16 08:00:56.392.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.002 (0.003) seconds
+Test Suite 'PerformanceTuningTests' started at 2026-09-16 08:00:56.392.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testBudgetAndThermalSafetyGates]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testBudgetAndThermalSafetyGates]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testBuildPipelineDepthsOneThroughFourDrainSubmittedWorkOnCancellation]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testBuildPipelineDepthsOneThroughFourDrainSubmittedWorkOnCancellation]' passed (0.017 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCacheIsKeyedByArchitectureBinaryAndProfileAndRecoversFromCorruption]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCacheIsKeyedByArchitectureBinaryAndProfileAndRecoversFromCorruption]' passed (0.004 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCancellationBeforeSubmissionDoesNotRetainAnEmptyBuild]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCancellationBeforeSubmissionDoesNotRetainAnEmptyBuild]' passed (0.006 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCancelledBuildResumesDrainedChunksWithExactConsensusAtEveryDepth]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCancelledBuildResumesDrainedChunksWithExactConsensusAtEveryDepth]' passed (0.079 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCandidateSetsRespectSIMDWidthAndImprovementGate]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testCandidateSetsRespectSIMDWidthAndImprovementGate]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testConcurrentCacheWritesRemainDecodableAndPreserveRecords]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testConcurrentCacheWritesRemainDecodableAndPreserveRecords]' passed (0.016 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testExecutionConfigurationRespectsDevicePipelineLimits]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testExecutionConfigurationRespectsDevicePipelineLimits]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testGenerationClassificationIncludesM6WithoutInventingMetalFamily]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testGenerationClassificationIncludesM6WithoutInventingMetalFamily]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testKnownFamilyClassificationStopsAtInstalledSDKBoundary]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testKnownFamilyClassificationStopsAtInstalledSDKBoundary]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testPipelineDepthsOneThroughFourPreserveSearchConsensus]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testPipelineDepthsOneThroughFourPreserveSearchConsensus]' passed (0.094 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testRepeatedCancellationPreservesOneContiguousPrefix]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testRepeatedCancellationPreservesOneContiguousPrefix]' passed (0.013 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testResolverPrecedenceIsExplicitThenCacheThenTuningThenFallback]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testResolverPrecedenceIsExplicitThenCacheThenTuningThenFallback]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testResumptionRejectsDifferentHeightSizeAndOptOut]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testResumptionRejectsDifferentHeightSizeAndOptOut]' passed (0.036 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testSafeFallbackIsM1CompatibleAndProfileSpecific]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testSafeFallbackIsM1CompatibleAndProfileSpecific]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testSemanticallyInvalidCacheRecordsAreIgnoredAndReplaceable]' started.
+Test Case '-[MetalErgoCoreTests.PerformanceTuningTests testSemanticallyInvalidCacheRecordsAreIgnoredAndReplaceable]' passed (0.006 seconds).
+Test Suite 'PerformanceTuningTests' passed at 2026-09-16 08:00:56.670.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.275 (0.277) seconds
+Test Suite 'StatisticsHTTPServerTests' started at 2026-09-16 08:00:56.670.
+Test Case '-[MetalErgoCoreTests.StatisticsHTTPServerTests testFragmentedRequestWaitsForCompleteHeaders]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsHTTPServerTests testFragmentedRequestWaitsForCompleteHeaders]' passed (0.238 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsHTTPServerTests testIncompleteHeaderConnectionTimesOut]' started.
+2026-09-16 08:00:56.991625+0200 xctest[12407:1790792] [connection] [C2 127.0.0.1:55092 tcp, local: 127.0.0.1:50878, server, prohibit joining protocols, definite, attribution: developer] is already cancelled, ignoring cancel
+Test Case '-[MetalErgoCoreTests.StatisticsHTTPServerTests testIncompleteHeaderConnectionTimesOut]' passed (0.084 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsHTTPServerTests testOversizedHeaderIsRejected]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsHTTPServerTests testOversizedHeaderIsRejected]' passed (0.048 seconds).
+Test Suite 'StatisticsHTTPServerTests' passed at 2026-09-16 08:00:57.041.
+	 Executed 3 tests, with 0 failures (0 unexpected) in 0.370 (0.371) seconds
+Test Suite 'StatisticsTests' started at 2026-09-16 08:00:57.041.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testDatasetAndPrefetchMetricsRemainCumulative]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testDatasetAndPrefetchMetricsRemainCumulative]' passed (0.048 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testDonationTelemetryIsAttributedAndCredentialFree]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testDonationTelemetryIsAttributedAndCredentialFree]' passed (0.024 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventFieldsIncludePipelineOccupancyTelemetry]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventFieldsIncludePipelineOccupancyTelemetry]' passed (0.023 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventFieldsIncludeSoCTemperatureTelemetry]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventFieldsIncludeSoCTemperatureTelemetry]' passed (0.019 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventWriterAppendsValidJSONLinesAcrossRestarts]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventWriterAppendsValidJSONLinesAcrossRestarts]' passed (0.022 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventWriterSerializesConcurrentWrites]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testEventWriterSerializesConcurrentWrites]' passed (0.002 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testExpectedSharesUseFull256BitTarget]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testExpectedSharesUseFull256BitTarget]' passed (0.023 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testIndependentEventWritersAppendCompleteRecordsToTheSameFile]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testIndependentEventWritersAppendCompleteRecordsToTheSameFile]' passed (0.085 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testIndependentHashrateWindowPreservesCumulativeAndDonationAccounting]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testIndependentHashrateWindowPreservesCumulativeAndDonationAccounting]' passed (0.064 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testMinerStatusLinePreservesFullTelemetryWhenSpaceAllows]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testMinerStatusLinePreservesFullTelemetryWhenSpaceAllows]' passed (0.022 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testMinerStatusLineSelectsARepresentationThatFitsTheTerminal]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testMinerStatusLineSelectsARepresentationThatFitsTheTerminal]' passed (0.022 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testNonSearchStatesClearRateAndLateCompletionsCannotRestoreIt]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testNonSearchStatesClearRateAndLateCompletionsCannotRestoreIt]' passed (0.222 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testPrometheusIsStableAndContainsNoPoolCredentials]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testPrometheusIsStableAndContainsNoPoolCredentials]' passed (0.025 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testRefreshAndEventFieldsCaptureLongTermStatisticsWithoutPoolHost]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testRefreshAndEventFieldsCaptureLongTermStatisticsWithoutPoolHost]' passed (0.045 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testStatisticsStoreSerializesConcurrentUpdates]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testStatisticsStoreSerializesConcurrentUpdates]' passed (0.023 seconds).
+Test Case '-[MetalErgoCoreTests.StatisticsTests testStatusAndEventFieldsExposeResolvedTuning]' started.
+Test Case '-[MetalErgoCoreTests.StatisticsTests testStatusAndEventFieldsExposeResolvedTuning]' passed (0.023 seconds).
+Test Suite 'StatisticsTests' passed at 2026-09-16 08:00:57.736.
+	 Executed 16 tests, with 0 failures (0 unexpected) in 0.691 (0.695) seconds
+Test Suite 'StratumTests' started at 2026-09-16 08:00:57.736.
+Test Case '-[MetalErgoCoreTests.StratumTests testMiningcoreSubscriptionAndJobLayout]' started.
+Test Case '-[MetalErgoCoreTests.StratumTests testMiningcoreSubscriptionAndJobLayout]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.StratumTests testRejectsMalformedExtranonceAndJob]' started.
+Test Case '-[MetalErgoCoreTests.StratumTests testRejectsMalformedExtranonceAndJob]' passed (0.001 seconds).
+Test Case '-[MetalErgoCoreTests.StratumTests testShareRejectionReportsCodeWithoutEchoingPoolProse]' started.
+Test Case '-[MetalErgoCoreTests.StratumTests testShareRejectionReportsCodeWithoutEchoingPoolProse]' passed (0.000 seconds).
+Test Case '-[MetalErgoCoreTests.StratumTests testTCPAndTLSConnectionsEnableKeepalive]' started.
+Test Case '-[MetalErgoCoreTests.StratumTests testTCPAndTLSConnectionsEnableKeepalive]' passed (0.001 seconds).
+Test Suite 'StratumTests' passed at 2026-09-16 08:00:57.739.
+	 Executed 4 tests, with 0 failures (0 unexpected) in 0.003 (0.003) seconds
+Test Suite 'MetalErgoCoreTests.xctest' passed at 2026-09-16 08:00:57.740.
+	 Executed 70 tests, with 0 failures (0 unexpected) in 1.804 (1.818) seconds
+Test Suite 'All tests' passed at 2026-09-16 08:00:57.740.
+	 Executed 70 tests, with 0 failures (0 unexpected) in 1.804 (1.819) seconds
+2026-09-16 08:00:58.016 xcodebuild[12385:1790484]  DVTAssertions: Warning in IDEFrameworks/IDEFoundation/Execution/LaunchSystem/IDELaunchSession.m:395
+Details:  setRunnablePIDWithDiagnostics:logSection:andCompletionHandler: called without a completion handler - blocking until diagnostics setup completes. Callers should migrate to using a completion handler for better performance.
+Object:   <IDELaunchSession: 0x7c460d5b00>
+Method:   -setRunnablePIDWithDiagnostics:logSection:andCompletionHandler:
+Thread:   <NSThread: 0x7c43499c40>{number = 3, name = (null)}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+Test Suite 'All tests' started at 2026-09-16 08:00:58.148.
+Test Suite 'ErgoMetalCLITests.xctest' started at 2026-09-16 08:00:58.149.
+Test Suite 'ArgumentsTests' started at 2026-09-16 08:00:58.149.
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testDonationDefaultsToZeroAndAcceptsIntegerBounds]' started.
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testDonationDefaultsToZeroAndAcceptsIntegerBounds]' passed (0.001 seconds).
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testDonationRejectsInvalidValuesAndTestnet]' started.
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testDonationRejectsInvalidValuesAndTestnet]' passed (0.001 seconds).
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testDonationRequiresAValue]' started.
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testDonationRequiresAValue]' passed (0.000 seconds).
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testTuningModesProfilesAndOverridesParseExactly]' started.
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testTuningModesProfilesAndOverridesParseExactly]' passed (0.000 seconds).
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testTuningOptionRangesAndEnumsRejectInvalidValues]' started.
+Test Case '-[ErgoMetalCLITests.ArgumentsTests testTuningOptionRangesAndEnumsRejectInvalidValues]' passed (0.000 seconds).
+Test Suite 'ArgumentsTests' passed at 2026-09-16 08:00:58.153.
+	 Executed 5 tests, with 0 failures (0 unexpected) in 0.003 (0.004) seconds
+Test Suite 'MiningCoordinatorTests' started at 2026-09-16 08:00:58.153.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testAuthorizationInvalidatesPendingReconnect]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testAuthorizationInvalidatesPendingReconnect]' passed (1.758 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testAuthorizedDonationJobCancelsTimeout]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testAuthorizedDonationJobCancelsTimeout]' passed (0.113 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testConcurrentDonationFailuresTriggerOneFailback]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testConcurrentDonationFailuresTriggerOneFailback]' passed (0.049 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDisabledDonationNeverConnectsDonationClient]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDisabledDonationNeverConnectsDonationClient]' passed (0.042 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDonationJobWithoutAuthorizationStillTimesOut]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDonationJobWithoutAuthorizationStillTimesOut]' passed (0.075 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDonationSharesAndSearchAreAttributedWithoutChangingScheduling]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDonationSharesAndSearchAreAttributedWithoutChangingScheduling]' passed (0.048 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDonationTimeoutReturnsToUser]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testDonationTimeoutReturnsToUser]' passed (0.079 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testJobChangeDrainsEveryPendingNonceBeforeResettingSearchWindow]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testJobChangeDrainsEveryPendingNonceBeforeResettingSearchWindow]' passed (0.272 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testPoolMessagesRedactCredentialsWithoutRedactingCounters]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testPoolMessagesRedactCredentialsWithoutRedactingCounters]' passed (0.048 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testRecipientRoundTripInvalidatesPendingReconnect]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testRecipientRoundTripInvalidatesPendingReconnect]' passed (1.757 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testReconnectAtSameHeightResumesBuildButInvalidatesOldJob]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testReconnectAtSameHeightResumesBuildButInvalidatesOldJob]' passed (0.086 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testScheduledSwitchInvalidatesOldWorkAndDonationFailureFallsBack]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testScheduledSwitchInvalidatesOldWorkAndDonationFailureFallsBack]' passed (0.046 seconds).
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testStopFinalizesOnlyAfterCompletedSearchIsAccountedFor]' started.
+Test Case '-[ErgoMetalCLITests.MiningCoordinatorTests testStopFinalizesOnlyAfterCompletedSearchIsAccountedFor]' passed (0.046 seconds).
+Test Suite 'MiningCoordinatorTests' passed at 2026-09-16 08:01:02.576.
+	 Executed 13 tests, with 0 failures (0 unexpected) in 4.419 (4.423) seconds
+Test Suite 'SearchStatisticsTests' started at 2026-09-16 08:01:02.576.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testDatasetBoundaryFlushKeepsSeparateWindowsAndExcludesBuildGap]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testDatasetBoundaryFlushKeepsSeparateWindowsAndExcludesBuildGap]' passed (0.044 seconds).
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testDatasetBuildDoesNotRetainPreviousSearchRate]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testDatasetBuildDoesNotRetainPreviousSearchRate]' passed (0.046 seconds).
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testFlushRetainsFrontierForFullyCoveredAndOutOfOrderCompletions]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testFlushRetainsFrontierForFullyCoveredAndOutOfOrderCompletions]' passed (0.024 seconds).
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testOverlappingPartialWindowUsesItsCompleteCommandInterval]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testOverlappingPartialWindowUsesItsCompleteCommandInterval]' passed (0.023 seconds).
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testTimeGapsDoNotBecomeActiveTimeInsideOrBetweenWindows]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testTimeGapsDoNotBecomeActiveTimeInsideOrBetweenWindows]' passed (0.024 seconds).
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testVariableBatchSizesAndShortMeasuredIntervalsAreNotCapped]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testVariableBatchSizesAndShortMeasuredIntervalsAreNotCapped]' passed (0.023 seconds).
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testWindowBoundariesAndEveryTailLengthAtPipelineDepthsOneThroughFour]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testWindowBoundariesAndEveryTailLengthAtPipelineDepthsOneThroughFour]' passed (1.332 seconds).
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testZeroTimeAndInvalidDurationCountNoncesWithoutInventingTime]' started.
+Test Case '-[ErgoMetalCLITests.SearchStatisticsTests testZeroTimeAndInvalidDurationCountNoncesWithoutInventingTime]' passed (0.024 seconds).
+Test Suite 'SearchStatisticsTests' passed at 2026-09-16 08:01:04.118.
+	 Executed 8 tests, with 0 failures (0 unexpected) in 1.540 (1.542) seconds
+Test Suite 'TuningTests' started at 2026-09-16 08:01:04.118.
+Test Case '-[ErgoMetalCLITests.TuningTests testBudgetCancelsBuildWithOneElementChunks]' started.
+Test Case '-[ErgoMetalCLITests.TuningTests testBudgetCancelsBuildWithOneElementChunks]' passed (0.205 seconds).
+Test Suite 'TuningTests' passed at 2026-09-16 08:01:04.323.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.205 (0.205) seconds
+Test Suite 'ErgoMetalCLITests.xctest' passed at 2026-09-16 08:01:04.323.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 6.166 (6.174) seconds
+Test Suite 'All tests' passed at 2026-09-16 08:01:04.323.
+	 Executed 27 tests, with 0 failures (0 unexpected) in 6.166 (6.175) seconds
+2026-09-16 08:01:04.605 xcodebuild[12385:1790433] [MT] IDETestOperationsObserverDebug: 8.870 elapsed -- Testing started completed.
+2026-09-16 08:01:04.605 xcodebuild[12385:1790433] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-09-16 08:01:04.605 xcodebuild[12385:1790433] [MT] IDETestOperationsObserverDebug: 8.870 sec, +8.870 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/build-E/Logs/Test/Test-MetalErgoMiner-2026.09.16_08-00-54-+0200.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

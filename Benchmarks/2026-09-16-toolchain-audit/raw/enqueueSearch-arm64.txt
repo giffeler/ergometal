@@ -1,0 +1,486 @@
+_$s13MetalErgoCore0A15AutolykosSolverC13enqueueSearch7message6target9baseNonce10nonceCount15threadgroupSizeAA0G10SubmissionCSays5UInt8VG_AA7UInt256Vs6UInt64VS2iSgtKF:
+100037754:	sub	sp, sp, #0x160
+100037758:	str	d8, [sp, #0x100]
+10003775c:	str	x28, [sp, #0x108]
+100037760:	stp	x27, x26, [sp, #0x110]
+100037764:	stp	x25, x24, [sp, #0x120]
+100037768:	stp	x23, x22, [sp, #0x130]
+10003776c:	stp	x20, x19, [sp, #0x140]
+100037770:	stp	x29, x30, [sp, #0x150]
+100037774:	add	x29, sp, #0x150
+100037778:	adrp	x8, 166 ; 0x1000dd000
+10003777c:	ldr	x8, [x8, #0x180] ; literal pool symbol address: ___stack_chk_guard
+100037780:	ldr	x8, [x8]
+100037784:	stur	x8, [x29, #-0x60]
+100037788:	ldr	x22, [x0, #0x10]
+10003778c:	cmp	x22, #0x20
+100037790:	b.ne	0x1000377d8
+100037794:	mov	x8, #-0x100000000
+100037798:	mov	x9, #-0xffffffff
+10003779c:	add	x8, x6, x8
+1000377a0:	cmp	x8, x9
+1000377a4:	b.hs	0x100037804
+1000377a8:	mov	x20, x6
+1000377ac:	bl	_$s13MetalErgoCore0A11SolverErrorOACs0E0AAWl
+1000377b0:	mov	x1, x0
+1000377b4:	adrp	x0, 162 ; 0x1000d9000
+1000377b8:	add	x0, x0, #0xe50
+1000377bc:	mov	x2, #0x0
+1000377c0:	mov	w3, #0x0
+1000377c4:	bl	0x100071344 ; symbol stub for: _swift_allocError
+1000377c8:	mov	x19, x0
+1000377cc:	stp	x20, xzr, [x1]
+1000377d0:	mov	w8, #0x4
+1000377d4:	b	0x100037e10
+1000377d8:	bl	_$s13MetalErgoCore14AutolykosErrorOACs0E0AAWl
+1000377dc:	mov	x1, x0
+1000377e0:	adrp	x0, 162 ; 0x1000d9000
+1000377e4:	add	x0, x0, #0x428
+1000377e8:	mov	x2, #0x0
+1000377ec:	mov	w3, #0x0
+1000377f0:	bl	0x100071344 ; symbol stub for: _swift_allocError
+1000377f4:	mov	x19, x0
+1000377f8:	str	x22, [x1]
+1000377fc:	strb	wzr, [x1, #0x8]
+100037800:	b	0x100037e14
+100037804:	neg	x8, x6
+100037808:	cmp	x5, x8
+10003780c:	b.ls	0x100037844
+100037810:	mov	x22, x5
+100037814:	mov	x20, x6
+100037818:	bl	_$s13MetalErgoCore0A11SolverErrorOACs0E0AAWl
+10003781c:	mov	x1, x0
+100037820:	adrp	x0, 162 ; 0x1000d9000
+100037824:	add	x0, x0, #0xe50
+100037828:	mov	x2, #0x0
+10003782c:	mov	w3, #0x0
+100037830:	bl	0x100071344 ; symbol stub for: _swift_allocError
+100037834:	mov	x19, x0
+100037838:	stp	x22, x20, [x1]
+10003783c:	mov	w8, #0x5
+100037840:	b	0x100037e10
+100037844:	ldrb	w9, [x29, #0x10]
+100037848:	and	w8, w9, #0xff
+10003784c:	cmp	w8, #0x1
+100037850:	str	x7, [sp, #0x40]
+100037854:	ccmp	x7, #0x0, #0x0, ne
+100037858:	b.le	0x100037994
+10003785c:	mov	x19, x21
+100037860:	str	w9, [sp, #0x4]
+100037864:	stp	x6, x5, [sp, #0x10]
+100037868:	mov	x28, x0
+10003786c:	mov	x27, x1
+100037870:	mov	x26, x2
+100037874:	mov	x25, x3
+100037878:	mov	x24, x4
+10003787c:	ldr	x8, [x20]
+100037880:	str	x8, [sp, #0x8]
+100037884:	ldr	x22, [x20, #0x110]
+100037888:	mov	x0, x22
+10003788c:	bl	_objc_msgSend$lock
+100037890:	ldr	x23, [x20, #0x138]
+100037894:	mov	x0, x23
+100037898:	bl	0x100071518 ; symbol stub for: _swift_retain
+10003789c:	mov	x0, x22
+1000378a0:	bl	_objc_msgSend$unlock
+1000378a4:	str	x23, [sp, #0x30]
+1000378a8:	cbz	x23, 0x100037de0
+1000378ac:	mov	x0, x28
+1000378b0:	bl	0x1000713b0 ; symbol stub for: _swift_bridgeObjectRetain
+1000378b4:	bl	_$s13MetalErgoCore7UInt256V9bigEndianACSays5UInt8VG_tcfCTf4nd_n
+1000378b8:	stp	x0, x1, [x29, #-0x80]
+1000378bc:	stp	x2, x3, [x29, #-0x70]
+1000378c0:	stp	x27, x26, [x29, #-0xa0]
+1000378c4:	stp	x25, x24, [x29, #-0x90]
+1000378c8:	ldr	x22, [x20, #0xe8]
+1000378cc:	mov	x0, x22
+1000378d0:	bl	_objc_msgSend$lock
+1000378d4:	str	x20, [sp, #0x28]
+1000378d8:	ldr	x25, [x20, #0xe0]
+1000378dc:	mov	x20, x22
+1000378e0:	and	x26, x25, #0xffffffffffffff8
+1000378e4:	cmn	x25, #0x1
+1000378e8:	csel	x8, x26, x25, gt
+1000378ec:	str	x8, [sp, #0x20]
+1000378f0:	and	x27, x25, #0xc000000000000001
+1000378f4:	lsr	x8, x25, #62
+1000378f8:	str	x8, [sp, #0x38]
+1000378fc:	b	0x100037908
+100037900:	mov	x0, x20
+100037904:	bl	_objc_msgSend$wait
+100037908:	ldr	x8, [sp, #0x38]
+10003790c:	cbnz	x8, 0x10003791c
+100037910:	ldr	x28, [x26, #0x10]
+100037914:	cbnz	x28, 0x10003792c
+100037918:	b	0x100037900
+10003791c:	ldr	x0, [sp, #0x20]
+100037920:	bl	0x100070f18 ; symbol stub for: _$ss18_CocoaArrayWrapperV8endIndexSivg
+100037924:	mov	x28, x0
+100037928:	cbz	x28, 0x100037900
+10003792c:	mov	x22, #0x0
+100037930:	cbnz	x27, 0x100037978
+100037934:	ldr	x8, [x26, #0x10]
+100037938:	cmp	x22, x8
+10003793c:	b.hs	0x100037ed8
+100037940:	add	x8, x25, x22, lsl #3
+100037944:	ldr	x24, [x8, #0x20]
+100037948:	mov	x0, x24
+10003794c:	bl	0x100071518 ; symbol stub for: _swift_retain
+100037950:	adds	x23, x22, #0x1
+100037954:	b.vs	0x100037990
+100037958:	ldrb	w8, [x24, #0x20]
+10003795c:	tbz	w8, #0x0, 0x1000379c4
+100037960:	mov	x0, x24
+100037964:	bl	0x100071500 ; symbol stub for: _swift_release
+100037968:	add	x22, x22, #0x1
+10003796c:	cmp	x23, x28
+100037970:	b.ne	0x100037930
+100037974:	b	0x100037900
+100037978:	mov	x0, x22
+10003797c:	mov	x1, x25
+100037980:	bl	0x100070e94 ; symbol stub for: _$ss12_ArrayBufferV19_getElementSlowPathyyXlSiFyXl_Ts5
+100037984:	mov	x24, x0
+100037988:	adds	x23, x22, #0x1
+10003798c:	b.vc	0x100037958
+100037990:	brk	#0x1
+100037994:	bl	_$s13MetalErgoCore0A11SolverErrorOACs0E0AAWl
+100037998:	mov	x1, x0
+10003799c:	adrp	x0, 162 ; 0x1000d9000
+1000379a0:	add	x0, x0, #0xe50
+1000379a4:	mov	x2, #0x0
+1000379a8:	mov	w3, #0x0
+1000379ac:	bl	0x100071344 ; symbol stub for: _swift_allocError
+1000379b0:	mov	x19, x0
+1000379b4:	ldr	x8, [sp, #0x40]
+1000379b8:	stp	x8, xzr, [x1]
+1000379bc:	mov	w8, #0x6
+1000379c0:	b	0x100037e10
+1000379c4:	mov	w8, #0x1
+1000379c8:	strb	w8, [x24, #0x20]
+1000379cc:	mov	x27, x20
+1000379d0:	mov	x0, x20
+1000379d4:	bl	_objc_msgSend$unlock
+1000379d8:	ldr	x20, [sp, #0x28]
+1000379dc:	ldrb	w8, [x20, #0xa2]
+1000379e0:	cbnz	w8, 0x100037a28
+1000379e4:	ldr	x25, [x20, #0x108]
+1000379e8:	ldr	x0, [x25, #0x10]
+1000379ec:	bl	_objc_msgSend$lock
+1000379f0:	ldp	x22, x26, [x25, #0x10]
+1000379f4:	add	x8, x26, #0x1
+1000379f8:	str	x8, [x25, #0x18]
+1000379fc:	ldr	x8, [x25, #0x20]
+100037a00:	cmp	x26, x8
+100037a04:	b.eq	0x100037a20
+100037a08:	mov	x0, x22
+100037a0c:	bl	_objc_msgSend$wait
+100037a10:	ldr	x8, [x25, #0x20]
+100037a14:	cmp	x26, x8
+100037a18:	b.ne	0x100037a08
+100037a1c:	ldr	x22, [x25, #0x10]
+100037a20:	mov	x0, x22
+100037a24:	bl	_objc_msgSend$unlock
+100037a28:	ldr	x0, [x20, #0xb8]
+100037a2c:	bl	_objc_msgSend$commandBufferWithUnretainedReferences
+100037a30:	mov	x29, x29
+100037a34:	bl	0x100071314 ; symbol stub for: _objc_retainAutoreleasedReturnValue
+100037a38:	cbz	x0, 0x100037e68
+100037a3c:	mov	x23, x0
+100037a40:	bl	_objc_msgSend$computeCommandEncoder
+100037a44:	mov	x29, x29
+100037a48:	bl	0x100071314 ; symbol stub for: _objc_retainAutoreleasedReturnValue
+100037a4c:	cbz	x0, 0x100037e60
+100037a50:	mov	x26, x0
+100037a54:	ldrb	w8, [x20, #0xa3]
+100037a58:	adrp	x9, 61 ; 0x100074000
+100037a5c:	add	x9, x9, #0x9a0 ; literal pool for: "gatherOnlyNonces"
+100037a60:	sub	x9, x9, #0x20
+100037a64:	orr	x9, x9, #0x8000000000000000
+100037a68:	cmp	w8, #0x1
+100037a6c:	mov	x8, #0x6573
+100037a70:	movk	x8, #0x7261, lsl #16
+100037a74:	movk	x8, #0x6863, lsl #32
+100037a78:	movk	x8, #0x6f4e, lsl #48
+100037a7c:	mov	x10, #0x10
+100037a80:	movk	x10, #0xd000, lsl #48
+100037a84:	csel	x22, x10, x8, eq
+100037a88:	mov	x8, #0x636e
+100037a8c:	movk	x8, #0x7365, lsl #16
+100037a90:	movk	x8, #0xec00, lsl #48
+100037a94:	csel	x27, x9, x8, eq
+100037a98:	mov	x0, x22
+100037a9c:	mov	x1, x27
+100037aa0:	bl	0x100070a8c ; symbol stub for: _$sSS10FoundationE19_bridgeToObjectiveCSo8NSStringCyF
+100037aa4:	mov	x28, x0
+100037aa8:	mov	x0, x27
+100037aac:	bl	0x100071398 ; symbol stub for: _swift_bridgeObjectRelease
+100037ab0:	mov	x0, x23
+100037ab4:	mov	x2, x28
+100037ab8:	bl	"_objc_msgSend$setLabel:"
+100037abc:	mov	x0, x28
+100037ac0:	bl	0x1000712fc ; symbol stub for: _objc_release
+100037ac4:	mov	x0, x22
+100037ac8:	mov	x1, x27
+100037acc:	bl	0x100070a8c ; symbol stub for: _$sSS10FoundationE19_bridgeToObjectiveCSo8NSStringCyF
+100037ad0:	mov	x22, x0
+100037ad4:	mov	x0, x27
+100037ad8:	bl	0x100071398 ; symbol stub for: _swift_bridgeObjectRelease
+100037adc:	mov	x0, x26
+100037ae0:	mov	x2, x22
+100037ae4:	bl	"_objc_msgSend$setLabel:"
+100037ae8:	mov	x0, x22
+100037aec:	bl	0x1000712fc ; symbol stub for: _objc_release
+100037af0:	ldr	x22, [x24, #0x18]
+100037af4:	mov	x0, x22
+100037af8:	bl	0x100071590 ; symbol stub for: _swift_unknownObjectRetain
+100037afc:	bl	_objc_msgSend$contents
+100037b00:	mov	x21, x0
+100037b04:	mov	x0, x22
+100037b08:	bl	0x1000712e4 ; symbol stub for: _objc_autorelease
+100037b0c:	str	wzr, [x21]
+100037b10:	ldr	x8, [sp, #0x18]
+100037b14:	str	x8, [sp, #0xa8]
+100037b18:	ldr	x8, [sp, #0x30]
+100037b1c:	ldr	x8, [x8, #0x18]
+100037b20:	tbnz	x8, #0x3f, 0x100037edc
+100037b24:	str	x23, [sp, #0x38]
+100037b28:	lsr	x9, x8, #32
+100037b2c:	cbnz	x9, 0x100037ee0
+100037b30:	ldr	w9, [sp, #0x4]
+100037b34:	and	w22, w9, #0xff
+100037b38:	str	w8, [sp, #0xa4]
+100037b3c:	ldr	x25, [sp, #0x30]
+100037b40:	ldr	x8, [x25, #0x28]
+100037b44:	str	x8, [sp, #0x90]
+100037b48:	ldr	d0, [x25, #0x30]
+100037b4c:	str	d0, [sp, #0x98]
+100037b50:	ldr	x8, [sp, #0x28]
+100037b54:	ldr	x27, [x8, #0xd0]
+100037b58:	mov	x0, x26
+100037b5c:	mov	x2, x27
+100037b60:	bl	"_objc_msgSend$setComputePipelineState:"
+100037b64:	ldr	x2, [x25, #0x38]
+100037b68:	mov	x0, x26
+100037b6c:	mov	x3, #0x0
+100037b70:	mov	x4, #0x0
+100037b74:	bl	"_objc_msgSend$setBuffer:offset:atIndex:"
+100037b78:	mov	w28, #0x1
+100037b7c:	sub	x2, x29, #0x80
+100037b80:	mov	x0, x26
+100037b84:	mov	w3, #0x20
+100037b88:	mov	w4, #0x1
+100037b8c:	bl	"_objc_msgSend$setBytes:length:atIndex:"
+100037b90:	sub	x2, x29, #0xa0
+100037b94:	mov	x0, x26
+100037b98:	mov	w3, #0x20
+100037b9c:	mov	w4, #0x2
+100037ba0:	bl	"_objc_msgSend$setBytes:length:atIndex:"
+100037ba4:	ldr	x2, [x24, #0x10]
+100037ba8:	mov	x0, x26
+100037bac:	mov	x3, #0x0
+100037bb0:	mov	w4, #0x3
+100037bb4:	bl	"_objc_msgSend$setBuffer:offset:atIndex:"
+100037bb8:	ldr	x2, [x24, #0x18]
+100037bbc:	mov	x0, x26
+100037bc0:	mov	x3, #0x0
+100037bc4:	mov	w4, #0x4
+100037bc8:	bl	"_objc_msgSend$setBuffer:offset:atIndex:"
+100037bcc:	add	x2, sp, #0xa8
+100037bd0:	mov	x0, x26
+100037bd4:	mov	w3, #0x8
+100037bd8:	mov	w4, #0x5
+100037bdc:	bl	"_objc_msgSend$setBytes:length:atIndex:"
+100037be0:	add	x2, sp, #0xa4
+100037be4:	mov	x0, x26
+100037be8:	mov	w3, #0x4
+100037bec:	mov	w4, #0x6
+100037bf0:	bl	"_objc_msgSend$setBytes:length:atIndex:"
+100037bf4:	add	x2, sp, #0x90
+100037bf8:	mov	x0, x26
+100037bfc:	mov	w3, #0x10
+100037c00:	mov	w4, #0x7
+100037c04:	bl	"_objc_msgSend$setBytes:length:atIndex:"
+100037c08:	cmp	w22, #0x1
+100037c0c:	mov	w9, #0x80
+100037c10:	ldr	x8, [sp, #0x40]
+100037c14:	csel	x22, x8, x9, ne
+100037c18:	mov	x0, x27
+100037c1c:	bl	_objc_msgSend$maxTotalThreadsPerThreadgroup
+100037c20:	dup.2d	v0, x28
+100037c24:	ldr	x20, [sp, #0x10]
+100037c28:	str	x20, [sp, #0x48]
+100037c2c:	cmp	x0, x22
+100037c30:	csel	x8, x0, x22, lt
+100037c34:	stur	q0, [sp, #0x50]
+100037c38:	str	x8, [sp, #0x78]
+100037c3c:	stur	q0, [sp, #0x80]
+100037c40:	add	x2, sp, #0x48
+100037c44:	add	x3, sp, #0x78
+100037c48:	mov	x0, x26
+100037c4c:	bl	"_objc_msgSend$dispatchThreads:threadsPerThreadgroup:"
+100037c50:	mov	x0, x26
+100037c54:	bl	_objc_msgSend$endEncoding
+100037c58:	bl	_$s13MetalErgoCore16SearchSubmissionCMa
+100037c5c:	mov	w1, #0x61
+100037c60:	mov	w2, #0x7
+100037c64:	bl	0x100071350 ; symbol stub for: _swift_allocObject
+100037c68:	mov	x28, x0
+100037c6c:	adrp	x8, 166 ; 0x1000dd000
+100037c70:	ldr	x0, [x8, #0xc0] ; literal pool symbol address: _OBJC_CLASS_$_NSCondition
+100037c74:	bl	0x1000712d8 ; symbol stub for: _objc_allocWithZone
+100037c78:	bl	_objc_msgSend$init
+100037c7c:	stp	x20, x0, [x28, #0x18]
+100037c80:	movi.2d	v0, #0000000000000000
+100037c84:	stur	q0, [x28, #0x28]
+100037c88:	stur	q0, [x28, #0x38]
+100037c8c:	stur	q0, [x28, #0x48]
+100037c90:	str	xzr, [x28, #0x58]
+100037c94:	mov	w8, #0xff
+100037c98:	strb	w8, [x28, #0x60]
+100037c9c:	ldr	x23, [sp, #0x18]
+100037ca0:	str	x23, [x28, #0x10]
+100037ca4:	adrp	x8, 166 ; 0x1000dd000
+100037ca8:	ldr	x0, [x8, #0xf8] ; literal pool symbol address: _OBJC_CLASS_$_NSProcessInfo
+100037cac:	bl	0x1000712f0 ; symbol stub for: _objc_opt_self
+100037cb0:	bl	_objc_msgSend$processInfo
+100037cb4:	mov	x29, x29
+100037cb8:	bl	0x100071314 ; symbol stub for: _objc_retainAutoreleasedReturnValue
+100037cbc:	mov	x22, x0
+100037cc0:	bl	_objc_msgSend$systemUptime
+100037cc4:	mov.16b	v8, v0
+100037cc8:	mov	x0, x22
+100037ccc:	bl	0x1000712fc ; symbol stub for: _objc_release
+100037cd0:	adrp	x0, 162 ; 0x1000d9000
+100037cd4:	add	x0, x0, #0xd18
+100037cd8:	mov	w1, #0x18
+100037cdc:	mov	w2, #0x7
+100037ce0:	bl	0x100071350 ; symbol stub for: _swift_allocObject
+100037ce4:	mov	x22, x0
+100037ce8:	add	x0, x0, #0x10
+100037cec:	ldr	x20, [sp, #0x28]
+100037cf0:	mov	x1, x20
+100037cf4:	bl	0x1000715b4 ; symbol stub for: _swift_weakInit
+100037cf8:	adrp	x0, 162 ; 0x1000d9000
+100037cfc:	add	x0, x0, #0xd90
+100037d00:	mov	w1, #0x58
+100037d04:	mov	w2, #0x7
+100037d08:	bl	0x100071350 ; symbol stub for: _swift_allocObject
+100037d0c:	stp	x25, x27, [x0, #0x10]
+100037d10:	stp	x24, x23, [x0, #0x20]
+100037d14:	ldp	x8, x9, [sp, #0x8]
+100037d18:	str	x9, [x0, #0x30]
+100037d1c:	str	d8, [x0, #0x38]
+100037d20:	stp	x22, x28, [x0, #0x40]
+100037d24:	str	x8, [x0, #0x50]
+100037d28:	adrp	x8, 3 ; 0x10003a000
+100037d2c:	add	x8, x8, #0x690
+100037d30:	stp	x8, x0, [sp, #0x68]
+100037d34:	adrp	x8, 166 ; 0x1000dd000
+100037d38:	ldr	x8, [x8, #0x168] ; literal pool symbol address: __NSConcreteStackBlock
+100037d3c:	str	x8, [sp, #0x48]
+100037d40:	adrp	x8, 66 ; 0x100079000
+100037d44:	ldr	d0, [x8, #0x610]
+100037d48:	str	d0, [sp, #0x50]
+100037d4c:	adrp	x8, 1 ; 0x100038000
+100037d50:	add	x8, x8, #0x344
+100037d54:	adrp	x9, 162 ; 0x1000d9000
+100037d58:	add	x9, x9, #0xda8
+100037d5c:	stp	x8, x9, [sp, #0x58]
+100037d60:	add	x0, sp, #0x48
+100037d64:	bl	0x1000711c4 ; symbol stub for: __Block_copy
+100037d68:	mov	x22, x0
+100037d6c:	ldr	x21, [sp, #0x70]
+100037d70:	mov	x0, x25
+100037d74:	bl	0x100071518 ; symbol stub for: _swift_retain
+100037d78:	mov	x0, x27
+100037d7c:	bl	0x100071590 ; symbol stub for: _swift_unknownObjectRetain
+100037d80:	mov	x0, x24
+100037d84:	bl	0x100071518 ; symbol stub for: _swift_retain
+100037d88:	mov	x0, x28
+100037d8c:	bl	0x100071518 ; symbol stub for: _swift_retain
+100037d90:	mov	x0, x21
+100037d94:	bl	0x100071500 ; symbol stub for: _swift_release
+100037d98:	ldr	x23, [sp, #0x38]
+100037d9c:	mov	x0, x23
+100037da0:	mov	x2, x22
+100037da4:	bl	"_objc_msgSend$addCompletedHandler:"
+100037da8:	mov	x0, x22
+100037dac:	bl	0x1000711d0 ; symbol stub for: __Block_release
+100037db0:	mov	x0, x23
+100037db4:	bl	_objc_msgSend$commit
+100037db8:	bl	_$s13MetalErgoCore0A15AutolykosSolverC19leaveSerializedGate33_8F75D240DC3B05E367E32180FD769E16LLyyF
+100037dbc:	mov	x0, x23
+100037dc0:	bl	0x100071578 ; symbol stub for: _swift_unknownObjectRelease
+100037dc4:	mov	x0, x26
+100037dc8:	bl	0x100071578 ; symbol stub for: _swift_unknownObjectRelease
+100037dcc:	mov	x0, x24
+100037dd0:	bl	0x100071500 ; symbol stub for: _swift_release
+100037dd4:	mov	x0, x25
+100037dd8:	bl	0x100071500 ; symbol stub for: _swift_release
+100037ddc:	b	0x100037e1c
+100037de0:	bl	_$s13MetalErgoCore0A11SolverErrorOACs0E0AAWl
+100037de4:	mov	x1, x0
+100037de8:	adrp	x0, 162 ; 0x1000d9000
+100037dec:	add	x0, x0, #0xe50
+100037df0:	mov	x2, #0x0
+100037df4:	mov	w3, #0x0
+100037df8:	bl	0x100071344 ; symbol stub for: _swift_allocError
+100037dfc:	mov	x19, x0
+100037e00:	adrp	x8, 66 ; 0x100079000
+100037e04:	ldr	q0, [x8, #0x580]
+100037e08:	str	q0, [x1]
+100037e0c:	mov	w8, #0xa
+100037e10:	strb	w8, [x1, #0x10]
+100037e14:	mov	x21, x0
+100037e18:	bl	0x1000715cc ; symbol stub for: _swift_willThrow
+100037e1c:	ldur	x8, [x29, #-0x60]
+100037e20:	adrp	x9, 166 ; 0x1000dd000
+100037e24:	ldr	x9, [x9, #0x180] ; literal pool symbol address: ___stack_chk_guard
+100037e28:	ldr	x9, [x9]
+100037e2c:	cmp	x9, x8
+100037e30:	b.ne	0x100037ee4
+100037e34:	mov	x0, x28
+100037e38:	mov	x21, x19
+100037e3c:	ldp	x29, x30, [sp, #0x150]
+100037e40:	ldp	x20, x19, [sp, #0x140]
+100037e44:	ldp	x23, x22, [sp, #0x130]
+100037e48:	ldp	x25, x24, [sp, #0x120]
+100037e4c:	ldp	x27, x26, [sp, #0x110]
+100037e50:	ldr	x28, [sp, #0x108]
+100037e54:	ldr	d8, [sp, #0x100]
+100037e58:	add	sp, sp, #0x160
+100037e5c:	ret
+100037e60:	mov	x0, x23
+100037e64:	bl	0x100071578 ; symbol stub for: _swift_unknownObjectRelease
+100037e68:	bl	_$s13MetalErgoCore0A15AutolykosSolverC19leaveSerializedGate33_8F75D240DC3B05E367E32180FD769E16LLyyF
+100037e6c:	mov	x0, x27
+100037e70:	bl	_objc_msgSend$lock
+100037e74:	strb	wzr, [x24, #0x20]
+100037e78:	mov	x0, x27
+100037e7c:	bl	_objc_msgSend$signal
+100037e80:	mov	x0, x27
+100037e84:	bl	_objc_msgSend$unlock
+100037e88:	bl	_$s13MetalErgoCore0A11SolverErrorOACs0E0AAWl
+100037e8c:	mov	x1, x0
+100037e90:	adrp	x0, 162 ; 0x1000d9000
+100037e94:	add	x0, x0, #0xe50
+100037e98:	mov	x2, #0x0
+100037e9c:	mov	w3, #0x0
+100037ea0:	bl	0x100071344 ; symbol stub for: _swift_allocError
+100037ea4:	mov	x19, x0
+100037ea8:	adrp	x8, 66 ; 0x100079000
+100037eac:	ldr	q0, [x8, #0x580]
+100037eb0:	str	q0, [x1]
+100037eb4:	mov	w8, #0xa
+100037eb8:	strb	w8, [x1, #0x10]
+100037ebc:	mov	x21, x0
+100037ec0:	bl	0x1000715cc ; symbol stub for: _swift_willThrow
+100037ec4:	mov	x0, x24
+100037ec8:	bl	0x100071500 ; symbol stub for: _swift_release
+100037ecc:	ldr	x0, [sp, #0x30]
+100037ed0:	bl	0x100071500 ; symbol stub for: _swift_release
+100037ed4:	b	0x100037e1c
+100037ed8:	brk	#0x1
+100037edc:	brk	#0x1
+100037ee0:	brk	#0x1
+100037ee4:	bl	0x1000711dc ; symbol stub for: ___stack_chk_fail

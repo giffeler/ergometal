@@ -1,0 +1,87 @@
+diff --git a/Sources/MetalErgoCore/Autolykos.swift b/Sources/MetalErgoCore/Autolykos.swift
+index 6856c17..9f9e965 100644
+--- a/Sources/MetalErgoCore/Autolykos.swift
++++ b/Sources/MetalErgoCore/Autolykos.swift
+@@ -60,7 +60,8 @@ public enum AutolykosV2 {
+         guard let encodedHeight = UInt32(exactly: height) else {
+             throw AutolykosError.invalidHeight(height)
+         }
+-        var digest = Blake2b256.hash(be32(encodedIndex) + be32(encodedHeight) + constantM)
++        let prefix = be32(encodedIndex) + be32(encodedHeight)
++        var digest = Blake2b256.hash(prefix: prefix.span, suffix: constantM.span)
+         digest[0] = 0 // consensus uses drop(1), represented as a zero-prefixed UInt256
+         return UInt256(bigEndian: digest)
+     }
+diff --git a/Sources/MetalErgoCore/Blake2b.swift b/Sources/MetalErgoCore/Blake2b.swift
+index e91c05c..a23df46 100644
+--- a/Sources/MetalErgoCore/Blake2b.swift
++++ b/Sources/MetalErgoCore/Blake2b.swift
+@@ -90,6 +90,38 @@ public enum Blake2b256 {
+ 
+         return (0..<32).map { UInt8(truncatingIfNeeded: h[$0 / 8] >> (($0 % 8) * 8)) }
+     }
++
++    /// Hash two borrowed regions without allocating their concatenation.
++    /// Only a block crossing the region boundary needs a temporary copy.
++    static func hash(prefix: Span<UInt8>, suffix: Span<UInt8>) -> [UInt8] {
++        let count = prefix.count + suffix.count
++        var h = iv
++        h[0] ^= 0x0101_0020
++        if count == 0 {
++            compress(&h, block: prefix, count: 0, final: true)
++        } else {
++            var offset = 0
++            while offset < count {
++                let end = offset + min(128, count - offset)
++                if end <= prefix.count {
++                    compress(&h, block: prefix.extracting(offset..<end),
++                             count: UInt64(end), final: end == count)
++                } else if offset >= prefix.count {
++                    compress(&h, block: suffix.extracting((offset - prefix.count)..<(end - prefix.count)),
++                             count: UInt64(end), final: end == count)
++                } else {
++                    var block = InlineArray<128, UInt8>(repeating: 0)
++                    for i in offset..<end {
++                        block[i - offset] = i < prefix.count ? prefix[i] : suffix[i - prefix.count]
++                    }
++                    compress(&h, block: block.span.extracting(0..<(end - offset)),
++                             count: UInt64(end), final: end == count)
++                }
++                offset = end
++            }
++        }
++        return (0..<32).map { UInt8(truncatingIfNeeded: h[$0 / 8] >> (($0 % 8) * 8)) }
++    }
+ }
+ 
+ public extension Array where Element == UInt8 {
+diff --git a/Tests/MetalErgoCoreTests/ConsensusTests.swift b/Tests/MetalErgoCoreTests/ConsensusTests.swift
+index dd9065b..a9c1c55 100644
+--- a/Tests/MetalErgoCoreTests/ConsensusTests.swift
++++ b/Tests/MetalErgoCoreTests/ConsensusTests.swift
+@@ -2,6 +2,25 @@ import XCTest
+ @testable import MetalErgoCore
+ 
+ final class ConsensusTests: XCTestCase {
++    func testSegmentedBlake2bAtEveryBoundary() {
++        for count in [0, 1, 7, 8, 127, 128, 129, 255, 256, 257, 8_200] {
++            let input = (0..<count).map { UInt8(truncatingIfNeeded: $0) }
++            let expected = Blake2b256.hash(input)
++            let splits = Set([0, count / 2, count] + [1, 7, 8, 120, 127, 128, 129, 256].filter { $0 <= count })
++            for split in splits {
++                XCTAssertEqual(Blake2b256.hash(prefix: input.span.extracting(0..<split),
++                                              suffix: input.span.extracting(split..<count)), expected,
++                               "length=\(count), split=\(split)")
++                // Separate storage makes suffix word reads physically unaligned
++                // for splits such as 1 and 7, unlike two views of one array.
++                let prefix = Array(input.prefix(split))
++                let suffix = Array(input.dropFirst(split))
++                XCTAssertEqual(Blake2b256.hash(prefix: prefix.span, suffix: suffix.span), expected,
++                               "separate buffers: length=\(count), split=\(split)")
++            }
++        }
++    }
++
+     func testBlake2b256Vectors() {
+         XCTAssertEqual(Blake2b256.hash([]).hex,
+             "0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8")

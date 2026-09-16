@@ -1,0 +1,61 @@
+[
+  {
+    "variant": "C",
+    "independent_vectors": 307,
+    "layout": "layout,32,32,4",
+    "command": [
+      "xcrun",
+      "swiftc",
+      "-swift-version",
+      "6",
+      "-target",
+      "arm64-apple-macos26.5",
+      "-O",
+      "-whole-module-optimization",
+      "/Users/denis/Developer/ergometal/Sources/MetalErgoCore/Blake2b.swift",
+      "Benchmarks/2026-09-16-toolchain-audit/correctness-probe.swift",
+      "-o",
+      "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/correctness-C"
+    ]
+  },
+  {
+    "variant": "E",
+    "independent_vectors": 307,
+    "layout": "layout,32,32,4",
+    "command": [
+      "xcrun",
+      "swiftc",
+      "-swift-version",
+      "6",
+      "-target",
+      "arm64-apple-macos26.5",
+      "-O",
+      "-whole-module-optimization",
+      "-D",
+      "SEGMENTED",
+      "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/experiment/Sources/MetalErgoCore/Blake2b.swift",
+      "Benchmarks/2026-09-16-toolchain-audit/correctness-probe.swift",
+      "-o",
+      "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/correctness-E"
+    ]
+  },
+  {
+    "variant": "F",
+    "independent_vectors": 307,
+    "layout": "layout,32,32,4",
+    "command": [
+      "xcrun",
+      "swiftc",
+      "-swift-version",
+      "6",
+      "-target",
+      "arm64-apple-macos27.0",
+      "-O",
+      "-whole-module-optimization",
+      "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/iterable/Blake2b.swift",
+      "Benchmarks/2026-09-16-toolchain-audit/correctness-probe.swift",
+      "-o",
+      "/Users/denis/Developer/ergometal/DerivedDataToolchainAudit20260916/artifacts/correctness-F"
+    ]
+  }
+]

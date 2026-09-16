@@ -1,0 +1,12 @@
+START 1 A temperature=43.09
+END 1 A active=14.58505 effective=11.91919 build=32.80291675 peak=66.03421020507812
+Traceback (most recent call last):
+  File "/Users/denis/Developer/ergometal/Benchmarks/2026-09-16-toolchain-audit/campaign.py", line 203, in <module>
+    for index, label in enumerate(args.sequence.split(','), 1): run(args, label, index)
+                                                                ~~~^^^^^^^^^^^^^^^^^^^^
+  File "/Users/denis/Developer/ergometal/Benchmarks/2026-09-16-toolchain-audit/campaign.py", line 111, in run
+    initial_temp = gate(binary, args.max_temperature, stem.with_suffix('.gate.ndjson'))
+  File "/Users/denis/Developer/ergometal/Benchmarks/2026-09-16-toolchain-audit/campaign.py", line 103, in gate
+    time.sleep(5)
+    ~~~~~~~~~~^^^
+KeyboardInterrupt

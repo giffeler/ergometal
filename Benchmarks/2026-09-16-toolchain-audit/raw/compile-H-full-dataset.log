@@ -1,0 +1,11 @@
+/Users/denis/Developer/ergometal/Benchmarks/2026-09-16-toolchain-audit/full-dataset-correctness.swift:5:1: error: 'main' attribute cannot be used in a module that contains top-level code
+ 1 | import Foundation
+   | |- note: top-level code defined in this source file
+   | `- note: pass '-parse-as-library' to compiler invocation if this is intentional
+ 2 | import MetalErgoCore
+ 3 | 
+ 4 | /// Standalone correctness check; run separately from throughput measurements.
+ 5 | @main enum FullDatasetCorrectness {
+   | `- error: 'main' attribute cannot be used in a module that contains top-level code
+ 6 |     static func main() throws {
+ 7 |         let height = 1_873_775

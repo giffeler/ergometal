@@ -1,0 +1,411 @@
+{
+  "all_checksums_match": true,
+  "checksums": {
+    "blake2b-32": "34008064",
+    "blake2b-128": "33209344",
+    "blake2b-8200": "1039712",
+    "autolykos-hit": "31350"
+  },
+  "measurements": [
+    {
+      "pair": 0,
+      "variant": "cpu-B",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.08351799999945797,
+      "minimum_seconds": 0.08311999999568798,
+      "maximum_seconds": 0.08560291666071862,
+      "stdev_seconds": 0.000942084613518302
+    },
+    {
+      "pair": 0,
+      "variant": "cpu-B",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.11205475000315346,
+      "minimum_seconds": 0.11150975000055041,
+      "maximum_seconds": 0.11275941666099243,
+      "stdev_seconds": 0.00047781542941499226
+    },
+    {
+      "pair": 0,
+      "variant": "cpu-B",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.1897949583362788,
+      "minimum_seconds": 0.1885701666615205,
+      "maximum_seconds": 0.19141491666960064,
+      "stdev_seconds": 0.0010221970616776817
+    },
+    {
+      "pair": 0,
+      "variant": "cpu-B",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.19530847917485517,
+      "minimum_seconds": 0.19337662500038277,
+      "maximum_seconds": 0.19798420832375996,
+      "stdev_seconds": 0.0017114326278924467
+    },
+    {
+      "pair": 0,
+      "variant": "cpu-C",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04838587500125868,
+      "minimum_seconds": 0.0483035833312897,
+      "maximum_seconds": 0.04898595833219588,
+      "stdev_seconds": 0.00026702277636860255
+    },
+    {
+      "pair": 0,
+      "variant": "cpu-C",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.04950827083666809,
+      "minimum_seconds": 0.049248291659750976,
+      "maximum_seconds": 0.0501759166654665,
+      "stdev_seconds": 0.00031650424143210044
+    },
+    {
+      "pair": 0,
+      "variant": "cpu-C",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.05255008333915612,
+      "minimum_seconds": 0.05220570834353566,
+      "maximum_seconds": 0.053016791673144326,
+      "stdev_seconds": 0.00031140207884134866
+    },
+    {
+      "pair": 0,
+      "variant": "cpu-C",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.0564391666703159,
+      "minimum_seconds": 0.055969624998397194,
+      "maximum_seconds": 0.05711979167244863,
+      "stdev_seconds": 0.0004822017276426073
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-C",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04846216666919645,
+      "minimum_seconds": 0.04803279165935237,
+      "maximum_seconds": 0.0503268750035204,
+      "stdev_seconds": 0.0008224833088197333
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-C",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.04954083332995651,
+      "minimum_seconds": 0.04930604166293051,
+      "maximum_seconds": 0.05130750000535045,
+      "stdev_seconds": 0.0007543384932470182
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-C",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.052493562499876134,
+      "minimum_seconds": 0.052361624999321066,
+      "maximum_seconds": 0.05268745833018329,
+      "stdev_seconds": 0.00012336074587329974
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-C",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.05617410416743951,
+      "minimum_seconds": 0.05611174998921342,
+      "maximum_seconds": 0.05661500000860542,
+      "stdev_seconds": 0.000225343885042968
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-E-segmented",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04839062500104774,
+      "minimum_seconds": 0.04820966666738968,
+      "maximum_seconds": 0.048621041656588204,
+      "stdev_seconds": 0.00016645541369655022
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-E-segmented",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.04958464583614841,
+      "minimum_seconds": 0.04932066667242907,
+      "maximum_seconds": 0.04963708332797978,
+      "stdev_seconds": 0.00011561526818752245
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-E-segmented",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.05251224999665283,
+      "minimum_seconds": 0.052361291673150845,
+      "maximum_seconds": 0.0527483750047395,
+      "stdev_seconds": 0.00015602984890414684
+    },
+    {
+      "pair": 1,
+      "variant": "cpu-E-segmented",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.056162041662901174,
+      "minimum_seconds": 0.05601204167760443,
+      "maximum_seconds": 0.05633020833192859,
+      "stdev_seconds": 0.00011134519611606173
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-C27",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.048369291667768266,
+      "minimum_seconds": 0.04823650000616908,
+      "maximum_seconds": 0.049769999997806735,
+      "stdev_seconds": 0.0005861202620878428
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-C27",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.04968835417093942,
+      "minimum_seconds": 0.049402666656533256,
+      "maximum_seconds": 0.051052041657385416,
+      "stdev_seconds": 0.0006018698156742418
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-C27",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.05245297916553682,
+      "minimum_seconds": 0.052377375002834015,
+      "maximum_seconds": 0.05280375000438653,
+      "stdev_seconds": 0.00016139138049372015
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-C27",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.05625920833699638,
+      "minimum_seconds": 0.0561229583399836,
+      "maximum_seconds": 0.056868666666559875,
+      "stdev_seconds": 0.00030296728038275533
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-F-iterable27",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04832333333615679,
+      "minimum_seconds": 0.048071458339109086,
+      "maximum_seconds": 0.049223624999285676,
+      "stdev_seconds": 0.0004895733611212856
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-F-iterable27",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.049146270837809425,
+      "minimum_seconds": 0.04872637499647681,
+      "maximum_seconds": 0.049640249999356456,
+      "stdev_seconds": 0.0003243321410945498
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-F-iterable27",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.052222270831407513,
+      "minimum_seconds": 0.051909291665651836,
+      "maximum_seconds": 0.05253866667044349,
+      "stdev_seconds": 0.00023206398754739812
+    },
+    {
+      "pair": 2,
+      "variant": "cpu-F-iterable27",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.05592541666555917,
+      "minimum_seconds": 0.055788875004509464,
+      "maximum_seconds": 0.05634704166732263,
+      "stdev_seconds": 0.00021499347869925547
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04870731250412064,
+      "minimum_seconds": 0.0482250416680472,
+      "maximum_seconds": 0.04935479165578727,
+      "stdev_seconds": 0.00045972321449352325
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.04959868750302121,
+      "minimum_seconds": 0.04948258333024569,
+      "maximum_seconds": 0.050749625006574206,
+      "stdev_seconds": 0.00048097189407811386
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.052692354169266764,
+      "minimum_seconds": 0.05239112499111798,
+      "maximum_seconds": 0.05316195833438542,
+      "stdev_seconds": 0.0002557205713908251
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.05631039583386155,
+      "minimum_seconds": 0.05618825000419747,
+      "maximum_seconds": 0.0569229166576406,
+      "stdev_seconds": 0.00030000364369741185
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C27",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04846622916375054,
+      "minimum_seconds": 0.048271708335960284,
+      "maximum_seconds": 0.05008637499122415,
+      "stdev_seconds": 0.0006938502893777261
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C27",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.049649937500362284,
+      "minimum_seconds": 0.04943187499884516,
+      "maximum_seconds": 0.0509241249965271,
+      "stdev_seconds": 0.0005552100401715748
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C27",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.0524229375005234,
+      "minimum_seconds": 0.052223499995307066,
+      "maximum_seconds": 0.052634208332165144,
+      "stdev_seconds": 0.00014849464517972927
+    },
+    {
+      "pair": 3,
+      "variant": "cpu-C27",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.056263375001435634,
+      "minimum_seconds": 0.05609508334600832,
+      "maximum_seconds": 0.0566300000064075,
+      "stdev_seconds": 0.00018694893200901257
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-C",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04876362499635434,
+      "minimum_seconds": 0.04830879166547675,
+      "maximum_seconds": 0.05356362499878742,
+      "stdev_seconds": 0.002010888393760636
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-C",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.049880583326739725,
+      "minimum_seconds": 0.04954849999921862,
+      "maximum_seconds": 0.05442487500840798,
+      "stdev_seconds": 0.0019044673513262426
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-C",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.052527395833749324,
+      "minimum_seconds": 0.05185666665784083,
+      "maximum_seconds": 0.055778333320631646,
+      "stdev_seconds": 0.0014612656108066915
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-C",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.05641960417415248,
+      "minimum_seconds": 0.05617729165533092,
+      "maximum_seconds": 0.060241666666115634,
+      "stdev_seconds": 0.0015961016821731532
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-M4",
+      "workload": "blake2b-32",
+      "n": 6,
+      "median_seconds": 0.04851752083777683,
+      "minimum_seconds": 0.04737937501340639,
+      "maximum_seconds": 0.04978862499410752,
+      "stdev_seconds": 0.0007745371851914652
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-M4",
+      "workload": "blake2b-128",
+      "n": 6,
+      "median_seconds": 0.04962289582908852,
+      "minimum_seconds": 0.04665770832798444,
+      "maximum_seconds": 0.0511617500014836,
+      "stdev_seconds": 0.001504664497702643
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-M4",
+      "workload": "blake2b-8200",
+      "n": 6,
+      "median_seconds": 0.052626541670178995,
+      "minimum_seconds": 0.051851416676072404,
+      "maximum_seconds": 0.05449587499606423,
+      "stdev_seconds": 0.0008994163706461541
+    },
+    {
+      "pair": 4,
+      "variant": "cpu-M4",
+      "workload": "autolykos-hit",
+      "n": 6,
+      "median_seconds": 0.05637227082479512,
+      "minimum_seconds": 0.05562699999427423,
+      "maximum_seconds": 0.06164437500410713,
+      "stdev_seconds": 0.0022254300192764706
+    }
+  ]
+}

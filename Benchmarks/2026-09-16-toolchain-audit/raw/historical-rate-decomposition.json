@@ -1,0 +1,14 @@
+{
+  "ratios": {
+    "average_hashrate": 0.9829920191114554,
+    "effective_hashrate": 0.954990901161727,
+    "search_duty_cycle": 0.9715143995013926
+  },
+  "percent_changes": {
+    "average_hashrate": -1.7007980888544605,
+    "effective_hashrate": -4.500909883827298,
+    "search_duty_cycle": -2.8485600498607377
+  },
+  "identity_residual": 0.0,
+  "note": "Mathematical rate decomposition, not causal attribution to software or temperature."
+}

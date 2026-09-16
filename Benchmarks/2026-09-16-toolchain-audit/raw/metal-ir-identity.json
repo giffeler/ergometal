@@ -1,0 +1,11 @@
+{
+  "normalized_ir_identical": true,
+  "normalization": [
+    "input artifact filename",
+    "module container offsets",
+    "Apple metal compiler identity",
+    "SDK Version metadata"
+  ],
+  "old_sha256": "7a9f08a6a19c56994ef51287153b1e5f30c409d7853f0691cda27bb9451409e6",
+  "new_sha256": "7a9f08a6a19c56994ef51287153b1e5f30c409d7853f0691cda27bb9451409e6"
+}

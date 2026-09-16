@@ -1,0 +1,4809 @@
+[
+  {
+    "path": "Distribution/ergometal1.jsonl",
+    "sha256": "a5ea8e886b92870e98c19153af2631f8f97bb48eae0d377a687783dba688fc0b",
+    "sessions": [
+      {
+        "sessionID": "E02756C6-59B5-440F-90A5-A3DA6EDDEA3A",
+        "first": "2026-09-13T13:53:16Z",
+        "last": "2026-09-13T17:36:45Z",
+        "event_counts": {
+          "session_started": 1,
+          "pool_connected": 5,
+          "pool_authorized": 5,
+          "job_received": 136,
+          "dataset_completed": 117,
+          "statistics_sample": 55,
+          "share_accepted": 10,
+          "pool_disconnected": 4,
+          "session_ended": 1
+        },
+        "start_fields": {
+          "tuning_source_batch_nonces": "cache",
+          "worktree_dirty": "false",
+          "gpu_generation": "m4",
+          "prebuild_batch_nonces": "131072",
+          "tuning_source_search_pipeline_depth": "cache",
+          "executable_sha256": "b18ed68823c6f1fe9837b057395d722392deef97b91e31c99b1a286573743b64",
+          "tuning_source_build_pipeline_depth": "cache",
+          "dataset_kernel": "u32pair-inline-m",
+          "tuning_source_prefetch_chunk_elements": "cache",
+          "search_pipeline_depth": "3",
+          "architecture": "arm64",
+          "network": "mainnet",
+          "worktree_revision": "3e024cc4da34ac21c178be3256c08195ab436e0c",
+          "donation_percent": "0",
+          "os_version": "Version 26.6.2 (Build 25G83)",
+          "tuning_source_prebuild_batch_nonces": "cache",
+          "tuning_source_build_chunk_elements": "cache",
+          "autotune_cache_key": "1d2fb43ad1b98722daf24b1005576438445c73b82b815bc030ae3ef84c07441a",
+          "os_build": "25G83",
+          "autotune_mode": "auto",
+          "donation_cycle_seconds": "6000",
+          "prefetch_chunk_elements": "1048576",
+          "profile": "peak",
+          "build_chunk_elements": "2097152",
+          "tuning_provenance": "cache",
+          "gpu_architecture": "applegpu_g16g",
+          "tuning_source_search_threadgroup_size": "cache",
+          "dataset_threadgroup_size": "256",
+          "threadgroup_size": "128",
+          "tuning_source_dataset_threadgroup_size": "cache",
+          "batch_nonces": "1048576",
+          "build_pipeline_depth": "2",
+          "gpu_family": "apple9",
+          "dataset_scheduling": "overlap",
+          "prebuild": "off",
+          "mode": "mining"
+        },
+        "final_fields": {
+          "gpu_seconds": "19547.077854996925",
+          "donation_shares_rejected": "0",
+          "build_pipeline_depth": "2",
+          "shares_submitted": "10",
+          "donation_scheduled_recipient": "user",
+          "dataset_cold_build_gpu_seconds_total": "3596.5174255399324",
+          "soc_temperature_session_peak_celsius": "77.14848327636719",
+          "gpu_family": "apple9",
+          "effective_hashrate": "11145231.719373137",
+          "donation_nonces": "0",
+          "batch_nonces": "1048576",
+          "tuning_source_prefetch_chunk_elements": "cache",
+          "gpu_build_command_wall_seconds_total": "3623.4272620833362",
+          "dataset_cold_builds_cancelled_total": "19",
+          "tuning_source_prebuild_batch_nonces": "cache",
+          "donation_failures": "0",
+          "nonces": "149450391552",
+          "dataset_prefetch_wait_seconds_total": "0.0",
+          "build_pipeline_max_threads": "256",
+          "dataset_cold_builds_resumed_total": "1",
+          "shares_rejected": "0",
+          "dataset_prefetch_builds_cancelled_total": "0",
+          "search_duty_cycle": "0.7293933573594417",
+          "hashrate": "0.0",
+          "donation_shares_expected": "0.0",
+          "dataset_cold_build_resumed_elements_total": "121634816",
+          "difficulty": "1.0",
+          "gpu_search_command_wall_busy_seconds_total": "9780.695960166864",
+          "donation_shares_submitted": "0",
+          "prefetch_chunk_elements": "1048576",
+          "tuning_source_search_threadgroup_size": "cache",
+          "protocol_errors": "0",
+          "dataset_prefetched_activations_total": "0",
+          "donation_shares_found": "0",
+          "share_luck_ratio": "1.1677831913825696",
+          "dataset_cached_activations_total": "12",
+          "dataset_activation_seconds": "31.3802595",
+          "gpu_search_command_wall_seconds_total": "29319.26066862262",
+          "state": "stopped",
+          "profile": "peak",
+          "prefetch_progress": "0.0",
+          "dataset_build_gpu_seconds": "31.198428791831248",
+          "threadgroup_size": "128",
+          "dataset_threadgroup_size": "256",
+          "thermal_state": "nominal",
+          "search_pipeline_depth": "3",
+          "gpu_build_command_non_gpu_seconds_total": "26.9098365434038",
+          "dataset_prefetch_builds_completed_total": "0",
+          "job_id": "bb49",
+          "autotune_mode": "auto",
+          "search_seconds": "9780.695960166864",
+          "dataset_prefetch_build_wall_seconds_total": "0.0",
+          "gpu_search_commands_completed_total": "142527",
+          "gpu_generation": "m4",
+          "dataset_activations_total": "117",
+          "height": "1872396",
+          "donation_shares_accepted": "0",
+          "shares_expected": "8.56323337567544",
+          "dataset_prefetch_builds_started_total": "0",
+          "gpu_build_commands_completed_total": "12549",
+          "search_pipeline_max_threads": "128",
+          "dataset_built_activations_total": "105",
+          "dataset_source": "built",
+          "reconnects": "4",
+          "gpu_search_command_gpu_busy_seconds_total": "9780.394958458375",
+          "donation_active_recipient": "user",
+          "dataset_prefetch_wasted_gpu_seconds_total": "0.0",
+          "soc_temperature_maximum_celsius": "62.03627014160156",
+          "shares_found": "10",
+          "dataset_prefetch_wasted_wall_seconds_total": "0.0",
+          "tuning_provenance": "cache",
+          "prebuild_batch_nonces": "131072",
+          "dataset_prefetch_build_gpu_seconds_total": "0.0",
+          "dataset_cold_build_wall_seconds_total": "3623.4299984579993",
+          "tuning_source_build_pipeline_depth": "cache",
+          "dataset_cold_builds_failed_total": "0",
+          "elapsed_seconds": "13409.357051968575",
+          "pool_connected": "false",
+          "average_hashrate": "15280138.7713774",
+          "dataset_bytes": "7272058080",
+          "donation_switches": "0",
+          "tuning_source_search_pipeline_depth": "cache",
+          "soc_temperature_sensor_count": "24",
+          "shares_accepted": "10",
+          "gpu_build_command_gpu_seconds_total": "3596.5174255399324",
+          "tuning_source_dataset_threadgroup_size": "cache",
+          "donation_window_seconds": "0.0",
+          "dataset_prefetch_waits_total": "0",
+          "job_target_hex": "000000003f00000003f00000003f00000003f00000003f00000003f00000003f",
+          "dataset_prefetch_builds_failed_total": "0",
+          "gpu_architecture": "applegpu_g16g",
+          "gpu_search_command_non_gpu_seconds_total": "9772.182813625695",
+          "autotune_cache_key": "1d2fb43ad1b98722daf24b1005576438445c73b82b815bc030ae3ef84c07441a",
+          "donation_shares_stale": "0",
+          "donation_percent": "0",
+          "tuning_source_batch_nonces": "cache",
+          "gpu_search_command_non_gpu_busy_seconds_total": "0.3010017084889114",
+          "donation_search_seconds": "0.0",
+          "dataset_prefetch_builds_discarded_total": "0",
+          "shares_stale": "0",
+          "temperature_source": "iohid_soc_die",
+          "dataset_cold_builds_completed_total": "105",
+          "dataset_activation_seconds_total": "3284.4598957969993",
+          "dataset_build_seconds": "31.380067959",
+          "tuning_source_build_chunk_elements": "cache",
+          "soc_temperature_average_celsius": "53.30409940083822",
+          "build_chunk_elements": "2097152",
+          "gpu_search_command_gpu_seconds_total": "19547.077854996925"
+        },
+        "chronology_and_monotonicity_issues": [],
+        "monotonic_fields_checked": [
+          "dataset_activation_seconds_total",
+          "dataset_activations_total",
+          "dataset_built_activations_total",
+          "dataset_cached_activations_total",
+          "dataset_cold_build_gpu_seconds_total",
+          "dataset_cold_build_resumed_elements_total",
+          "dataset_cold_build_wall_seconds_total",
+          "dataset_cold_builds_cancelled_total",
+          "dataset_cold_builds_completed_total",
+          "dataset_cold_builds_failed_total",
+          "dataset_cold_builds_resumed_total",
+          "dataset_prefetch_build_gpu_seconds_total",
+          "dataset_prefetch_build_wall_seconds_total",
+          "dataset_prefetch_builds_cancelled_total",
+          "dataset_prefetch_builds_completed_total",
+          "dataset_prefetch_builds_discarded_total",
+          "dataset_prefetch_builds_failed_total",
+          "dataset_prefetch_builds_started_total",
+          "dataset_prefetch_wait_seconds_total",
+          "dataset_prefetch_waits_total",
+          "dataset_prefetch_wasted_gpu_seconds_total",
+          "dataset_prefetch_wasted_wall_seconds_total",
+          "dataset_prefetched_activations_total",
+          "elapsed_seconds",
+          "gpu_build_command_gpu_seconds_total",
+          "gpu_build_command_non_gpu_seconds_total",
+          "gpu_build_command_wall_seconds_total",
+          "gpu_build_commands_completed_total",
+          "gpu_search_command_gpu_busy_seconds_total",
+          "gpu_search_command_gpu_seconds_total",
+          "gpu_search_command_non_gpu_busy_seconds_total",
+          "gpu_search_command_non_gpu_seconds_total",
+          "gpu_search_command_wall_busy_seconds_total",
+          "gpu_search_command_wall_seconds_total",
+          "gpu_search_commands_completed_total",
+          "gpu_seconds",
+          "nonces",
+          "protocol_errors",
+          "reconnects",
+          "search_seconds",
+          "shares_accepted",
+          "shares_found",
+          "shares_rejected",
+          "shares_stale",
+          "shares_submitted"
+        ],
+        "invariant_residuals": {
+          "active_hashrate": 0.0,
+          "effective_hashrate": 0.0,
+          "search_duty": 0.0,
+          "search_wall_busy": 0.0,
+          "search_busy_partition": 0.0,
+          "nonce_command_count": 0
+        },
+        "unaccounted_wall_seconds": 5.231093343711109,
+        "cold_build_seconds": {
+          "n": 105,
+          "minimum": 31.37203875,
+          "median": 31.418206333,
+          "maximum": 32.135299833,
+          "mean": 31.44114682022857,
+          "stdev": 0.12916347736163286
+        },
+        "cold_build_gpu_seconds": {
+          "n": 105,
+          "minimum": 31.18797470824211,
+          "median": 31.196274208516115,
+          "maximum": 31.943987458216725,
+          "mean": 31.22211146426936,
+          "stdev": 0.13111219933570176
+        },
+        "sampled_sensor_maximum_celsius": {
+          "n": 56,
+          "minimum": 54.36021423339844,
+          "median": 64.5149917602539,
+          "maximum": 77.14848327636719,
+          "mean": 65.1289588383266,
+          "stdev": 4.886027047684696
+        },
+        "intervals": [
+          {
+            "start": "2026-09-13T13:57:16Z",
+            "end": "2026-09-13T14:01:16Z",
+            "active_mhs": 15.422404636155683,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-13T14:01:16Z",
+            "end": "2026-09-13T14:05:16Z",
+            "active_mhs": 15.177628879486386,
+            "temperature_end": 70.75177001953125
+          },
+          {
+            "start": "2026-09-13T14:05:16Z",
+            "end": "2026-09-13T14:09:16Z",
+            "active_mhs": 15.246217156559945,
+            "temperature_end": 66.27407836914062
+          },
+          {
+            "start": "2026-09-13T14:09:16Z",
+            "end": "2026-09-13T14:13:16Z",
+            "active_mhs": 15.153120139472652,
+            "temperature_end": 64.99473571777344
+          },
+          {
+            "start": "2026-09-13T14:13:16Z",
+            "end": "2026-09-13T14:17:16Z",
+            "active_mhs": 15.062510206519661,
+            "temperature_end": 64.75486755371094
+          },
+          {
+            "start": "2026-09-13T14:17:16Z",
+            "end": "2026-09-13T14:21:16Z",
+            "active_mhs": 14.996683006209095,
+            "temperature_end": 76.66873168945312
+          },
+          {
+            "start": "2026-09-13T14:21:16Z",
+            "end": "2026-09-13T14:25:16Z",
+            "active_mhs": 15.234828873553614,
+            "temperature_end": 71.63131713867188
+          },
+          {
+            "start": "2026-09-13T14:25:16Z",
+            "end": "2026-09-13T14:29:16Z",
+            "active_mhs": 15.31805507027974,
+            "temperature_end": 62.755889892578125
+          },
+          {
+            "start": "2026-09-13T14:29:16Z",
+            "end": "2026-09-13T14:33:16Z",
+            "active_mhs": 15.122234562051872,
+            "temperature_end": 68.35301208496094
+          },
+          {
+            "start": "2026-09-13T14:33:16Z",
+            "end": "2026-09-13T14:37:16Z",
+            "active_mhs": 15.186758229463184,
+            "temperature_end": 63.31561279296875
+          },
+          {
+            "start": "2026-09-13T14:37:16Z",
+            "end": "2026-09-13T14:41:16Z",
+            "active_mhs": 15.141550230926672,
+            "temperature_end": 73.07058715820312
+          },
+          {
+            "start": "2026-09-13T14:41:16Z",
+            "end": "2026-09-13T14:45:16Z",
+            "active_mhs": 15.248404155147737,
+            "temperature_end": 70.51190185546875
+          },
+          {
+            "start": "2026-09-13T14:45:16Z",
+            "end": "2026-09-13T14:49:16Z",
+            "active_mhs": 15.185845727947623,
+            "temperature_end": 62.27613830566406
+          },
+          {
+            "start": "2026-09-13T14:49:16Z",
+            "end": "2026-09-13T14:53:16Z",
+            "active_mhs": 15.205609249850065,
+            "temperature_end": 63.39556884765625
+          },
+          {
+            "start": "2026-09-13T14:53:16Z",
+            "end": "2026-09-13T14:57:16Z",
+            "active_mhs": 15.271567064129615,
+            "temperature_end": 69.47242736816406
+          },
+          {
+            "start": "2026-09-13T14:57:16Z",
+            "end": "2026-09-13T15:01:16Z",
+            "active_mhs": 15.221324595520834,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-13T15:01:16Z",
+            "end": "2026-09-13T15:05:16Z",
+            "active_mhs": 15.196999676071565,
+            "temperature_end": 59.63749694824219
+          },
+          {
+            "start": "2026-09-13T15:05:16Z",
+            "end": "2026-09-13T15:09:16Z",
+            "active_mhs": 15.100373483346477,
+            "temperature_end": 62.83586120605469
+          },
+          {
+            "start": "2026-09-13T15:09:16Z",
+            "end": "2026-09-13T15:13:16Z",
+            "active_mhs": 15.314308830117483,
+            "temperature_end": 71.31149291992188
+          },
+          {
+            "start": "2026-09-13T15:13:16Z",
+            "end": "2026-09-13T15:17:16Z",
+            "active_mhs": 15.288361926009902,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-13T15:17:16Z",
+            "end": "2026-09-13T15:21:16Z",
+            "active_mhs": 15.470500154715983,
+            "temperature_end": 64.75486755371094
+          },
+          {
+            "start": "2026-09-13T15:21:16Z",
+            "end": "2026-09-13T15:25:16Z",
+            "active_mhs": 15.2991340562521,
+            "temperature_end": 63.23564147949219
+          },
+          {
+            "start": "2026-09-13T15:25:16Z",
+            "end": "2026-09-13T15:29:16Z",
+            "active_mhs": 15.46138003220841,
+            "temperature_end": 65.07470703125
+          },
+          {
+            "start": "2026-09-13T15:29:16Z",
+            "end": "2026-09-13T15:33:16Z",
+            "active_mhs": 15.634384885311242,
+            "temperature_end": 64.75486755371094
+          },
+          {
+            "start": "2026-09-13T15:33:16Z",
+            "end": "2026-09-13T15:37:16Z",
+            "active_mhs": 15.411770578257126,
+            "temperature_end": 66.03421020507812
+          },
+          {
+            "start": "2026-09-13T15:37:16Z",
+            "end": "2026-09-13T15:41:16Z",
+            "active_mhs": 15.1672412889291,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-13T15:41:16Z",
+            "end": "2026-09-13T15:45:16Z",
+            "active_mhs": 15.265362454551614,
+            "temperature_end": 61.23667907714844
+          },
+          {
+            "start": "2026-09-13T15:45:16Z",
+            "end": "2026-09-13T15:49:16Z",
+            "active_mhs": 15.365260708496754,
+            "temperature_end": 65.234619140625
+          },
+          {
+            "start": "2026-09-13T15:49:16Z",
+            "end": "2026-09-13T15:53:16Z",
+            "active_mhs": 15.296574898567213,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-13T15:53:16Z",
+            "end": "2026-09-13T15:57:16Z",
+            "active_mhs": 15.384516390255037,
+            "temperature_end": 63.31561279296875
+          },
+          {
+            "start": "2026-09-13T15:57:16Z",
+            "end": "2026-09-13T16:01:16Z",
+            "active_mhs": 15.276513384743785,
+            "temperature_end": 74.19000244140625
+          },
+          {
+            "start": "2026-09-13T16:01:16Z",
+            "end": "2026-09-13T16:05:16Z",
+            "active_mhs": 15.25155794961929,
+            "temperature_end": 65.95425415039062
+          },
+          {
+            "start": "2026-09-13T16:05:16Z",
+            "end": "2026-09-13T16:09:16Z",
+            "active_mhs": 15.408918469023803,
+            "temperature_end": 61.79638671875
+          },
+          {
+            "start": "2026-09-13T16:09:16Z",
+            "end": "2026-09-13T16:13:16Z",
+            "active_mhs": 15.399498828910328,
+            "temperature_end": 69.15260314941406
+          },
+          {
+            "start": "2026-09-13T16:13:16Z",
+            "end": "2026-09-13T16:17:16Z",
+            "active_mhs": 15.408219289934372,
+            "temperature_end": 63.95527648925781
+          },
+          {
+            "start": "2026-09-13T16:17:16Z",
+            "end": "2026-09-13T16:21:16Z",
+            "active_mhs": 15.36337705793877,
+            "temperature_end": 70.51190185546875
+          },
+          {
+            "start": "2026-09-13T16:21:16Z",
+            "end": "2026-09-13T16:25:16Z",
+            "active_mhs": 15.29095433690005,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-13T16:25:16Z",
+            "end": "2026-09-13T16:29:16Z",
+            "active_mhs": 15.317624228356689,
+            "temperature_end": 64.43502807617188
+          },
+          {
+            "start": "2026-09-13T16:29:16Z",
+            "end": "2026-09-13T16:33:16Z",
+            "active_mhs": 15.360537425092089,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-13T16:33:16Z",
+            "end": "2026-09-13T16:37:16Z",
+            "active_mhs": 15.33497614592883,
+            "temperature_end": 59.157745361328125
+          },
+          {
+            "start": "2026-09-13T16:37:16Z",
+            "end": "2026-09-13T16:41:16Z",
+            "active_mhs": 15.5595847795006,
+            "temperature_end": 60.996795654296875
+          },
+          {
+            "start": "2026-09-13T16:41:16Z",
+            "end": "2026-09-13T16:45:16Z",
+            "active_mhs": 15.326236247496286,
+            "temperature_end": 77.14848327636719
+          },
+          {
+            "start": "2026-09-13T16:45:16Z",
+            "end": "2026-09-13T16:49:16Z",
+            "active_mhs": 15.317455721527596,
+            "temperature_end": 70.91169738769531
+          },
+          {
+            "start": "2026-09-13T16:49:16Z",
+            "end": "2026-09-13T16:53:16Z",
+            "active_mhs": 15.212851547748176,
+            "temperature_end": 65.234619140625
+          },
+          {
+            "start": "2026-09-13T16:53:16Z",
+            "end": "2026-09-13T16:57:16Z",
+            "active_mhs": 15.298289403527892,
+            "temperature_end": 61.79638671875
+          },
+          {
+            "start": "2026-09-13T16:57:16Z",
+            "end": "2026-09-13T17:01:16Z",
+            "active_mhs": 15.346527846936505,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-13T17:01:16Z",
+            "end": "2026-09-13T17:05:16Z",
+            "active_mhs": 15.154525155007736,
+            "temperature_end": 65.87428283691406
+          },
+          {
+            "start": "2026-09-13T17:05:16Z",
+            "end": "2026-09-13T17:09:16Z",
+            "active_mhs": 15.320082103735793,
+            "temperature_end": 66.75382995605469
+          },
+          {
+            "start": "2026-09-13T17:09:16Z",
+            "end": "2026-09-13T17:13:16Z",
+            "active_mhs": 15.271455969115568,
+            "temperature_end": 64.59495544433594
+          },
+          {
+            "start": "2026-09-13T17:13:16Z",
+            "end": "2026-09-13T17:17:16Z",
+            "active_mhs": 15.123269398385297,
+            "temperature_end": 60.03729248046875
+          },
+          {
+            "start": "2026-09-13T17:17:16Z",
+            "end": "2026-09-13T17:21:16Z",
+            "active_mhs": 15.416745543005174,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-13T17:21:16Z",
+            "end": "2026-09-13T17:25:16Z",
+            "active_mhs": 15.221830760185261,
+            "temperature_end": 59.31767272949219
+          },
+          {
+            "start": "2026-09-13T17:25:16Z",
+            "end": "2026-09-13T17:29:16Z",
+            "active_mhs": 15.135677371487965,
+            "temperature_end": 62.755889892578125
+          },
+          {
+            "start": "2026-09-13T17:29:16Z",
+            "end": "2026-09-13T17:33:16Z",
+            "active_mhs": 15.142826189501301,
+            "temperature_end": 73.95013427734375
+          },
+          {
+            "start": "2026-09-13T17:33:16Z",
+            "end": "2026-09-13T17:36:45Z",
+            "active_mhs": 15.365810128793758,
+            "temperature_end": 62.03627014160156
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "Distribution/ergometal2.jsonl",
+    "sha256": "4fd1a172291fea04923748af80331e127eaac90998e0189ad83a9c8bad932481",
+    "sessions": [
+      {
+        "sessionID": "CA5F69A5-A81F-470C-9FF4-50E4890640D5",
+        "first": "2026-09-13T19:18:59Z",
+        "last": "2026-09-14T11:42:25Z",
+        "event_counts": {
+          "session_started": 1,
+          "pool_connected": 17,
+          "pool_authorized": 17,
+          "job_received": 533,
+          "dataset_completed": 438,
+          "statistics_sample": 245,
+          "share_accepted": 42,
+          "pool_disconnected": 16,
+          "session_ended": 1
+        },
+        "start_fields": {
+          "donation_cycle_seconds": "6000",
+          "prebuild": "off",
+          "tuning_source_batch_nonces": "cache",
+          "architecture": "arm64",
+          "tuning_source_prefetch_chunk_elements": "cache",
+          "tuning_source_search_threadgroup_size": "cache",
+          "dataset_scheduling": "overlap",
+          "gpu_generation": "m4",
+          "autotune_cache_key": "1d2fb43ad1b98722daf24b1005576438445c73b82b815bc030ae3ef84c07441a",
+          "gpu_architecture": "applegpu_g16g",
+          "tuning_source_prebuild_batch_nonces": "cache",
+          "executable_sha256": "b18ed68823c6f1fe9837b057395d722392deef97b91e31c99b1a286573743b64",
+          "worktree_revision": "3e024cc4da34ac21c178be3256c08195ab436e0c",
+          "tuning_source_build_pipeline_depth": "cache",
+          "tuning_source_build_chunk_elements": "cache",
+          "tuning_source_dataset_threadgroup_size": "cache",
+          "tuning_source_search_pipeline_depth": "cache",
+          "build_chunk_elements": "2097152",
+          "profile": "peak",
+          "autotune_mode": "auto",
+          "build_pipeline_depth": "2",
+          "batch_nonces": "1048576",
+          "dataset_threadgroup_size": "256",
+          "os_build": "25G83",
+          "os_version": "Version 26.6.2 (Build 25G83)",
+          "search_pipeline_depth": "3",
+          "dataset_kernel": "u32pair-inline-m",
+          "gpu_family": "apple9",
+          "mode": "mining",
+          "donation_percent": "0",
+          "tuning_provenance": "cache",
+          "worktree_dirty": "false",
+          "prebuild_batch_nonces": "131072",
+          "threadgroup_size": "128",
+          "network": "mainnet",
+          "prefetch_chunk_elements": "1048576"
+        },
+        "final_fields": {
+          "state": "stopped",
+          "dataset_prefetch_builds_cancelled_total": "0",
+          "dataset_bytes": "7272058080",
+          "tuning_source_search_threadgroup_size": "cache",
+          "donation_active_recipient": "user",
+          "shares_stale": "0",
+          "dataset_prefetch_builds_completed_total": "0",
+          "dataset_prefetch_waits_total": "0",
+          "average_hashrate": "15381818.545665344",
+          "tuning_source_build_pipeline_depth": "cache",
+          "batch_nonces": "1048576",
+          "soc_temperature_sensor_count": "24",
+          "dataset_threadgroup_size": "256",
+          "dataset_build_seconds": "31.418983292",
+          "pool_connected": "false",
+          "dataset_activation_seconds": "31.419189708",
+          "gpu_search_command_non_gpu_busy_seconds_total": "2.0811827075085603",
+          "dataset_cold_build_wall_seconds_total": "14275.027507127994",
+          "autotune_mode": "auto",
+          "donation_scheduled_recipient": "user",
+          "protocol_errors": "0",
+          "hashrate": "0.0",
+          "shares_submitted": "42",
+          "dataset_cached_activations_total": "43",
+          "dataset_prefetch_wasted_gpu_seconds_total": "0.0",
+          "donation_switches": "0",
+          "dataset_prefetch_builds_started_total": "0",
+          "temperature_source": "iohid_soc_die",
+          "donation_nonces": "0",
+          "job_id": "bd8a",
+          "donation_search_seconds": "0.0",
+          "soc_temperature_session_peak_celsius": "79.14744567871094",
+          "dataset_source": "built",
+          "gpu_architecture": "applegpu_g16g",
+          "donation_shares_expected": "0.0",
+          "search_seconds": "44709.59392833305",
+          "donation_shares_accepted": "0",
+          "donation_shares_submitted": "0",
+          "thermal_state": "nominal",
+          "height": "1872935",
+          "tuning_provenance": "cache",
+          "search_duty_cycle": "0.7577074829334437",
+          "dataset_activation_seconds_total": "12392.747990554995",
+          "prebuild_batch_nonces": "131072",
+          "gpu_search_command_gpu_busy_seconds_total": "44707.51274562554",
+          "dataset_prefetch_build_wall_seconds_total": "0.0",
+          "dataset_cold_builds_completed_total": "395",
+          "tuning_source_prebuild_batch_nonces": "cache",
+          "gpu_search_command_wall_seconds_total": "134039.3288098244",
+          "gpu_build_command_wall_seconds_total": "14275.01694041668",
+          "effective_hashrate": "11654919.013175052",
+          "reconnects": "16",
+          "dataset_prefetch_build_gpu_seconds_total": "0.0",
+          "dataset_cold_builds_cancelled_total": "95",
+          "nonces": "687714861056",
+          "search_pipeline_depth": "3",
+          "gpu_generation": "m4",
+          "donation_failures": "0",
+          "dataset_built_activations_total": "395",
+          "donation_window_seconds": "0.0",
+          "tuning_source_dataset_threadgroup_size": "cache",
+          "build_pipeline_depth": "2",
+          "dataset_build_gpu_seconds": "31.19244399992749",
+          "gpu_seconds": "89355.787408753",
+          "autotune_cache_key": "1d2fb43ad1b98722daf24b1005576438445c73b82b815bc030ae3ef84c07441a",
+          "dataset_activations_total": "438",
+          "build_chunk_elements": "2097152",
+          "dataset_prefetch_builds_failed_total": "0",
+          "build_pipeline_max_threads": "256",
+          "gpu_build_command_gpu_seconds_total": "14169.127571707271",
+          "shares_expected": "39.40480041562096",
+          "shares_accepted": "42",
+          "gpu_search_command_wall_busy_seconds_total": "44709.59392833305",
+          "dataset_prefetched_activations_total": "0",
+          "tuning_source_batch_nonces": "cache",
+          "dataset_cold_builds_resumed_total": "3",
+          "gpu_family": "apple9",
+          "shares_found": "42",
+          "gpu_search_commands_completed_total": "655856",
+          "difficulty": "1.0",
+          "soc_temperature_maximum_celsius": "58.43812561035156",
+          "shares_rejected": "0",
+          "donation_shares_found": "0",
+          "search_pipeline_max_threads": "128",
+          "profile": "peak",
+          "donation_shares_rejected": "0",
+          "dataset_cold_build_gpu_seconds_total": "14169.127571707271",
+          "job_target_hex": "000000003f00000003f00000003f00000003f00000003f00000003f00000003f",
+          "tuning_source_prefetch_chunk_elements": "cache",
+          "soc_temperature_average_celsius": "52.564479192097984",
+          "dataset_prefetch_wait_seconds_total": "0.0",
+          "share_luck_ratio": "1.065859985509538",
+          "gpu_search_command_gpu_seconds_total": "89355.787408753",
+          "dataset_prefetch_wasted_wall_seconds_total": "0.0",
+          "prefetch_progress": "0.0",
+          "tuning_source_search_pipeline_depth": "cache",
+          "donation_percent": "0",
+          "elapsed_seconds": "59006.40410101414",
+          "tuning_source_build_chunk_elements": "cache",
+          "gpu_build_command_non_gpu_seconds_total": "105.88936870940961",
+          "dataset_cold_builds_failed_total": "0",
+          "prefetch_chunk_elements": "1048576",
+          "dataset_prefetch_builds_discarded_total": "0",
+          "gpu_build_commands_completed_total": "49439",
+          "donation_shares_stale": "0",
+          "dataset_cold_build_resumed_elements_total": "272629760",
+          "threadgroup_size": "128",
+          "gpu_search_command_non_gpu_seconds_total": "44683.54140107139"
+        },
+        "chronology_and_monotonicity_issues": [],
+        "monotonic_fields_checked": [
+          "dataset_activation_seconds_total",
+          "dataset_activations_total",
+          "dataset_built_activations_total",
+          "dataset_cached_activations_total",
+          "dataset_cold_build_gpu_seconds_total",
+          "dataset_cold_build_resumed_elements_total",
+          "dataset_cold_build_wall_seconds_total",
+          "dataset_cold_builds_cancelled_total",
+          "dataset_cold_builds_completed_total",
+          "dataset_cold_builds_failed_total",
+          "dataset_cold_builds_resumed_total",
+          "dataset_prefetch_build_gpu_seconds_total",
+          "dataset_prefetch_build_wall_seconds_total",
+          "dataset_prefetch_builds_cancelled_total",
+          "dataset_prefetch_builds_completed_total",
+          "dataset_prefetch_builds_discarded_total",
+          "dataset_prefetch_builds_failed_total",
+          "dataset_prefetch_builds_started_total",
+          "dataset_prefetch_wait_seconds_total",
+          "dataset_prefetch_waits_total",
+          "dataset_prefetch_wasted_gpu_seconds_total",
+          "dataset_prefetch_wasted_wall_seconds_total",
+          "dataset_prefetched_activations_total",
+          "elapsed_seconds",
+          "gpu_build_command_gpu_seconds_total",
+          "gpu_build_command_non_gpu_seconds_total",
+          "gpu_build_command_wall_seconds_total",
+          "gpu_build_commands_completed_total",
+          "gpu_search_command_gpu_busy_seconds_total",
+          "gpu_search_command_gpu_seconds_total",
+          "gpu_search_command_non_gpu_busy_seconds_total",
+          "gpu_search_command_non_gpu_seconds_total",
+          "gpu_search_command_wall_busy_seconds_total",
+          "gpu_search_command_wall_seconds_total",
+          "gpu_search_commands_completed_total",
+          "gpu_seconds",
+          "nonces",
+          "protocol_errors",
+          "reconnects",
+          "search_seconds",
+          "shares_accepted",
+          "shares_found",
+          "shares_rejected",
+          "shares_stale",
+          "shares_submitted"
+        ],
+        "invariant_residuals": {
+          "active_hashrate": 0.0,
+          "effective_hashrate": 0.0,
+          "search_duty": 0.0,
+          "search_wall_busy": 0.0,
+          "search_busy_partition": 0.0,
+          "nonce_command_count": 0
+        },
+        "unaccounted_wall_seconds": 21.782665553091647,
+        "cold_build_seconds": {
+          "n": 395,
+          "minimum": 31.354848833,
+          "median": 31.411785792,
+          "maximum": 32.432350084,
+          "mean": 31.434734021425317,
+          "stdev": 0.12721833949743275
+        },
+        "cold_build_gpu_seconds": {
+          "n": 395,
+          "minimum": 31.181286625069333,
+          "median": 31.18941020828788,
+          "maximum": 32.24153058324009,
+          "mean": 31.216494615502505,
+          "stdev": 0.12997922818254581
+        },
+        "sampled_sensor_maximum_celsius": {
+          "n": 246,
+          "minimum": 52.52116394042969,
+          "median": 63.3555908203125,
+          "maximum": 79.14744567871094,
+          "mean": 64.90828239627001,
+          "stdev": 5.132640107479599
+        },
+        "intervals": [
+          {
+            "start": "2026-09-13T19:22:59Z",
+            "end": "2026-09-13T19:26:59Z",
+            "active_mhs": 15.143585333061974,
+            "temperature_end": 57.238739013671875
+          },
+          {
+            "start": "2026-09-13T19:26:59Z",
+            "end": "2026-09-13T19:30:59Z",
+            "active_mhs": 15.406985229101217,
+            "temperature_end": 65.4744873046875
+          },
+          {
+            "start": "2026-09-13T19:30:59Z",
+            "end": "2026-09-13T19:34:59Z",
+            "active_mhs": 15.479467066210258,
+            "temperature_end": 63.15568542480469
+          },
+          {
+            "start": "2026-09-13T19:34:59Z",
+            "end": "2026-09-13T19:38:59Z",
+            "active_mhs": 15.485123417443623,
+            "temperature_end": 61.15672302246094
+          },
+          {
+            "start": "2026-09-13T19:38:59Z",
+            "end": "2026-09-13T19:42:59Z",
+            "active_mhs": 15.047003074352213,
+            "temperature_end": 65.71437072753906
+          },
+          {
+            "start": "2026-09-13T19:42:59Z",
+            "end": "2026-09-13T19:46:59Z",
+            "active_mhs": 15.017424315530969,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-13T19:46:59Z",
+            "end": "2026-09-13T19:50:59Z",
+            "active_mhs": 15.29080764923381,
+            "temperature_end": 60.03729248046875
+          },
+          {
+            "start": "2026-09-13T19:50:59Z",
+            "end": "2026-09-13T19:54:59Z",
+            "active_mhs": 15.262269026931246,
+            "temperature_end": 59.87738037109375
+          },
+          {
+            "start": "2026-09-13T19:54:59Z",
+            "end": "2026-09-13T19:58:59Z",
+            "active_mhs": 15.171160842997704,
+            "temperature_end": 71.47140502929688
+          },
+          {
+            "start": "2026-09-13T19:58:59Z",
+            "end": "2026-09-13T20:02:59Z",
+            "active_mhs": 15.185966396474454,
+            "temperature_end": 58.917877197265625
+          },
+          {
+            "start": "2026-09-13T20:02:59Z",
+            "end": "2026-09-13T20:06:59Z",
+            "active_mhs": 15.1977229504922,
+            "temperature_end": 58.51808166503906
+          },
+          {
+            "start": "2026-09-13T20:06:59Z",
+            "end": "2026-09-13T20:10:59Z",
+            "active_mhs": 15.192468375317565,
+            "temperature_end": 57.9583740234375
+          },
+          {
+            "start": "2026-09-13T20:10:59Z",
+            "end": "2026-09-13T20:14:59Z",
+            "active_mhs": 15.147068120440533,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-13T20:14:59Z",
+            "end": "2026-09-13T20:18:59Z",
+            "active_mhs": 15.341838813720427,
+            "temperature_end": 66.27407836914062
+          },
+          {
+            "start": "2026-09-13T20:18:59Z",
+            "end": "2026-09-13T20:22:59Z",
+            "active_mhs": 15.592105526383639,
+            "temperature_end": 71.23152160644531
+          },
+          {
+            "start": "2026-09-13T20:22:59Z",
+            "end": "2026-09-13T20:26:59Z",
+            "active_mhs": 15.549099325388651,
+            "temperature_end": 71.55136108398438
+          },
+          {
+            "start": "2026-09-13T20:26:59Z",
+            "end": "2026-09-13T20:30:59Z",
+            "active_mhs": 15.451314303198238,
+            "temperature_end": 60.996795654296875
+          },
+          {
+            "start": "2026-09-13T20:30:59Z",
+            "end": "2026-09-13T20:34:59Z",
+            "active_mhs": 15.499284862649539,
+            "temperature_end": 73.15054321289062
+          },
+          {
+            "start": "2026-09-13T20:34:59Z",
+            "end": "2026-09-13T20:38:59Z",
+            "active_mhs": 15.555068223784751,
+            "temperature_end": 62.436065673828125
+          },
+          {
+            "start": "2026-09-13T20:38:59Z",
+            "end": "2026-09-13T20:42:59Z",
+            "active_mhs": 15.53924788450296,
+            "temperature_end": 62.27613830566406
+          },
+          {
+            "start": "2026-09-13T20:42:59Z",
+            "end": "2026-09-13T20:46:59Z",
+            "active_mhs": 15.547229806496025,
+            "temperature_end": 65.234619140625
+          },
+          {
+            "start": "2026-09-13T20:46:59Z",
+            "end": "2026-09-13T20:50:59Z",
+            "active_mhs": 15.662615096972244,
+            "temperature_end": 69.79226684570312
+          },
+          {
+            "start": "2026-09-13T20:50:59Z",
+            "end": "2026-09-13T20:54:59Z",
+            "active_mhs": 15.626860308569002,
+            "temperature_end": 61.47654724121094
+          },
+          {
+            "start": "2026-09-13T20:54:59Z",
+            "end": "2026-09-13T20:58:59Z",
+            "active_mhs": 15.577846287852775,
+            "temperature_end": 73.15054321289062
+          },
+          {
+            "start": "2026-09-13T20:58:59Z",
+            "end": "2026-09-13T21:02:59Z",
+            "active_mhs": 15.58555496722293,
+            "temperature_end": 65.79432678222656
+          },
+          {
+            "start": "2026-09-13T21:02:59Z",
+            "end": "2026-09-13T21:06:59Z",
+            "active_mhs": 15.43571774897645,
+            "temperature_end": 61.47654724121094
+          },
+          {
+            "start": "2026-09-13T21:06:59Z",
+            "end": "2026-09-13T21:10:59Z",
+            "active_mhs": 15.468530312965028,
+            "temperature_end": 62.11622619628906
+          },
+          {
+            "start": "2026-09-13T21:10:59Z",
+            "end": "2026-09-13T21:14:59Z",
+            "active_mhs": 15.640220964719449,
+            "temperature_end": 61.07676696777344
+          },
+          {
+            "start": "2026-09-13T21:14:59Z",
+            "end": "2026-09-13T21:18:59Z",
+            "active_mhs": 15.644948469068348,
+            "temperature_end": 71.55136108398438
+          },
+          {
+            "start": "2026-09-13T21:18:59Z",
+            "end": "2026-09-13T21:22:59Z",
+            "active_mhs": 15.525587476747422,
+            "temperature_end": 60.836883544921875
+          },
+          {
+            "start": "2026-09-13T21:22:59Z",
+            "end": "2026-09-13T21:26:59Z",
+            "active_mhs": 15.521143841226358,
+            "temperature_end": 70.91169738769531
+          },
+          {
+            "start": "2026-09-13T21:26:59Z",
+            "end": "2026-09-13T21:30:59Z",
+            "active_mhs": 15.204457372114154,
+            "temperature_end": 77.30839538574219
+          },
+          {
+            "start": "2026-09-13T21:30:59Z",
+            "end": "2026-09-13T21:34:59Z",
+            "active_mhs": 15.2947907760298,
+            "temperature_end": 61.39659118652344
+          },
+          {
+            "start": "2026-09-13T21:34:59Z",
+            "end": "2026-09-13T21:38:59Z",
+            "active_mhs": 15.545939093715626,
+            "temperature_end": 65.71437072753906
+          },
+          {
+            "start": "2026-09-13T21:38:59Z",
+            "end": "2026-09-13T21:42:59Z",
+            "active_mhs": 15.481921573547462,
+            "temperature_end": 59.87738037109375
+          },
+          {
+            "start": "2026-09-13T21:42:59Z",
+            "end": "2026-09-13T21:46:59Z",
+            "active_mhs": 15.394817859254367,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-13T21:46:59Z",
+            "end": "2026-09-13T21:50:59Z",
+            "active_mhs": 15.404301361593177,
+            "temperature_end": 64.19515991210938
+          },
+          {
+            "start": "2026-09-13T21:50:59Z",
+            "end": "2026-09-13T21:54:59Z",
+            "active_mhs": 15.665848219760479,
+            "temperature_end": 75.38938903808594
+          },
+          {
+            "start": "2026-09-13T21:54:59Z",
+            "end": "2026-09-13T21:58:59Z",
+            "active_mhs": 15.289390009646333,
+            "temperature_end": 66.03421020507812
+          },
+          {
+            "start": "2026-09-13T21:58:59Z",
+            "end": "2026-09-13T22:02:59Z",
+            "active_mhs": 15.176694199689114,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-13T22:02:59Z",
+            "end": "2026-09-13T22:06:59Z",
+            "active_mhs": 15.202117170931341,
+            "temperature_end": 73.87016296386719
+          },
+          {
+            "start": "2026-09-13T22:06:59Z",
+            "end": "2026-09-13T22:10:59Z",
+            "active_mhs": 15.2058102737838,
+            "temperature_end": 71.79124450683594
+          },
+          {
+            "start": "2026-09-13T22:10:59Z",
+            "end": "2026-09-13T22:14:59Z",
+            "active_mhs": 15.231673105763639,
+            "temperature_end": 61.7164306640625
+          },
+          {
+            "start": "2026-09-13T22:14:59Z",
+            "end": "2026-09-13T22:18:59Z",
+            "active_mhs": 15.214978525626538,
+            "temperature_end": 62.83586120605469
+          },
+          {
+            "start": "2026-09-13T22:18:59Z",
+            "end": "2026-09-13T22:22:59Z",
+            "active_mhs": 15.243200837880021,
+            "temperature_end": 68.832763671875
+          },
+          {
+            "start": "2026-09-13T22:22:59Z",
+            "end": "2026-09-13T22:26:59Z",
+            "active_mhs": 15.206760357971621,
+            "temperature_end": 62.27613830566406
+          },
+          {
+            "start": "2026-09-13T22:26:59Z",
+            "end": "2026-09-13T22:30:59Z",
+            "active_mhs": 15.251735722519504,
+            "temperature_end": 70.43194580078125
+          },
+          {
+            "start": "2026-09-13T22:30:59Z",
+            "end": "2026-09-13T22:34:59Z",
+            "active_mhs": 15.220971851293204,
+            "temperature_end": 62.99577331542969
+          },
+          {
+            "start": "2026-09-13T22:34:59Z",
+            "end": "2026-09-13T22:38:59Z",
+            "active_mhs": 15.285457294869133,
+            "temperature_end": 67.71334838867188
+          },
+          {
+            "start": "2026-09-13T22:38:59Z",
+            "end": "2026-09-13T22:42:59Z",
+            "active_mhs": 15.317308778749464,
+            "temperature_end": 71.63131713867188
+          },
+          {
+            "start": "2026-09-13T22:42:59Z",
+            "end": "2026-09-13T22:46:59Z",
+            "active_mhs": 15.668321253285745,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-13T22:46:59Z",
+            "end": "2026-09-13T22:50:59Z",
+            "active_mhs": 15.253028314744693,
+            "temperature_end": 77.78814697265625
+          },
+          {
+            "start": "2026-09-13T22:50:59Z",
+            "end": "2026-09-13T22:54:59Z",
+            "active_mhs": 15.275119521156904,
+            "temperature_end": 72.3509521484375
+          },
+          {
+            "start": "2026-09-13T22:54:59Z",
+            "end": "2026-09-13T22:58:59Z",
+            "active_mhs": 15.315965026176478,
+            "temperature_end": 74.50984191894531
+          },
+          {
+            "start": "2026-09-13T22:58:59Z",
+            "end": "2026-09-13T23:02:59Z",
+            "active_mhs": 15.537217868797274,
+            "temperature_end": 63.23564147949219
+          },
+          {
+            "start": "2026-09-13T23:02:59Z",
+            "end": "2026-09-13T23:06:59Z",
+            "active_mhs": 15.307057555100092,
+            "temperature_end": 65.79432678222656
+          },
+          {
+            "start": "2026-09-13T23:06:59Z",
+            "end": "2026-09-13T23:10:59Z",
+            "active_mhs": 15.397844498383307,
+            "temperature_end": 62.516021728515625
+          },
+          {
+            "start": "2026-09-13T23:10:59Z",
+            "end": "2026-09-13T23:14:59Z",
+            "active_mhs": 15.43415640934464,
+            "temperature_end": 67.47346496582031
+          },
+          {
+            "start": "2026-09-13T23:14:59Z",
+            "end": "2026-09-13T23:18:59Z",
+            "active_mhs": 15.77318180224638,
+            "temperature_end": 64.91477966308594
+          },
+          {
+            "start": "2026-09-13T23:18:59Z",
+            "end": "2026-09-13T23:22:59Z",
+            "active_mhs": 15.286512185616479,
+            "temperature_end": 62.35609436035156
+          },
+          {
+            "start": "2026-09-13T23:22:59Z",
+            "end": "2026-09-13T23:26:59Z",
+            "active_mhs": 15.356915514238972,
+            "temperature_end": 66.11416625976562
+          },
+          {
+            "start": "2026-09-13T23:26:59Z",
+            "end": "2026-09-13T23:30:59Z",
+            "active_mhs": 15.270739336380476,
+            "temperature_end": 60.996795654296875
+          },
+          {
+            "start": "2026-09-13T23:30:59Z",
+            "end": "2026-09-13T23:34:59Z",
+            "active_mhs": 15.108735627358516,
+            "temperature_end": 62.675933837890625
+          },
+          {
+            "start": "2026-09-13T23:34:59Z",
+            "end": "2026-09-13T23:38:59Z",
+            "active_mhs": 15.264084131775293,
+            "temperature_end": 64.59495544433594
+          },
+          {
+            "start": "2026-09-13T23:38:59Z",
+            "end": "2026-09-13T23:42:59Z",
+            "active_mhs": 15.369618679722882,
+            "temperature_end": 65.39453125
+          },
+          {
+            "start": "2026-09-13T23:42:59Z",
+            "end": "2026-09-13T23:46:59Z",
+            "active_mhs": 15.531458341070474,
+            "temperature_end": 60.35713195800781
+          },
+          {
+            "start": "2026-09-13T23:46:59Z",
+            "end": "2026-09-13T23:50:59Z",
+            "active_mhs": 15.552758766480622,
+            "temperature_end": 60.11724853515625
+          },
+          {
+            "start": "2026-09-13T23:50:59Z",
+            "end": "2026-09-13T23:54:59Z",
+            "active_mhs": 15.451302993614506,
+            "temperature_end": 76.82864379882812
+          },
+          {
+            "start": "2026-09-13T23:54:59Z",
+            "end": "2026-09-13T23:58:59Z",
+            "active_mhs": 15.216115578960748,
+            "temperature_end": 65.39453125
+          },
+          {
+            "start": "2026-09-13T23:58:59Z",
+            "end": "2026-09-14T00:02:59Z",
+            "active_mhs": 15.249087537432457,
+            "temperature_end": 63.95527648925781
+          },
+          {
+            "start": "2026-09-14T00:02:59Z",
+            "end": "2026-09-14T00:06:59Z",
+            "active_mhs": 15.280903635467107,
+            "temperature_end": 70.91169738769531
+          },
+          {
+            "start": "2026-09-14T00:06:59Z",
+            "end": "2026-09-14T00:10:59Z",
+            "active_mhs": 15.204080184769234,
+            "temperature_end": 72.430908203125
+          },
+          {
+            "start": "2026-09-14T00:10:59Z",
+            "end": "2026-09-14T00:14:59Z",
+            "active_mhs": 15.36232208690019,
+            "temperature_end": 62.675933837890625
+          },
+          {
+            "start": "2026-09-14T00:14:59Z",
+            "end": "2026-09-14T00:18:59Z",
+            "active_mhs": 15.182323530276026,
+            "temperature_end": 60.03729248046875
+          },
+          {
+            "start": "2026-09-14T00:18:59Z",
+            "end": "2026-09-14T00:22:59Z",
+            "active_mhs": 15.450325806238913,
+            "temperature_end": 58.997833251953125
+          },
+          {
+            "start": "2026-09-14T00:22:59Z",
+            "end": "2026-09-14T00:26:59Z",
+            "active_mhs": 15.417820628304868,
+            "temperature_end": 72.5108642578125
+          },
+          {
+            "start": "2026-09-14T00:26:59Z",
+            "end": "2026-09-14T00:30:59Z",
+            "active_mhs": 15.258714102743536,
+            "temperature_end": 61.5565185546875
+          },
+          {
+            "start": "2026-09-14T00:30:59Z",
+            "end": "2026-09-14T00:34:59Z",
+            "active_mhs": 15.306578570416626,
+            "temperature_end": 62.19618225097656
+          },
+          {
+            "start": "2026-09-14T00:34:59Z",
+            "end": "2026-09-14T00:38:59Z",
+            "active_mhs": 15.48833186502205,
+            "temperature_end": 63.71540832519531
+          },
+          {
+            "start": "2026-09-14T00:38:59Z",
+            "end": "2026-09-14T00:42:59Z",
+            "active_mhs": 15.316424437024718,
+            "temperature_end": 62.11622619628906
+          },
+          {
+            "start": "2026-09-14T00:42:59Z",
+            "end": "2026-09-14T00:46:59Z",
+            "active_mhs": 15.402248079853205,
+            "temperature_end": 68.5928955078125
+          },
+          {
+            "start": "2026-09-14T00:46:59Z",
+            "end": "2026-09-14T00:50:59Z",
+            "active_mhs": 15.29285405556933,
+            "temperature_end": 67.15362548828125
+          },
+          {
+            "start": "2026-09-14T00:50:59Z",
+            "end": "2026-09-14T00:54:59Z",
+            "active_mhs": 15.169027793731031,
+            "temperature_end": 61.79638671875
+          },
+          {
+            "start": "2026-09-14T00:54:59Z",
+            "end": "2026-09-14T00:58:59Z",
+            "active_mhs": 15.294768842564253,
+            "temperature_end": 69.79226684570312
+          },
+          {
+            "start": "2026-09-14T00:58:59Z",
+            "end": "2026-09-14T01:02:59Z",
+            "active_mhs": 15.39376883006758,
+            "temperature_end": 66.35403442382812
+          },
+          {
+            "start": "2026-09-14T01:02:59Z",
+            "end": "2026-09-14T01:06:59Z",
+            "active_mhs": 15.31870427615902,
+            "temperature_end": 75.30943298339844
+          },
+          {
+            "start": "2026-09-14T01:06:59Z",
+            "end": "2026-09-14T01:10:59Z",
+            "active_mhs": 15.159101166009506,
+            "temperature_end": 61.95631408691406
+          },
+          {
+            "start": "2026-09-14T01:10:59Z",
+            "end": "2026-09-14T01:14:59Z",
+            "active_mhs": 15.290041642027216,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-14T01:14:59Z",
+            "end": "2026-09-14T01:18:59Z",
+            "active_mhs": 15.166979009040118,
+            "temperature_end": 58.997833251953125
+          },
+          {
+            "start": "2026-09-14T01:18:59Z",
+            "end": "2026-09-14T01:22:59Z",
+            "active_mhs": 15.192574123470235,
+            "temperature_end": 62.755889892578125
+          },
+          {
+            "start": "2026-09-14T01:22:59Z",
+            "end": "2026-09-14T01:26:59Z",
+            "active_mhs": 15.837297081059875,
+            "temperature_end": 63.15568542480469
+          },
+          {
+            "start": "2026-09-14T01:26:59Z",
+            "end": "2026-09-14T01:30:59Z",
+            "active_mhs": 15.250884019002374,
+            "temperature_end": 72.1910400390625
+          },
+          {
+            "start": "2026-09-14T01:30:59Z",
+            "end": "2026-09-14T01:34:59Z",
+            "active_mhs": 15.269818687015976,
+            "temperature_end": 67.79330444335938
+          },
+          {
+            "start": "2026-09-14T01:34:59Z",
+            "end": "2026-09-14T01:38:59Z",
+            "active_mhs": 15.399659785591673,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-14T01:38:59Z",
+            "end": "2026-09-14T01:42:59Z",
+            "active_mhs": 15.301962415903676,
+            "temperature_end": 60.756927490234375
+          },
+          {
+            "start": "2026-09-14T01:42:59Z",
+            "end": "2026-09-14T01:46:59Z",
+            "active_mhs": 15.253542748635956,
+            "temperature_end": 61.95631408691406
+          },
+          {
+            "start": "2026-09-14T01:46:59Z",
+            "end": "2026-09-14T01:50:59Z",
+            "active_mhs": 15.232436999646316,
+            "temperature_end": 74.19000244140625
+          },
+          {
+            "start": "2026-09-14T01:50:59Z",
+            "end": "2026-09-14T01:54:59Z",
+            "active_mhs": 15.361078465254788,
+            "temperature_end": 60.51704406738281
+          },
+          {
+            "start": "2026-09-14T01:54:59Z",
+            "end": "2026-09-14T01:58:59Z",
+            "active_mhs": 15.469971324519195,
+            "temperature_end": 61.8763427734375
+          },
+          {
+            "start": "2026-09-14T01:58:59Z",
+            "end": "2026-09-14T02:02:59Z",
+            "active_mhs": 15.366069326481433,
+            "temperature_end": 69.95219421386719
+          },
+          {
+            "start": "2026-09-14T02:02:59Z",
+            "end": "2026-09-14T02:06:59Z",
+            "active_mhs": 15.39016806175903,
+            "temperature_end": 63.95527648925781
+          },
+          {
+            "start": "2026-09-14T02:06:59Z",
+            "end": "2026-09-14T02:10:59Z",
+            "active_mhs": 15.511843830771053,
+            "temperature_end": 61.8763427734375
+          },
+          {
+            "start": "2026-09-14T02:10:59Z",
+            "end": "2026-09-14T02:14:59Z",
+            "active_mhs": 15.249952494481482,
+            "temperature_end": 60.836883544921875
+          },
+          {
+            "start": "2026-09-14T02:14:59Z",
+            "end": "2026-09-14T02:18:59Z",
+            "active_mhs": 15.455554231852183,
+            "temperature_end": 72.67079162597656
+          },
+          {
+            "start": "2026-09-14T02:18:59Z",
+            "end": "2026-09-14T02:22:59Z",
+            "active_mhs": 15.212501882827004,
+            "temperature_end": 77.94807434082031
+          },
+          {
+            "start": "2026-09-14T02:22:59Z",
+            "end": "2026-09-14T02:26:59Z",
+            "active_mhs": 15.20078385466433,
+            "temperature_end": 68.27305603027344
+          },
+          {
+            "start": "2026-09-14T02:26:59Z",
+            "end": "2026-09-14T02:30:59Z",
+            "active_mhs": 15.278434172407342,
+            "temperature_end": 75.38938903808594
+          },
+          {
+            "start": "2026-09-14T02:30:59Z",
+            "end": "2026-09-14T02:34:59Z",
+            "active_mhs": 15.282825674882963,
+            "temperature_end": 67.79330444335938
+          },
+          {
+            "start": "2026-09-14T02:34:59Z",
+            "end": "2026-09-14T02:38:59Z",
+            "active_mhs": 15.253322927936448,
+            "temperature_end": 75.9490966796875
+          },
+          {
+            "start": "2026-09-14T02:38:59Z",
+            "end": "2026-09-14T02:42:59Z",
+            "active_mhs": 15.161074992934426,
+            "temperature_end": 60.51704406738281
+          },
+          {
+            "start": "2026-09-14T02:42:59Z",
+            "end": "2026-09-14T02:46:59Z",
+            "active_mhs": 15.133566686886624,
+            "temperature_end": 70.03215026855469
+          },
+          {
+            "start": "2026-09-14T02:46:59Z",
+            "end": "2026-09-14T02:50:59Z",
+            "active_mhs": 15.383784279206514,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-14T02:50:59Z",
+            "end": "2026-09-14T02:54:59Z",
+            "active_mhs": 16.064516540427515,
+            "temperature_end": 70.51190185546875
+          },
+          {
+            "start": "2026-09-14T02:54:59Z",
+            "end": "2026-09-14T02:58:59Z",
+            "active_mhs": 15.274302426692492,
+            "temperature_end": 66.43400573730469
+          },
+          {
+            "start": "2026-09-14T02:58:59Z",
+            "end": "2026-09-14T03:02:59Z",
+            "active_mhs": 15.191232326052887,
+            "temperature_end": 64.27511596679688
+          },
+          {
+            "start": "2026-09-14T03:02:59Z",
+            "end": "2026-09-14T03:06:59Z",
+            "active_mhs": 15.296978917809033,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-14T03:06:59Z",
+            "end": "2026-09-14T03:10:59Z",
+            "active_mhs": 15.295519134867108,
+            "temperature_end": 70.51190185546875
+          },
+          {
+            "start": "2026-09-14T03:10:59Z",
+            "end": "2026-09-14T03:14:59Z",
+            "active_mhs": 15.39458104683366,
+            "temperature_end": 60.11724853515625
+          },
+          {
+            "start": "2026-09-14T03:14:59Z",
+            "end": "2026-09-14T03:18:59Z",
+            "active_mhs": 15.338298726085924,
+            "temperature_end": 75.30943298339844
+          },
+          {
+            "start": "2026-09-14T03:18:59Z",
+            "end": "2026-09-14T03:22:59Z",
+            "active_mhs": 15.351535190632264,
+            "temperature_end": 71.55136108398438
+          },
+          {
+            "start": "2026-09-14T03:22:59Z",
+            "end": "2026-09-14T03:26:59Z",
+            "active_mhs": 15.26297415175395,
+            "temperature_end": 64.03523254394531
+          },
+          {
+            "start": "2026-09-14T03:26:59Z",
+            "end": "2026-09-14T03:30:59Z",
+            "active_mhs": 15.498996566732918,
+            "temperature_end": 61.39659118652344
+          },
+          {
+            "start": "2026-09-14T03:30:59Z",
+            "end": "2026-09-14T03:34:59Z",
+            "active_mhs": 15.543520572060498,
+            "temperature_end": 66.27407836914062
+          },
+          {
+            "start": "2026-09-14T03:34:59Z",
+            "end": "2026-09-14T03:38:59Z",
+            "active_mhs": 15.732095169596672,
+            "temperature_end": 59.63749694824219
+          },
+          {
+            "start": "2026-09-14T03:38:59Z",
+            "end": "2026-09-14T03:42:59Z",
+            "active_mhs": 15.592315849532092,
+            "temperature_end": 59.237701416015625
+          },
+          {
+            "start": "2026-09-14T03:42:59Z",
+            "end": "2026-09-14T03:46:59Z",
+            "active_mhs": 15.388175531022087,
+            "temperature_end": 59.39762878417969
+          },
+          {
+            "start": "2026-09-14T03:46:59Z",
+            "end": "2026-09-14T03:50:59Z",
+            "active_mhs": 15.523730852591601,
+            "temperature_end": 70.11210632324219
+          },
+          {
+            "start": "2026-09-14T03:50:59Z",
+            "end": "2026-09-14T03:54:59Z",
+            "active_mhs": 15.217324275359488,
+            "temperature_end": 61.07676696777344
+          },
+          {
+            "start": "2026-09-14T03:54:59Z",
+            "end": "2026-09-14T03:58:59Z",
+            "active_mhs": 15.236319638744241,
+            "temperature_end": 63.23564147949219
+          },
+          {
+            "start": "2026-09-14T03:58:59Z",
+            "end": "2026-09-14T04:02:59Z",
+            "active_mhs": 15.444678512111086,
+            "temperature_end": 59.237701416015625
+          },
+          {
+            "start": "2026-09-14T04:02:59Z",
+            "end": "2026-09-14T04:06:59Z",
+            "active_mhs": 15.484900987594596,
+            "temperature_end": 59.55754089355469
+          },
+          {
+            "start": "2026-09-14T04:06:59Z",
+            "end": "2026-09-14T04:10:59Z",
+            "active_mhs": 15.595479291678686,
+            "temperature_end": 58.67799377441406
+          },
+          {
+            "start": "2026-09-14T04:10:59Z",
+            "end": "2026-09-14T04:14:59Z",
+            "active_mhs": 15.590129234669964,
+            "temperature_end": 67.95321655273438
+          },
+          {
+            "start": "2026-09-14T04:14:59Z",
+            "end": "2026-09-14T04:18:59Z",
+            "active_mhs": 15.31456360455654,
+            "temperature_end": 59.71746826171875
+          },
+          {
+            "start": "2026-09-14T04:18:59Z",
+            "end": "2026-09-14T04:22:59Z",
+            "active_mhs": 15.350741182466814,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-14T04:22:59Z",
+            "end": "2026-09-14T04:26:59Z",
+            "active_mhs": 15.459634038296722,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-14T04:26:59Z",
+            "end": "2026-09-14T04:30:59Z",
+            "active_mhs": 15.313024244946364,
+            "temperature_end": 59.39762878417969
+          },
+          {
+            "start": "2026-09-14T04:30:59Z",
+            "end": "2026-09-14T04:34:59Z",
+            "active_mhs": 15.552847828077853,
+            "temperature_end": 58.358154296875
+          },
+          {
+            "start": "2026-09-14T04:34:59Z",
+            "end": "2026-09-14T04:38:59Z",
+            "active_mhs": 15.539583253381075,
+            "temperature_end": 59.39762878417969
+          },
+          {
+            "start": "2026-09-14T04:38:59Z",
+            "end": "2026-09-14T04:42:59Z",
+            "active_mhs": 15.598901744015963,
+            "temperature_end": 58.1182861328125
+          },
+          {
+            "start": "2026-09-14T04:42:59Z",
+            "end": "2026-09-14T04:46:59Z",
+            "active_mhs": 15.210318245487525,
+            "temperature_end": 59.63749694824219
+          },
+          {
+            "start": "2026-09-14T04:46:59Z",
+            "end": "2026-09-14T04:50:59Z",
+            "active_mhs": 15.329948898722867,
+            "temperature_end": 66.35403442382812
+          },
+          {
+            "start": "2026-09-14T04:50:59Z",
+            "end": "2026-09-14T04:54:59Z",
+            "active_mhs": 15.463602919739344,
+            "temperature_end": 74.26995849609375
+          },
+          {
+            "start": "2026-09-14T04:54:59Z",
+            "end": "2026-09-14T04:58:59Z",
+            "active_mhs": 15.275870960866873,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-14T04:58:59Z",
+            "end": "2026-09-14T05:02:59Z",
+            "active_mhs": 15.202738826232691,
+            "temperature_end": 75.46934509277344
+          },
+          {
+            "start": "2026-09-14T05:02:59Z",
+            "end": "2026-09-14T05:06:59Z",
+            "active_mhs": 15.319650509834585,
+            "temperature_end": 70.35197448730469
+          },
+          {
+            "start": "2026-09-14T05:06:59Z",
+            "end": "2026-09-14T05:10:59Z",
+            "active_mhs": 15.2294551276141,
+            "temperature_end": 59.87738037109375
+          },
+          {
+            "start": "2026-09-14T05:10:59Z",
+            "end": "2026-09-14T05:14:59Z",
+            "active_mhs": 15.549869170690757,
+            "temperature_end": 66.91375732421875
+          },
+          {
+            "start": "2026-09-14T05:14:59Z",
+            "end": "2026-09-14T05:18:59Z",
+            "active_mhs": 15.421359305679989,
+            "temperature_end": 73.15054321289062
+          },
+          {
+            "start": "2026-09-14T05:18:59Z",
+            "end": "2026-09-14T05:22:59Z",
+            "active_mhs": 15.307891546930984,
+            "temperature_end": 62.91581726074219
+          },
+          {
+            "start": "2026-09-14T05:22:59Z",
+            "end": "2026-09-14T05:26:59Z",
+            "active_mhs": 15.302846667243841,
+            "temperature_end": 70.67181396484375
+          },
+          {
+            "start": "2026-09-14T05:26:59Z",
+            "end": "2026-09-14T05:30:59Z",
+            "active_mhs": 15.329488002931392,
+            "temperature_end": 61.5565185546875
+          },
+          {
+            "start": "2026-09-14T05:30:59Z",
+            "end": "2026-09-14T05:34:59Z",
+            "active_mhs": 15.362183670230062,
+            "temperature_end": 62.436065673828125
+          },
+          {
+            "start": "2026-09-14T05:34:59Z",
+            "end": "2026-09-14T05:38:59Z",
+            "active_mhs": 15.250030197391238,
+            "temperature_end": 63.47552490234375
+          },
+          {
+            "start": "2026-09-14T05:38:59Z",
+            "end": "2026-09-14T05:42:59Z",
+            "active_mhs": 15.503629347346465,
+            "temperature_end": 62.35609436035156
+          },
+          {
+            "start": "2026-09-14T05:42:59Z",
+            "end": "2026-09-14T05:46:59Z",
+            "active_mhs": 15.383062271039298,
+            "temperature_end": 73.15054321289062
+          },
+          {
+            "start": "2026-09-14T05:46:59Z",
+            "end": "2026-09-14T05:50:59Z",
+            "active_mhs": 15.300422656716853,
+            "temperature_end": 62.675933837890625
+          },
+          {
+            "start": "2026-09-14T05:50:59Z",
+            "end": "2026-09-14T05:54:59Z",
+            "active_mhs": 15.497138774491654,
+            "temperature_end": 62.99577331542969
+          },
+          {
+            "start": "2026-09-14T05:54:59Z",
+            "end": "2026-09-14T05:58:59Z",
+            "active_mhs": 15.201376743214418,
+            "temperature_end": 61.8763427734375
+          },
+          {
+            "start": "2026-09-14T05:58:59Z",
+            "end": "2026-09-14T06:02:59Z",
+            "active_mhs": 15.314359582534376,
+            "temperature_end": 69.95219421386719
+          },
+          {
+            "start": "2026-09-14T06:02:59Z",
+            "end": "2026-09-14T06:06:59Z",
+            "active_mhs": 15.277262938312175,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-14T06:06:59Z",
+            "end": "2026-09-14T06:10:59Z",
+            "active_mhs": 15.330095157568833,
+            "temperature_end": 67.63337707519531
+          },
+          {
+            "start": "2026-09-14T06:10:59Z",
+            "end": "2026-09-14T06:14:59Z",
+            "active_mhs": 15.288787197828519,
+            "temperature_end": 60.996795654296875
+          },
+          {
+            "start": "2026-09-14T06:14:59Z",
+            "end": "2026-09-14T06:18:59Z",
+            "active_mhs": 15.281720456138697,
+            "temperature_end": 62.99577331542969
+          },
+          {
+            "start": "2026-09-14T06:18:59Z",
+            "end": "2026-09-14T06:22:59Z",
+            "active_mhs": 15.343508469628556,
+            "temperature_end": 65.07470703125
+          },
+          {
+            "start": "2026-09-14T06:22:59Z",
+            "end": "2026-09-14T06:26:59Z",
+            "active_mhs": 15.788729334172277,
+            "temperature_end": 66.11416625976562
+          },
+          {
+            "start": "2026-09-14T06:26:59Z",
+            "end": "2026-09-14T06:30:59Z",
+            "active_mhs": 15.607538410547361,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-14T06:30:59Z",
+            "end": "2026-09-14T06:34:59Z",
+            "active_mhs": 15.304755932539086,
+            "temperature_end": 60.11724853515625
+          },
+          {
+            "start": "2026-09-14T06:34:59Z",
+            "end": "2026-09-14T06:38:59Z",
+            "active_mhs": 15.405022013743663,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-14T06:38:59Z",
+            "end": "2026-09-14T06:42:59Z",
+            "active_mhs": 15.35773467356372,
+            "temperature_end": 69.63235473632812
+          },
+          {
+            "start": "2026-09-14T06:42:59Z",
+            "end": "2026-09-14T06:46:59Z",
+            "active_mhs": 15.240139588645244,
+            "temperature_end": 64.43502807617188
+          },
+          {
+            "start": "2026-09-14T06:46:59Z",
+            "end": "2026-09-14T06:50:59Z",
+            "active_mhs": 15.14845809251692,
+            "temperature_end": 61.636474609375
+          },
+          {
+            "start": "2026-09-14T06:50:59Z",
+            "end": "2026-09-14T06:54:59Z",
+            "active_mhs": 15.29377523810911,
+            "temperature_end": 65.95425415039062
+          },
+          {
+            "start": "2026-09-14T06:54:59Z",
+            "end": "2026-09-14T06:58:59Z",
+            "active_mhs": 15.343904725126066,
+            "temperature_end": 63.55548095703125
+          },
+          {
+            "start": "2026-09-14T06:58:59Z",
+            "end": "2026-09-14T07:02:59Z",
+            "active_mhs": 15.380107965924587,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-14T07:02:59Z",
+            "end": "2026-09-14T07:06:59Z",
+            "active_mhs": 15.343588117794178,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-14T07:06:59Z",
+            "end": "2026-09-14T07:10:59Z",
+            "active_mhs": 15.667791428444552,
+            "temperature_end": 62.03627014160156
+          },
+          {
+            "start": "2026-09-14T07:10:59Z",
+            "end": "2026-09-14T07:14:59Z",
+            "active_mhs": 15.222334301227106,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-14T07:14:59Z",
+            "end": "2026-09-14T07:18:59Z",
+            "active_mhs": 15.27365392298951,
+            "temperature_end": 60.51704406738281
+          },
+          {
+            "start": "2026-09-14T07:18:59Z",
+            "end": "2026-09-14T07:22:59Z",
+            "active_mhs": 15.371594764890357,
+            "temperature_end": 62.675933837890625
+          },
+          {
+            "start": "2026-09-14T07:22:59Z",
+            "end": "2026-09-14T07:26:59Z",
+            "active_mhs": 15.469006807336433,
+            "temperature_end": 59.077789306640625
+          },
+          {
+            "start": "2026-09-14T07:26:59Z",
+            "end": "2026-09-14T07:30:59Z",
+            "active_mhs": 15.526831975461404,
+            "temperature_end": 76.26893615722656
+          },
+          {
+            "start": "2026-09-14T07:30:59Z",
+            "end": "2026-09-14T07:34:59Z",
+            "active_mhs": 15.471613468196983,
+            "temperature_end": 60.03729248046875
+          },
+          {
+            "start": "2026-09-14T07:34:59Z",
+            "end": "2026-09-14T07:38:59Z",
+            "active_mhs": 15.206881722348319,
+            "temperature_end": 61.07676696777344
+          },
+          {
+            "start": "2026-09-14T07:38:59Z",
+            "end": "2026-09-14T07:42:59Z",
+            "active_mhs": 15.188150245525328,
+            "temperature_end": 70.59185791015625
+          },
+          {
+            "start": "2026-09-14T07:42:59Z",
+            "end": "2026-09-14T07:46:59Z",
+            "active_mhs": 15.417601875292016,
+            "temperature_end": 59.39762878417969
+          },
+          {
+            "start": "2026-09-14T07:46:59Z",
+            "end": "2026-09-14T07:50:59Z",
+            "active_mhs": 15.460614683453397,
+            "temperature_end": 63.39556884765625
+          },
+          {
+            "start": "2026-09-14T07:50:59Z",
+            "end": "2026-09-14T07:54:59Z",
+            "active_mhs": 15.629737547981524,
+            "temperature_end": 58.67799377441406
+          },
+          {
+            "start": "2026-09-14T07:54:59Z",
+            "end": "2026-09-14T07:58:59Z",
+            "active_mhs": 15.467485889553856,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-14T07:58:59Z",
+            "end": "2026-09-14T08:02:59Z",
+            "active_mhs": 15.522450739588203,
+            "temperature_end": 72.5108642578125
+          },
+          {
+            "start": "2026-09-14T08:02:59Z",
+            "end": "2026-09-14T08:06:59Z",
+            "active_mhs": 15.180737704447372,
+            "temperature_end": 58.67799377441406
+          },
+          {
+            "start": "2026-09-14T08:06:59Z",
+            "end": "2026-09-14T08:10:59Z",
+            "active_mhs": 15.43883862506671,
+            "temperature_end": 61.07676696777344
+          },
+          {
+            "start": "2026-09-14T08:10:59Z",
+            "end": "2026-09-14T08:14:59Z",
+            "active_mhs": 15.384926327723655,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-14T08:14:59Z",
+            "end": "2026-09-14T08:18:59Z",
+            "active_mhs": 15.172030133541272,
+            "temperature_end": 64.27511596679688
+          },
+          {
+            "start": "2026-09-14T08:18:59Z",
+            "end": "2026-09-14T08:22:59Z",
+            "active_mhs": 15.380991476277334,
+            "temperature_end": 66.59391784667969
+          },
+          {
+            "start": "2026-09-14T08:22:59Z",
+            "end": "2026-09-14T08:26:59Z",
+            "active_mhs": 15.246515571424151,
+            "temperature_end": 62.91581726074219
+          },
+          {
+            "start": "2026-09-14T08:26:59Z",
+            "end": "2026-09-14T08:30:59Z",
+            "active_mhs": 15.554999436193139,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-14T08:30:59Z",
+            "end": "2026-09-14T08:34:59Z",
+            "active_mhs": 15.535187383553218,
+            "temperature_end": 61.79638671875
+          },
+          {
+            "start": "2026-09-14T08:34:59Z",
+            "end": "2026-09-14T08:38:59Z",
+            "active_mhs": 15.630662504872365,
+            "temperature_end": 59.71746826171875
+          },
+          {
+            "start": "2026-09-14T08:38:59Z",
+            "end": "2026-09-14T08:42:59Z",
+            "active_mhs": 15.287990895739187,
+            "temperature_end": 62.755889892578125
+          },
+          {
+            "start": "2026-09-14T08:42:59Z",
+            "end": "2026-09-14T08:46:59Z",
+            "active_mhs": 15.334854409818211,
+            "temperature_end": 59.077789306640625
+          },
+          {
+            "start": "2026-09-14T08:46:59Z",
+            "end": "2026-09-14T08:50:59Z",
+            "active_mhs": 15.35902025379237,
+            "temperature_end": 62.755889892578125
+          },
+          {
+            "start": "2026-09-14T08:50:59Z",
+            "end": "2026-09-14T08:54:59Z",
+            "active_mhs": 15.394093628269534,
+            "temperature_end": 66.51396179199219
+          },
+          {
+            "start": "2026-09-14T08:54:59Z",
+            "end": "2026-09-14T08:58:59Z",
+            "active_mhs": 15.185180463867491,
+            "temperature_end": 62.675933837890625
+          },
+          {
+            "start": "2026-09-14T08:58:59Z",
+            "end": "2026-09-14T09:02:59Z",
+            "active_mhs": 15.505026502846377,
+            "temperature_end": 59.87738037109375
+          },
+          {
+            "start": "2026-09-14T09:02:59Z",
+            "end": "2026-09-14T09:06:59Z",
+            "active_mhs": 15.503718026991844,
+            "temperature_end": 69.15260314941406
+          },
+          {
+            "start": "2026-09-14T09:06:59Z",
+            "end": "2026-09-14T09:10:59Z",
+            "active_mhs": 15.479340225729754,
+            "temperature_end": 60.916839599609375
+          },
+          {
+            "start": "2026-09-14T09:10:59Z",
+            "end": "2026-09-14T09:14:59Z",
+            "active_mhs": 15.332831772845601,
+            "temperature_end": 59.79742431640625
+          },
+          {
+            "start": "2026-09-14T09:14:59Z",
+            "end": "2026-09-14T09:18:59Z",
+            "active_mhs": 15.315429729521103,
+            "temperature_end": 72.91065979003906
+          },
+          {
+            "start": "2026-09-14T09:18:59Z",
+            "end": "2026-09-14T09:22:59Z",
+            "active_mhs": 15.426845415010309,
+            "temperature_end": 70.99165344238281
+          },
+          {
+            "start": "2026-09-14T09:22:59Z",
+            "end": "2026-09-14T09:26:59Z",
+            "active_mhs": 15.498386723079305,
+            "temperature_end": 65.71437072753906
+          },
+          {
+            "start": "2026-09-14T09:26:59Z",
+            "end": "2026-09-14T09:30:59Z",
+            "active_mhs": 15.344284366797273,
+            "temperature_end": 63.95527648925781
+          },
+          {
+            "start": "2026-09-14T09:30:59Z",
+            "end": "2026-09-14T09:34:59Z",
+            "active_mhs": 15.158150818736322,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-14T09:34:59Z",
+            "end": "2026-09-14T09:38:59Z",
+            "active_mhs": 15.342086043596955,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-14T09:38:59Z",
+            "end": "2026-09-14T09:42:59Z",
+            "active_mhs": 15.212638939775527,
+            "temperature_end": 60.11724853515625
+          },
+          {
+            "start": "2026-09-14T09:42:59Z",
+            "end": "2026-09-14T09:46:59Z",
+            "active_mhs": 15.46923852976112,
+            "temperature_end": 68.832763671875
+          },
+          {
+            "start": "2026-09-14T09:46:59Z",
+            "end": "2026-09-14T09:50:59Z",
+            "active_mhs": 15.391126213442169,
+            "temperature_end": 61.95631408691406
+          },
+          {
+            "start": "2026-09-14T09:50:59Z",
+            "end": "2026-09-14T09:54:59Z",
+            "active_mhs": 15.423492893425074,
+            "temperature_end": 66.11416625976562
+          },
+          {
+            "start": "2026-09-14T09:54:59Z",
+            "end": "2026-09-14T09:58:59Z",
+            "active_mhs": 15.28383708625189,
+            "temperature_end": 61.95631408691406
+          },
+          {
+            "start": "2026-09-14T09:58:59Z",
+            "end": "2026-09-14T10:02:59Z",
+            "active_mhs": 15.623148049332965,
+            "temperature_end": 60.51704406738281
+          },
+          {
+            "start": "2026-09-14T10:02:59Z",
+            "end": "2026-09-14T10:06:59Z",
+            "active_mhs": 15.513799422701588,
+            "temperature_end": 62.595977783203125
+          },
+          {
+            "start": "2026-09-14T10:06:59Z",
+            "end": "2026-09-14T10:10:59Z",
+            "active_mhs": 15.253600483893527,
+            "temperature_end": 64.35507202148438
+          },
+          {
+            "start": "2026-09-14T10:10:59Z",
+            "end": "2026-09-14T10:14:59Z",
+            "active_mhs": 15.36890665526734,
+            "temperature_end": 78.58773803710938
+          },
+          {
+            "start": "2026-09-14T10:14:59Z",
+            "end": "2026-09-14T10:18:59Z",
+            "active_mhs": 15.777118247697558,
+            "temperature_end": 61.636474609375
+          },
+          {
+            "start": "2026-09-14T10:18:59Z",
+            "end": "2026-09-14T10:22:59Z",
+            "active_mhs": 15.703819169958003,
+            "temperature_end": 66.35403442382812
+          },
+          {
+            "start": "2026-09-14T10:22:59Z",
+            "end": "2026-09-14T10:26:59Z",
+            "active_mhs": 15.276243412441024,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-14T10:26:59Z",
+            "end": "2026-09-14T10:30:59Z",
+            "active_mhs": 15.263340458738384,
+            "temperature_end": 73.07058715820312
+          },
+          {
+            "start": "2026-09-14T10:30:59Z",
+            "end": "2026-09-14T10:34:59Z",
+            "active_mhs": 15.341868147955546,
+            "temperature_end": 64.51498413085938
+          },
+          {
+            "start": "2026-09-14T10:34:59Z",
+            "end": "2026-09-14T10:38:59Z",
+            "active_mhs": 15.549626192521885,
+            "temperature_end": 60.51704406738281
+          },
+          {
+            "start": "2026-09-14T10:38:59Z",
+            "end": "2026-09-14T10:42:59Z",
+            "active_mhs": 15.526390671073322,
+            "temperature_end": 63.31561279296875
+          },
+          {
+            "start": "2026-09-14T10:42:59Z",
+            "end": "2026-09-14T10:46:59Z",
+            "active_mhs": 15.181815508157316,
+            "temperature_end": 64.03523254394531
+          },
+          {
+            "start": "2026-09-14T10:46:59Z",
+            "end": "2026-09-14T10:50:59Z",
+            "active_mhs": 15.604275429229062,
+            "temperature_end": 75.46934509277344
+          },
+          {
+            "start": "2026-09-14T10:50:59Z",
+            "end": "2026-09-14T10:54:59Z",
+            "active_mhs": 15.421515732321767,
+            "temperature_end": 63.79536437988281
+          },
+          {
+            "start": "2026-09-14T10:54:59Z",
+            "end": "2026-09-14T10:58:59Z",
+            "active_mhs": 15.211196576858645,
+            "temperature_end": 64.19515991210938
+          },
+          {
+            "start": "2026-09-14T10:58:59Z",
+            "end": "2026-09-14T11:02:59Z",
+            "active_mhs": 15.45166679145077,
+            "temperature_end": 67.23358154296875
+          },
+          {
+            "start": "2026-09-14T11:02:59Z",
+            "end": "2026-09-14T11:06:59Z",
+            "active_mhs": 15.610233623908794,
+            "temperature_end": 62.436065673828125
+          },
+          {
+            "start": "2026-09-14T11:06:59Z",
+            "end": "2026-09-14T11:10:59Z",
+            "active_mhs": 15.21751361918935,
+            "temperature_end": 79.14744567871094
+          },
+          {
+            "start": "2026-09-14T11:10:59Z",
+            "end": "2026-09-14T11:14:59Z",
+            "active_mhs": 15.228553877200103,
+            "temperature_end": 66.35403442382812
+          },
+          {
+            "start": "2026-09-14T11:14:59Z",
+            "end": "2026-09-14T11:18:59Z",
+            "active_mhs": 15.402747611278965,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-14T11:18:59Z",
+            "end": "2026-09-14T11:22:59Z",
+            "active_mhs": 15.442077987622575,
+            "temperature_end": 72.430908203125
+          },
+          {
+            "start": "2026-09-14T11:22:59Z",
+            "end": "2026-09-14T11:26:59Z",
+            "active_mhs": 15.325157222874857,
+            "temperature_end": 60.836883544921875
+          },
+          {
+            "start": "2026-09-14T11:26:59Z",
+            "end": "2026-09-14T11:30:59Z",
+            "active_mhs": 15.398637771102171,
+            "temperature_end": 60.03729248046875
+          },
+          {
+            "start": "2026-09-14T11:30:59Z",
+            "end": "2026-09-14T11:34:59Z",
+            "active_mhs": 15.441655268503089,
+            "temperature_end": 59.87738037109375
+          },
+          {
+            "start": "2026-09-14T11:34:59Z",
+            "end": "2026-09-14T11:38:59Z",
+            "active_mhs": 15.358184471008762,
+            "temperature_end": 61.7164306640625
+          },
+          {
+            "start": "2026-09-14T11:38:59Z",
+            "end": "2026-09-14T11:42:25Z",
+            "active_mhs": 15.430998360421464,
+            "temperature_end": 58.43812561035156
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "Distribution/ergometal3.jsonl",
+    "sha256": "6d4136194e137c21729b415ba688a323e5f64e03dc02ebbfab1fe54496c60fad",
+    "sessions": [
+      {
+        "sessionID": "4E92D84C-8549-48AC-AE8D-676D7F9CB55C",
+        "first": "2026-09-14T20:40:32Z",
+        "last": "2026-09-15T06:29:29Z",
+        "event_counts": {
+          "session_started": 1,
+          "pool_connected": 13,
+          "pool_authorized": 13,
+          "job_received": 315,
+          "dataset_completed": 260,
+          "share_accepted": 23,
+          "statistics_sample": 147,
+          "pool_disconnected": 12,
+          "session_ended": 1
+        },
+        "start_fields": {
+          "profile": "peak",
+          "tuning_source_batch_nonces": "tuned",
+          "tuning_source_prefetch_chunk_elements": "tuned",
+          "executable_sha256": "b18ed68823c6f1fe9837b057395d722392deef97b91e31c99b1a286573743b64",
+          "network": "mainnet",
+          "dataset_scheduling": "overlap",
+          "autotune_mode": "auto",
+          "gpu_generation": "m4",
+          "batch_nonces": "1048576",
+          "threadgroup_size": "64",
+          "tuning_source_build_pipeline_depth": "tuned",
+          "tuning_source_search_pipeline_depth": "tuned",
+          "mode": "mining",
+          "tuning_provenance": "tuned",
+          "tuning_source_build_chunk_elements": "tuned",
+          "os_version": "Version 27.0 (Build 26A428)",
+          "worktree_dirty": "false",
+          "dataset_threadgroup_size": "256",
+          "donation_cycle_seconds": "6000",
+          "worktree_revision": "3e024cc4da34ac21c178be3256c08195ab436e0c",
+          "os_build": "26A428",
+          "donation_percent": "0",
+          "tuning_source_search_threadgroup_size": "tuned",
+          "build_pipeline_depth": "2",
+          "tuning_source_prebuild_batch_nonces": "tuned",
+          "autotune_cache_key": "1fdbaf85eb489cb7e05a7428c03a6433b0715c86cd5b5fac43577d6ac1d52c4a",
+          "prefetch_chunk_elements": "524288",
+          "gpu_architecture": "applegpu_g16g",
+          "dataset_kernel": "u32pair-inline-m",
+          "prebuild": "off",
+          "build_chunk_elements": "2097152",
+          "prebuild_batch_nonces": "131072",
+          "architecture": "arm64",
+          "search_pipeline_depth": "2",
+          "tuning_source_dataset_threadgroup_size": "tuned",
+          "gpu_family": "apple9"
+        },
+        "final_fields": {
+          "search_pipeline_depth": "2",
+          "tuning_source_batch_nonces": "tuned",
+          "tuning_source_build_chunk_elements": "tuned",
+          "donation_shares_accepted": "0",
+          "donation_active_recipient": "user",
+          "donation_window_seconds": "0.0",
+          "shares_accepted": "23",
+          "dataset_prefetched_activations_total": "0",
+          "job_id": "bfe2",
+          "prebuild_batch_nonces": "131072",
+          "tuning_source_search_threadgroup_size": "tuned",
+          "dataset_bytes": "7272058080",
+          "dataset_prefetch_wait_seconds_total": "0.0",
+          "gpu_seconds": "53434.64917599943",
+          "gpu_build_command_wall_seconds_total": "8239.032035083339",
+          "dataset_activations_total": "260",
+          "tuning_source_prebuild_batch_nonces": "tuned",
+          "share_luck_ratio": "0.9633823404027791",
+          "dataset_activation_seconds_total": "7272.863722132004",
+          "dataset_built_activations_total": "232",
+          "prefetch_chunk_elements": "524288",
+          "job_target_hex": "000000003f00000003f00000003f00000003f00000003f00000003f00000003f",
+          "dataset_cold_builds_cancelled_total": "55",
+          "hashrate": "0.0",
+          "dataset_cold_build_wall_seconds_total": "8239.038313830999",
+          "prefetch_progress": "0.0",
+          "donation_shares_rejected": "0",
+          "dataset_prefetch_wasted_wall_seconds_total": "0.0",
+          "build_chunk_elements": "2097152",
+          "dataset_build_seconds": "31.455700125",
+          "shares_stale": "0",
+          "nonces": "416666353664",
+          "height": "1873501",
+          "dataset_prefetch_build_wall_seconds_total": "0.0",
+          "dataset_prefetch_builds_cancelled_total": "0",
+          "dataset_prefetch_waits_total": "0",
+          "gpu_family": "apple9",
+          "state": "stopped",
+          "protocol_errors": "0",
+          "donation_shares_stale": "0",
+          "dataset_prefetch_build_gpu_seconds_total": "0.0",
+          "donation_nonces": "0",
+          "tuning_provenance": "tuned",
+          "donation_scheduled_recipient": "user",
+          "shares_expected": "23.874217987412933",
+          "gpu_build_commands_completed_total": "28453",
+          "search_duty_cycle": "0.7663607375039498",
+          "shares_rejected": "0",
+          "search_pipeline_max_threads": "64",
+          "dataset_prefetch_builds_discarded_total": "0",
+          "donation_shares_found": "0",
+          "soc_temperature_session_peak_celsius": "79.14744567871094",
+          "soc_temperature_average_celsius": "55.76283264160156",
+          "dataset_cold_builds_failed_total": "0",
+          "reconnects": "12",
+          "gpu_search_command_gpu_seconds_total": "53434.649175999584",
+          "gpu_search_command_non_gpu_seconds_total": "704.4453323331181",
+          "build_pipeline_max_threads": "256",
+          "temperature_source": "iohid_soc_die",
+          "donation_shares_submitted": "0",
+          "elapsed_seconds": "35337.30779492855",
+          "dataset_cold_build_resumed_elements_total": "402653184",
+          "dataset_prefetch_builds_started_total": "0",
+          "difficulty": "1.0",
+          "gpu_search_commands_completed_total": "397364",
+          "gpu_search_command_wall_busy_seconds_total": "27081.12526312552",
+          "gpu_build_command_gpu_seconds_total": "8167.833994207758",
+          "donation_failures": "0",
+          "dataset_prefetch_builds_failed_total": "0",
+          "shares_submitted": "23",
+          "tuning_source_dataset_threadgroup_size": "tuned",
+          "batch_nonces": "1048576",
+          "dataset_cold_build_gpu_seconds_total": "8167.833994207758",
+          "build_pipeline_depth": "2",
+          "thermal_state": "nominal",
+          "dataset_prefetch_builds_completed_total": "0",
+          "dataset_cached_activations_total": "28",
+          "dataset_source": "built",
+          "tuning_source_build_pipeline_depth": "tuned",
+          "threadgroup_size": "64",
+          "average_hashrate": "15385858.21732251",
+          "autotune_mode": "auto",
+          "donation_switches": "0",
+          "gpu_search_command_non_gpu_busy_seconds_total": "18.010998291978467",
+          "shares_found": "23",
+          "dataset_activation_seconds": "31.455892333",
+          "gpu_search_command_gpu_busy_seconds_total": "27063.11426483354",
+          "gpu_build_command_non_gpu_seconds_total": "71.19804087558077",
+          "tuning_source_prefetch_chunk_elements": "tuned",
+          "gpu_architecture": "applegpu_g16g",
+          "tuning_source_search_pipeline_depth": "tuned",
+          "dataset_prefetch_wasted_gpu_seconds_total": "0.0",
+          "gpu_generation": "m4",
+          "donation_search_seconds": "0.0",
+          "soc_temperature_maximum_celsius": "63.15568542480469",
+          "effective_hashrate": "11791117.650558487",
+          "dataset_build_gpu_seconds": "31.202022791643685",
+          "dataset_cold_builds_completed_total": "232",
+          "search_seconds": "27081.12526312552",
+          "dataset_threadgroup_size": "256",
+          "soc_temperature_sensor_count": "24",
+          "donation_shares_expected": "0.0",
+          "gpu_search_command_wall_seconds_total": "54139.0945083327",
+          "donation_percent": "0",
+          "autotune_cache_key": "1fdbaf85eb489cb7e05a7428c03a6433b0715c86cd5b5fac43577d6ac1d52c4a",
+          "profile": "peak",
+          "dataset_cold_builds_resumed_total": "3",
+          "pool_connected": "false"
+        },
+        "chronology_and_monotonicity_issues": [],
+        "monotonic_fields_checked": [
+          "dataset_activation_seconds_total",
+          "dataset_activations_total",
+          "dataset_built_activations_total",
+          "dataset_cached_activations_total",
+          "dataset_cold_build_gpu_seconds_total",
+          "dataset_cold_build_resumed_elements_total",
+          "dataset_cold_build_wall_seconds_total",
+          "dataset_cold_builds_cancelled_total",
+          "dataset_cold_builds_completed_total",
+          "dataset_cold_builds_failed_total",
+          "dataset_cold_builds_resumed_total",
+          "dataset_prefetch_build_gpu_seconds_total",
+          "dataset_prefetch_build_wall_seconds_total",
+          "dataset_prefetch_builds_cancelled_total",
+          "dataset_prefetch_builds_completed_total",
+          "dataset_prefetch_builds_discarded_total",
+          "dataset_prefetch_builds_failed_total",
+          "dataset_prefetch_builds_started_total",
+          "dataset_prefetch_wait_seconds_total",
+          "dataset_prefetch_waits_total",
+          "dataset_prefetch_wasted_gpu_seconds_total",
+          "dataset_prefetch_wasted_wall_seconds_total",
+          "dataset_prefetched_activations_total",
+          "elapsed_seconds",
+          "gpu_build_command_gpu_seconds_total",
+          "gpu_build_command_non_gpu_seconds_total",
+          "gpu_build_command_wall_seconds_total",
+          "gpu_build_commands_completed_total",
+          "gpu_search_command_gpu_busy_seconds_total",
+          "gpu_search_command_gpu_seconds_total",
+          "gpu_search_command_non_gpu_busy_seconds_total",
+          "gpu_search_command_non_gpu_seconds_total",
+          "gpu_search_command_wall_busy_seconds_total",
+          "gpu_search_command_wall_seconds_total",
+          "gpu_search_commands_completed_total",
+          "gpu_seconds",
+          "nonces",
+          "protocol_errors",
+          "reconnects",
+          "search_seconds",
+          "shares_accepted",
+          "shares_found",
+          "shares_rejected",
+          "shares_stale",
+          "shares_submitted"
+        ],
+        "invariant_residuals": {
+          "active_hashrate": 0.0,
+          "effective_hashrate": 0.0,
+          "search_duty": 0.0,
+          "search_wall_busy": 0.0,
+          "search_busy_partition": 0.0,
+          "nonce_command_count": 0
+        },
+        "unaccounted_wall_seconds": 17.144217972032493,
+        "cold_build_seconds": {
+          "n": 232,
+          "minimum": 31.385838792,
+          "median": 31.452007833,
+          "maximum": 34.508409167,
+          "mean": 31.525319966215516,
+          "stdev": 0.3622944274564142
+        },
+        "cold_build_gpu_seconds": {
+          "n": 232,
+          "minimum": 31.197124250011257,
+          "median": 31.202393666673743,
+          "maximum": 34.137671375004174,
+          "mean": 31.27464434662196,
+          "stdev": 0.3549149282254793
+        },
+        "sampled_sensor_maximum_celsius": {
+          "n": 148,
+          "minimum": 58.51808166503906,
+          "median": 64.67491149902344,
+          "maximum": 79.14744567871094,
+          "mean": 66.24058666744747,
+          "stdev": 5.331210048166431
+        },
+        "intervals": [
+          {
+            "start": "2026-09-14T20:44:32Z",
+            "end": "2026-09-14T20:48:32Z",
+            "active_mhs": 15.393996885314982,
+            "temperature_end": 61.39659118652344
+          },
+          {
+            "start": "2026-09-14T20:48:32Z",
+            "end": "2026-09-14T20:52:32Z",
+            "active_mhs": 15.141914688728326,
+            "temperature_end": 65.234619140625
+          },
+          {
+            "start": "2026-09-14T20:52:32Z",
+            "end": "2026-09-14T20:56:32Z",
+            "active_mhs": 15.050679315313502,
+            "temperature_end": 72.75074768066406
+          },
+          {
+            "start": "2026-09-14T20:56:32Z",
+            "end": "2026-09-14T21:00:32Z",
+            "active_mhs": 14.972885457945846,
+            "temperature_end": 75.709228515625
+          },
+          {
+            "start": "2026-09-14T21:00:32Z",
+            "end": "2026-09-14T21:04:32Z",
+            "active_mhs": 14.524164032478682,
+            "temperature_end": 73.15054321289062
+          },
+          {
+            "start": "2026-09-14T21:04:32Z",
+            "end": "2026-09-14T21:08:32Z",
+            "active_mhs": 14.603381375276236,
+            "temperature_end": 78.10798645019531
+          },
+          {
+            "start": "2026-09-14T21:08:32Z",
+            "end": "2026-09-14T21:12:32Z",
+            "active_mhs": 14.85510243866664,
+            "temperature_end": 70.03215026855469
+          },
+          {
+            "start": "2026-09-14T21:12:32Z",
+            "end": "2026-09-14T21:16:32Z",
+            "active_mhs": 15.092437247459372,
+            "temperature_end": 66.43400573730469
+          },
+          {
+            "start": "2026-09-14T21:16:32Z",
+            "end": "2026-09-14T21:20:32Z",
+            "active_mhs": 15.45831038650819,
+            "temperature_end": 79.14744567871094
+          },
+          {
+            "start": "2026-09-14T21:20:32Z",
+            "end": "2026-09-14T21:24:32Z",
+            "active_mhs": 15.445971353518356,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-14T21:24:32Z",
+            "end": "2026-09-14T21:28:32Z",
+            "active_mhs": 15.37765730286914,
+            "temperature_end": 75.46934509277344
+          },
+          {
+            "start": "2026-09-14T21:28:32Z",
+            "end": "2026-09-14T21:32:32Z",
+            "active_mhs": 15.551295535343357,
+            "temperature_end": 62.99577331542969
+          },
+          {
+            "start": "2026-09-14T21:32:32Z",
+            "end": "2026-09-14T21:36:32Z",
+            "active_mhs": 15.361602426487313,
+            "temperature_end": 66.59391784667969
+          },
+          {
+            "start": "2026-09-14T21:36:32Z",
+            "end": "2026-09-14T21:40:32Z",
+            "active_mhs": 15.324731358406781,
+            "temperature_end": 73.07058715820312
+          },
+          {
+            "start": "2026-09-14T21:40:32Z",
+            "end": "2026-09-14T21:44:32Z",
+            "active_mhs": 15.291427612172305,
+            "temperature_end": 78.90757751464844
+          },
+          {
+            "start": "2026-09-14T21:44:32Z",
+            "end": "2026-09-14T21:48:32Z",
+            "active_mhs": 14.99748907680742,
+            "temperature_end": 72.83070373535156
+          },
+          {
+            "start": "2026-09-14T21:48:32Z",
+            "end": "2026-09-14T21:52:32Z",
+            "active_mhs": 15.288324272281981,
+            "temperature_end": 72.3509521484375
+          },
+          {
+            "start": "2026-09-14T21:52:32Z",
+            "end": "2026-09-14T21:56:32Z",
+            "active_mhs": 15.510064465478695,
+            "temperature_end": 62.83586120605469
+          },
+          {
+            "start": "2026-09-14T21:56:32Z",
+            "end": "2026-09-14T22:00:32Z",
+            "active_mhs": 15.53990736817513,
+            "temperature_end": 68.19309997558594
+          },
+          {
+            "start": "2026-09-14T22:00:32Z",
+            "end": "2026-09-14T22:04:32Z",
+            "active_mhs": 15.509817197118348,
+            "temperature_end": 64.19515991210938
+          },
+          {
+            "start": "2026-09-14T22:04:32Z",
+            "end": "2026-09-14T22:08:32Z",
+            "active_mhs": 15.475694814361399,
+            "temperature_end": 64.03523254394531
+          },
+          {
+            "start": "2026-09-14T22:08:32Z",
+            "end": "2026-09-14T22:12:32Z",
+            "active_mhs": 15.361876374309029,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-14T22:12:32Z",
+            "end": "2026-09-14T22:16:32Z",
+            "active_mhs": 15.395151130900803,
+            "temperature_end": 64.83482360839844
+          },
+          {
+            "start": "2026-09-14T22:16:32Z",
+            "end": "2026-09-14T22:20:32Z",
+            "active_mhs": 15.516071624039252,
+            "temperature_end": 71.15156555175781
+          },
+          {
+            "start": "2026-09-14T22:20:32Z",
+            "end": "2026-09-14T22:24:32Z",
+            "active_mhs": 15.56253386654303,
+            "temperature_end": 74.19000244140625
+          },
+          {
+            "start": "2026-09-14T22:24:32Z",
+            "end": "2026-09-14T22:28:32Z",
+            "active_mhs": 15.578273256137503,
+            "temperature_end": 62.99577331542969
+          },
+          {
+            "start": "2026-09-14T22:28:32Z",
+            "end": "2026-09-14T22:32:32Z",
+            "active_mhs": 15.512694170807038,
+            "temperature_end": 66.75382995605469
+          },
+          {
+            "start": "2026-09-14T22:32:32Z",
+            "end": "2026-09-14T22:36:32Z",
+            "active_mhs": 15.565374819221844,
+            "temperature_end": 62.99577331542969
+          },
+          {
+            "start": "2026-09-14T22:36:32Z",
+            "end": "2026-09-14T22:40:32Z",
+            "active_mhs": 15.535854638867178,
+            "temperature_end": 60.43708801269531
+          },
+          {
+            "start": "2026-09-14T22:40:32Z",
+            "end": "2026-09-14T22:44:32Z",
+            "active_mhs": 15.505866400469893,
+            "temperature_end": 67.31355285644531
+          },
+          {
+            "start": "2026-09-14T22:44:32Z",
+            "end": "2026-09-14T22:48:32Z",
+            "active_mhs": 15.524136822503001,
+            "temperature_end": 64.75486755371094
+          },
+          {
+            "start": "2026-09-14T22:48:32Z",
+            "end": "2026-09-14T22:52:32Z",
+            "active_mhs": 15.54524801568122,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-14T22:52:32Z",
+            "end": "2026-09-14T22:56:32Z",
+            "active_mhs": 15.56978932191734,
+            "temperature_end": 72.83070373535156
+          },
+          {
+            "start": "2026-09-14T22:56:32Z",
+            "end": "2026-09-14T23:00:32Z",
+            "active_mhs": 15.369389278908184,
+            "temperature_end": 74.90963745117188
+          },
+          {
+            "start": "2026-09-14T23:00:32Z",
+            "end": "2026-09-14T23:04:32Z",
+            "active_mhs": 15.584058009355855,
+            "temperature_end": 73.55033874511719
+          },
+          {
+            "start": "2026-09-14T23:04:32Z",
+            "end": "2026-09-14T23:08:32Z",
+            "active_mhs": 15.442250672919824,
+            "temperature_end": 62.436065673828125
+          },
+          {
+            "start": "2026-09-14T23:08:32Z",
+            "end": "2026-09-14T23:12:32Z",
+            "active_mhs": 15.302355946315483,
+            "temperature_end": 69.71231079101562
+          },
+          {
+            "start": "2026-09-14T23:12:32Z",
+            "end": "2026-09-14T23:16:32Z",
+            "active_mhs": 15.294898678419926,
+            "temperature_end": 64.59495544433594
+          },
+          {
+            "start": "2026-09-14T23:16:32Z",
+            "end": "2026-09-14T23:20:32Z",
+            "active_mhs": 15.61132757820368,
+            "temperature_end": 70.11210632324219
+          },
+          {
+            "start": "2026-09-14T23:20:32Z",
+            "end": "2026-09-14T23:24:32Z",
+            "active_mhs": 15.390073288023087,
+            "temperature_end": 68.35301208496094
+          },
+          {
+            "start": "2026-09-14T23:24:32Z",
+            "end": "2026-09-14T23:28:32Z",
+            "active_mhs": 15.235599701239996,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-14T23:28:32Z",
+            "end": "2026-09-14T23:32:32Z",
+            "active_mhs": 15.460720609848915,
+            "temperature_end": 67.55342102050781
+          },
+          {
+            "start": "2026-09-14T23:32:32Z",
+            "end": "2026-09-14T23:36:32Z",
+            "active_mhs": 15.53624952121362,
+            "temperature_end": 63.55548095703125
+          },
+          {
+            "start": "2026-09-14T23:36:32Z",
+            "end": "2026-09-14T23:40:32Z",
+            "active_mhs": 15.502633779927976,
+            "temperature_end": 74.50984191894531
+          },
+          {
+            "start": "2026-09-14T23:40:32Z",
+            "end": "2026-09-14T23:44:32Z",
+            "active_mhs": 15.500747400586626,
+            "temperature_end": 61.23667907714844
+          },
+          {
+            "start": "2026-09-14T23:44:32Z",
+            "end": "2026-09-14T23:48:32Z",
+            "active_mhs": 15.438999927855559,
+            "temperature_end": 77.62823486328125
+          },
+          {
+            "start": "2026-09-14T23:48:32Z",
+            "end": "2026-09-14T23:52:32Z",
+            "active_mhs": 15.529268554584673,
+            "temperature_end": 64.03523254394531
+          },
+          {
+            "start": "2026-09-14T23:52:32Z",
+            "end": "2026-09-14T23:56:32Z",
+            "active_mhs": 15.51682864644592,
+            "temperature_end": 68.43296813964844
+          },
+          {
+            "start": "2026-09-14T23:56:32Z",
+            "end": "2026-09-15T00:00:32Z",
+            "active_mhs": 15.614504017705336,
+            "temperature_end": 66.35403442382812
+          },
+          {
+            "start": "2026-09-15T00:00:32Z",
+            "end": "2026-09-15T00:04:32Z",
+            "active_mhs": 15.570501842498418,
+            "temperature_end": 70.91169738769531
+          },
+          {
+            "start": "2026-09-15T00:04:32Z",
+            "end": "2026-09-15T00:08:32Z",
+            "active_mhs": 15.578050569121697,
+            "temperature_end": 61.23667907714844
+          },
+          {
+            "start": "2026-09-15T00:08:32Z",
+            "end": "2026-09-15T00:12:32Z",
+            "active_mhs": 15.511020052011839,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-15T00:12:32Z",
+            "end": "2026-09-15T00:16:32Z",
+            "active_mhs": 15.334012109905395,
+            "temperature_end": 62.27613830566406
+          },
+          {
+            "start": "2026-09-15T00:16:32Z",
+            "end": "2026-09-15T00:20:32Z",
+            "active_mhs": 15.359460045148484,
+            "temperature_end": 75.22946166992188
+          },
+          {
+            "start": "2026-09-15T00:20:32Z",
+            "end": "2026-09-15T00:24:32Z",
+            "active_mhs": 15.230240349653707,
+            "temperature_end": 60.676971435546875
+          },
+          {
+            "start": "2026-09-15T00:24:32Z",
+            "end": "2026-09-15T00:28:32Z",
+            "active_mhs": 15.527002358836365,
+            "temperature_end": 61.5565185546875
+          },
+          {
+            "start": "2026-09-15T00:28:32Z",
+            "end": "2026-09-15T00:32:32Z",
+            "active_mhs": 15.544570367125637,
+            "temperature_end": 59.157745361328125
+          },
+          {
+            "start": "2026-09-15T00:32:32Z",
+            "end": "2026-09-15T00:36:32Z",
+            "active_mhs": 15.280855945758063,
+            "temperature_end": 60.43708801269531
+          },
+          {
+            "start": "2026-09-15T00:36:32Z",
+            "end": "2026-09-15T00:40:32Z",
+            "active_mhs": 15.282560203051851,
+            "temperature_end": 64.11518859863281
+          },
+          {
+            "start": "2026-09-15T00:40:32Z",
+            "end": "2026-09-15T00:44:32Z",
+            "active_mhs": 15.177431007437773,
+            "temperature_end": 59.87738037109375
+          },
+          {
+            "start": "2026-09-15T00:44:32Z",
+            "end": "2026-09-15T00:48:32Z",
+            "active_mhs": 15.567403524880001,
+            "temperature_end": 58.997833251953125
+          },
+          {
+            "start": "2026-09-15T00:48:32Z",
+            "end": "2026-09-15T00:52:32Z",
+            "active_mhs": 15.283125755935915,
+            "temperature_end": 59.47758483886719
+          },
+          {
+            "start": "2026-09-15T00:52:32Z",
+            "end": "2026-09-15T00:56:32Z",
+            "active_mhs": 15.458347002018494,
+            "temperature_end": 58.51808166503906
+          },
+          {
+            "start": "2026-09-15T00:56:32Z",
+            "end": "2026-09-15T01:00:32Z",
+            "active_mhs": 15.190211978786952,
+            "temperature_end": 58.59803771972656
+          },
+          {
+            "start": "2026-09-15T01:00:32Z",
+            "end": "2026-09-15T01:04:32Z",
+            "active_mhs": 15.468506265212147,
+            "temperature_end": 71.07160949707031
+          },
+          {
+            "start": "2026-09-15T01:04:32Z",
+            "end": "2026-09-15T01:08:32Z",
+            "active_mhs": 15.233860690557592,
+            "temperature_end": 71.79124450683594
+          },
+          {
+            "start": "2026-09-15T01:08:32Z",
+            "end": "2026-09-15T01:12:32Z",
+            "active_mhs": 15.305028686449882,
+            "temperature_end": 72.83070373535156
+          },
+          {
+            "start": "2026-09-15T01:12:32Z",
+            "end": "2026-09-15T01:16:32Z",
+            "active_mhs": 15.14721265194933,
+            "temperature_end": 61.31663513183594
+          },
+          {
+            "start": "2026-09-15T01:16:32Z",
+            "end": "2026-09-15T01:20:32Z",
+            "active_mhs": 15.136498141934437,
+            "temperature_end": 70.43194580078125
+          },
+          {
+            "start": "2026-09-15T01:20:32Z",
+            "end": "2026-09-15T01:24:32Z",
+            "active_mhs": 15.175890339102063,
+            "temperature_end": 60.27717590332031
+          },
+          {
+            "start": "2026-09-15T01:24:32Z",
+            "end": "2026-09-15T01:28:32Z",
+            "active_mhs": 15.210869870891747,
+            "temperature_end": 70.35197448730469
+          },
+          {
+            "start": "2026-09-15T01:28:32Z",
+            "end": "2026-09-15T01:32:32Z",
+            "active_mhs": 15.11702723123754,
+            "temperature_end": 73.63029479980469
+          },
+          {
+            "start": "2026-09-15T01:32:32Z",
+            "end": "2026-09-15T01:36:32Z",
+            "active_mhs": 15.48637070212062,
+            "temperature_end": 76.42884826660156
+          },
+          {
+            "start": "2026-09-15T01:36:32Z",
+            "end": "2026-09-15T01:40:32Z",
+            "active_mhs": 15.430741486501972,
+            "temperature_end": 62.595977783203125
+          },
+          {
+            "start": "2026-09-15T01:40:32Z",
+            "end": "2026-09-15T01:44:32Z",
+            "active_mhs": 15.313693922590817,
+            "temperature_end": 70.19206237792969
+          },
+          {
+            "start": "2026-09-15T01:44:32Z",
+            "end": "2026-09-15T01:48:32Z",
+            "active_mhs": 15.380262488189087,
+            "temperature_end": 62.595977783203125
+          },
+          {
+            "start": "2026-09-15T01:48:32Z",
+            "end": "2026-09-15T01:52:32Z",
+            "active_mhs": 15.380479938196267,
+            "temperature_end": 61.23667907714844
+          },
+          {
+            "start": "2026-09-15T01:52:32Z",
+            "end": "2026-09-15T01:56:32Z",
+            "active_mhs": 15.278798902453655,
+            "temperature_end": 64.19515991210938
+          },
+          {
+            "start": "2026-09-15T01:56:32Z",
+            "end": "2026-09-15T02:00:32Z",
+            "active_mhs": 15.352396443040456,
+            "temperature_end": 75.22946166992188
+          },
+          {
+            "start": "2026-09-15T02:00:32Z",
+            "end": "2026-09-15T02:04:32Z",
+            "active_mhs": 15.426242959930175,
+            "temperature_end": 65.87428283691406
+          },
+          {
+            "start": "2026-09-15T02:04:32Z",
+            "end": "2026-09-15T02:08:32Z",
+            "active_mhs": 15.232971446268726,
+            "temperature_end": 77.46830749511719
+          },
+          {
+            "start": "2026-09-15T02:08:32Z",
+            "end": "2026-09-15T02:12:32Z",
+            "active_mhs": 15.396609606987397,
+            "temperature_end": 65.4744873046875
+          },
+          {
+            "start": "2026-09-15T02:12:32Z",
+            "end": "2026-09-15T02:16:32Z",
+            "active_mhs": 15.424835505735242,
+            "temperature_end": 64.99473571777344
+          },
+          {
+            "start": "2026-09-15T02:16:32Z",
+            "end": "2026-09-15T02:20:32Z",
+            "active_mhs": 15.513791113529841,
+            "temperature_end": 62.436065673828125
+          },
+          {
+            "start": "2026-09-15T02:20:32Z",
+            "end": "2026-09-15T02:24:32Z",
+            "active_mhs": 15.622436925301384,
+            "temperature_end": 60.51704406738281
+          },
+          {
+            "start": "2026-09-15T02:24:32Z",
+            "end": "2026-09-15T02:28:32Z",
+            "active_mhs": 15.5698856915838,
+            "temperature_end": 60.03729248046875
+          },
+          {
+            "start": "2026-09-15T02:28:32Z",
+            "end": "2026-09-15T02:32:32Z",
+            "active_mhs": 15.451596747970052,
+            "temperature_end": 68.6728515625
+          },
+          {
+            "start": "2026-09-15T02:32:32Z",
+            "end": "2026-09-15T02:36:32Z",
+            "active_mhs": 15.265911000626573,
+            "temperature_end": 71.47140502929688
+          },
+          {
+            "start": "2026-09-15T02:36:32Z",
+            "end": "2026-09-15T02:40:32Z",
+            "active_mhs": 15.179088719399061,
+            "temperature_end": 63.39556884765625
+          },
+          {
+            "start": "2026-09-15T02:40:32Z",
+            "end": "2026-09-15T02:44:32Z",
+            "active_mhs": 15.23067123650059,
+            "temperature_end": 60.836883544921875
+          },
+          {
+            "start": "2026-09-15T02:44:32Z",
+            "end": "2026-09-15T02:48:32Z",
+            "active_mhs": 15.33971553422957,
+            "temperature_end": 61.8763427734375
+          },
+          {
+            "start": "2026-09-15T02:48:32Z",
+            "end": "2026-09-15T02:52:32Z",
+            "active_mhs": 15.360516700254735,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-15T02:52:32Z",
+            "end": "2026-09-15T02:56:32Z",
+            "active_mhs": 15.329939919962237,
+            "temperature_end": 62.03627014160156
+          },
+          {
+            "start": "2026-09-15T02:56:32Z",
+            "end": "2026-09-15T03:00:32Z",
+            "active_mhs": 15.390238540013108,
+            "temperature_end": 72.1910400390625
+          },
+          {
+            "start": "2026-09-15T03:00:32Z",
+            "end": "2026-09-15T03:04:32Z",
+            "active_mhs": 15.15030059502277,
+            "temperature_end": 67.55342102050781
+          },
+          {
+            "start": "2026-09-15T03:04:32Z",
+            "end": "2026-09-15T03:08:32Z",
+            "active_mhs": 15.245233653059078,
+            "temperature_end": 62.19618225097656
+          },
+          {
+            "start": "2026-09-15T03:08:32Z",
+            "end": "2026-09-15T03:12:32Z",
+            "active_mhs": 15.183752014815248,
+            "temperature_end": 67.07366943359375
+          },
+          {
+            "start": "2026-09-15T03:12:32Z",
+            "end": "2026-09-15T03:16:32Z",
+            "active_mhs": 15.407667177881978,
+            "temperature_end": 62.755889892578125
+          },
+          {
+            "start": "2026-09-15T03:16:32Z",
+            "end": "2026-09-15T03:20:32Z",
+            "active_mhs": 15.381139077480158,
+            "temperature_end": 62.11622619628906
+          },
+          {
+            "start": "2026-09-15T03:20:32Z",
+            "end": "2026-09-15T03:24:32Z",
+            "active_mhs": 15.562588575685385,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-15T03:24:32Z",
+            "end": "2026-09-15T03:28:32Z",
+            "active_mhs": 15.24716069458912,
+            "temperature_end": 72.59083557128906
+          },
+          {
+            "start": "2026-09-15T03:28:32Z",
+            "end": "2026-09-15T03:32:32Z",
+            "active_mhs": 15.191279017608613,
+            "temperature_end": 62.675933837890625
+          },
+          {
+            "start": "2026-09-15T03:32:32Z",
+            "end": "2026-09-15T03:36:32Z",
+            "active_mhs": 15.33983455693165,
+            "temperature_end": 66.67387390136719
+          },
+          {
+            "start": "2026-09-15T03:36:32Z",
+            "end": "2026-09-15T03:40:32Z",
+            "active_mhs": 15.329880478190821,
+            "temperature_end": 66.51396179199219
+          },
+          {
+            "start": "2026-09-15T03:40:32Z",
+            "end": "2026-09-15T03:44:32Z",
+            "active_mhs": 15.209033212531098,
+            "temperature_end": 62.755889892578125
+          },
+          {
+            "start": "2026-09-15T03:44:32Z",
+            "end": "2026-09-15T03:48:32Z",
+            "active_mhs": 15.504565071384114,
+            "temperature_end": 62.27613830566406
+          },
+          {
+            "start": "2026-09-15T03:48:32Z",
+            "end": "2026-09-15T03:52:32Z",
+            "active_mhs": 15.575409725028939,
+            "temperature_end": 61.15672302246094
+          },
+          {
+            "start": "2026-09-15T03:52:32Z",
+            "end": "2026-09-15T03:56:32Z",
+            "active_mhs": 15.503602337332396,
+            "temperature_end": 61.79638671875
+          },
+          {
+            "start": "2026-09-15T03:56:32Z",
+            "end": "2026-09-15T04:00:32Z",
+            "active_mhs": 15.376029106403829,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-15T04:00:32Z",
+            "end": "2026-09-15T04:04:32Z",
+            "active_mhs": 15.542664298468155,
+            "temperature_end": 60.03729248046875
+          },
+          {
+            "start": "2026-09-15T04:04:32Z",
+            "end": "2026-09-15T04:08:32Z",
+            "active_mhs": 15.446554274956545,
+            "temperature_end": 74.98959350585938
+          },
+          {
+            "start": "2026-09-15T04:08:32Z",
+            "end": "2026-09-15T04:12:32Z",
+            "active_mhs": 15.468437868004296,
+            "temperature_end": 65.1546630859375
+          },
+          {
+            "start": "2026-09-15T04:12:32Z",
+            "end": "2026-09-15T04:16:32Z",
+            "active_mhs": 15.24192953063146,
+            "temperature_end": 62.99577331542969
+          },
+          {
+            "start": "2026-09-15T04:16:32Z",
+            "end": "2026-09-15T04:20:32Z",
+            "active_mhs": 15.374869321076796,
+            "temperature_end": 61.8763427734375
+          },
+          {
+            "start": "2026-09-15T04:20:32Z",
+            "end": "2026-09-15T04:24:32Z",
+            "active_mhs": 15.664034363505452,
+            "temperature_end": 64.91477966308594
+          },
+          {
+            "start": "2026-09-15T04:24:32Z",
+            "end": "2026-09-15T04:28:32Z",
+            "active_mhs": 15.369423131367222,
+            "temperature_end": 72.27099609375
+          },
+          {
+            "start": "2026-09-15T04:28:32Z",
+            "end": "2026-09-15T04:32:32Z",
+            "active_mhs": 15.4835571986434,
+            "temperature_end": 61.636474609375
+          },
+          {
+            "start": "2026-09-15T04:32:32Z",
+            "end": "2026-09-15T04:36:32Z",
+            "active_mhs": 15.4786404859992,
+            "temperature_end": 65.39453125
+          },
+          {
+            "start": "2026-09-15T04:36:32Z",
+            "end": "2026-09-15T04:40:32Z",
+            "active_mhs": 15.266757263837837,
+            "temperature_end": 72.5108642578125
+          },
+          {
+            "start": "2026-09-15T04:40:32Z",
+            "end": "2026-09-15T04:44:32Z",
+            "active_mhs": 15.445404091517437,
+            "temperature_end": 76.26893615722656
+          },
+          {
+            "start": "2026-09-15T04:44:32Z",
+            "end": "2026-09-15T04:48:32Z",
+            "active_mhs": 15.251925090470165,
+            "temperature_end": 62.35609436035156
+          },
+          {
+            "start": "2026-09-15T04:48:32Z",
+            "end": "2026-09-15T04:52:32Z",
+            "active_mhs": 15.392104819030013,
+            "temperature_end": 71.23152160644531
+          },
+          {
+            "start": "2026-09-15T04:52:32Z",
+            "end": "2026-09-15T04:56:32Z",
+            "active_mhs": 15.31938308543456,
+            "temperature_end": 61.47654724121094
+          },
+          {
+            "start": "2026-09-15T04:56:32Z",
+            "end": "2026-09-15T05:00:32Z",
+            "active_mhs": 15.558499473788073,
+            "temperature_end": 63.55548095703125
+          },
+          {
+            "start": "2026-09-15T05:00:32Z",
+            "end": "2026-09-15T05:04:32Z",
+            "active_mhs": 15.370378403881277,
+            "temperature_end": 61.636474609375
+          },
+          {
+            "start": "2026-09-15T05:04:32Z",
+            "end": "2026-09-15T05:08:32Z",
+            "active_mhs": 15.654092797509715,
+            "temperature_end": 64.83482360839844
+          },
+          {
+            "start": "2026-09-15T05:08:32Z",
+            "end": "2026-09-15T05:12:32Z",
+            "active_mhs": 15.181310574172024,
+            "temperature_end": 62.675933837890625
+          },
+          {
+            "start": "2026-09-15T05:12:32Z",
+            "end": "2026-09-15T05:16:32Z",
+            "active_mhs": 15.153295968809124,
+            "temperature_end": 62.516021728515625
+          },
+          {
+            "start": "2026-09-15T05:16:32Z",
+            "end": "2026-09-15T05:20:32Z",
+            "active_mhs": 15.517886569875488,
+            "temperature_end": 59.95733642578125
+          },
+          {
+            "start": "2026-09-15T05:20:32Z",
+            "end": "2026-09-15T05:24:32Z",
+            "active_mhs": 15.472790947289147,
+            "temperature_end": 63.95527648925781
+          },
+          {
+            "start": "2026-09-15T05:24:32Z",
+            "end": "2026-09-15T05:28:32Z",
+            "active_mhs": 15.561633955298449,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-15T05:28:32Z",
+            "end": "2026-09-15T05:32:32Z",
+            "active_mhs": 15.170528621418805,
+            "temperature_end": 75.46934509277344
+          },
+          {
+            "start": "2026-09-15T05:32:32Z",
+            "end": "2026-09-15T05:36:32Z",
+            "active_mhs": 15.493060625297742,
+            "temperature_end": 61.7164306640625
+          },
+          {
+            "start": "2026-09-15T05:36:32Z",
+            "end": "2026-09-15T05:40:32Z",
+            "active_mhs": 15.41138509248302,
+            "temperature_end": 61.15672302246094
+          },
+          {
+            "start": "2026-09-15T05:40:32Z",
+            "end": "2026-09-15T05:44:32Z",
+            "active_mhs": 15.562828414368129,
+            "temperature_end": 60.19721984863281
+          },
+          {
+            "start": "2026-09-15T05:44:32Z",
+            "end": "2026-09-15T05:48:32Z",
+            "active_mhs": 15.23261513019115,
+            "temperature_end": 63.87532043457031
+          },
+          {
+            "start": "2026-09-15T05:48:32Z",
+            "end": "2026-09-15T05:52:32Z",
+            "active_mhs": 15.50697584104204,
+            "temperature_end": 61.636474609375
+          },
+          {
+            "start": "2026-09-15T05:52:32Z",
+            "end": "2026-09-15T05:56:32Z",
+            "active_mhs": 15.574192022442071,
+            "temperature_end": 61.79638671875
+          },
+          {
+            "start": "2026-09-15T05:56:32Z",
+            "end": "2026-09-15T06:00:32Z",
+            "active_mhs": 15.537535317801284,
+            "temperature_end": 64.67491149902344
+          },
+          {
+            "start": "2026-09-15T06:00:32Z",
+            "end": "2026-09-15T06:04:32Z",
+            "active_mhs": 15.587374748313694,
+            "temperature_end": 62.35609436035156
+          },
+          {
+            "start": "2026-09-15T06:04:32Z",
+            "end": "2026-09-15T06:08:32Z",
+            "active_mhs": 15.506223669742683,
+            "temperature_end": 65.55445861816406
+          },
+          {
+            "start": "2026-09-15T06:08:32Z",
+            "end": "2026-09-15T06:12:32Z",
+            "active_mhs": 15.489077200151915,
+            "temperature_end": 71.47140502929688
+          },
+          {
+            "start": "2026-09-15T06:12:32Z",
+            "end": "2026-09-15T06:16:32Z",
+            "active_mhs": 15.513933833996939,
+            "temperature_end": 61.07676696777344
+          },
+          {
+            "start": "2026-09-15T06:16:32Z",
+            "end": "2026-09-15T06:20:32Z",
+            "active_mhs": 15.489634758981559,
+            "temperature_end": 74.11004638671875
+          },
+          {
+            "start": "2026-09-15T06:20:32Z",
+            "end": "2026-09-15T06:24:32Z",
+            "active_mhs": 15.53013701413215,
+            "temperature_end": 61.47654724121094
+          },
+          {
+            "start": "2026-09-15T06:24:32Z",
+            "end": "2026-09-15T06:28:32Z",
+            "active_mhs": 15.49414918303413,
+            "temperature_end": 63.15568542480469
+          },
+          {
+            "start": "2026-09-15T06:28:32Z",
+            "end": "2026-09-15T06:29:29Z",
+            "active_mhs": 14.54099876879824,
+            "temperature_end": 63.15568542480469
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "path": "Distribution/ergometal4.jsonl",
+    "sha256": "1c11c12f77074a2b6d9c75073123b578264411ff461b3c2f6257ffa99879727a",
+    "sessions": [
+      {
+        "sessionID": "740206FB-F873-4930-AB14-C60D63FC7310",
+        "first": "2026-09-15T15:48:39Z",
+        "last": "2026-09-16T04:10:05Z",
+        "event_counts": {
+          "session_started": 1,
+          "pool_connected": 11,
+          "pool_authorized": 11,
+          "job_received": 418,
+          "dataset_completed": 329,
+          "statistics_sample": 185,
+          "share_accepted": 35,
+          "pool_disconnected": 10,
+          "session_ended": 1
+        },
+        "start_fields": {
+          "donation_percent": "0",
+          "search_pipeline_depth": "2",
+          "tuning_source_build_pipeline_depth": "tuned",
+          "dataset_kernel": "u32pair-inline-m",
+          "mode": "mining",
+          "autotune_mode": "auto",
+          "prebuild": "off",
+          "os_build": "26A428",
+          "worktree_revision": "28736760cbab5e62c81c2907062c09ad9da4d599",
+          "profile": "peak",
+          "autotune_cache_key": "1172e2f6a5365584ee91dc24d2d6b1195192013292222cd2448a44feeba76e80",
+          "prebuild_batch_nonces": "131072",
+          "donation_cycle_seconds": "6000",
+          "tuning_source_prefetch_chunk_elements": "tuned",
+          "gpu_architecture": "applegpu_g16g",
+          "tuning_provenance": "tuned",
+          "os_version": "Version 27.0 (Build 26A428)",
+          "build_pipeline_depth": "2",
+          "architecture": "arm64",
+          "dataset_scheduling": "overlap",
+          "build_chunk_elements": "2097152",
+          "worktree_dirty": "false",
+          "tuning_source_batch_nonces": "tuned",
+          "tuning_source_search_pipeline_depth": "tuned",
+          "executable_sha256": "e318af94fc52c7764c4476e542c24c98ab851a5a004c6658ac6e46552a252f79",
+          "gpu_family": "apple9",
+          "threadgroup_size": "64",
+          "tuning_source_build_chunk_elements": "tuned",
+          "prefetch_chunk_elements": "1048576",
+          "tuning_source_dataset_threadgroup_size": "tuned",
+          "batch_nonces": "4194304",
+          "tuning_source_prebuild_batch_nonces": "tuned",
+          "tuning_source_search_threadgroup_size": "tuned",
+          "network": "mainnet",
+          "dataset_threadgroup_size": "256",
+          "gpu_generation": "m4"
+        },
+        "final_fields": {
+          "dataset_cold_builds_completed_total": "290",
+          "gpu_build_command_non_gpu_seconds_total": "87.09989050061267",
+          "prefetch_progress": "0.0",
+          "donation_search_seconds": "0.0",
+          "job_id": "c436",
+          "gpu_search_command_wall_busy_seconds_total": "33120.86107641745",
+          "shares_stale": "0",
+          "autotune_cache_key": "1172e2f6a5365584ee91dc24d2d6b1195192013292222cd2448a44feeba76e80",
+          "donation_scheduled_recipient": "user",
+          "donation_shares_expected": "0.0",
+          "dataset_bytes": "7272058080",
+          "dataset_prefetch_builds_cancelled_total": "0",
+          "dataset_cold_build_wall_seconds_total": "11352.309486121996",
+          "dataset_built_activations_total": "290",
+          "job_target_hex": "000000003f00000003f00000003f00000003f00000003f00000003f00000003f",
+          "height": "1874148",
+          "dataset_cached_activations_total": "39",
+          "donation_percent": "0",
+          "dataset_cold_builds_resumed_total": "5",
+          "dataset_prefetch_build_wall_seconds_total": "0.0",
+          "search_pipeline_depth": "2",
+          "dataset_activation_seconds": "33.744016333",
+          "dataset_prefetch_builds_failed_total": "0",
+          "gpu_build_command_wall_seconds_total": "11352.305884125395",
+          "shares_expected": "28.70212554973886",
+          "dataset_prefetch_builds_discarded_total": "0",
+          "donation_shares_rejected": "0",
+          "tuning_source_search_threadgroup_size": "tuned",
+          "tuning_source_batch_nonces": "tuned",
+          "autotune_mode": "auto",
+          "dataset_cold_builds_failed_total": "0",
+          "gpu_build_commands_completed_total": "37124",
+          "average_hashrate": "15124175.834808432",
+          "donation_nonces": "0",
+          "soc_temperature_session_peak_celsius": "86.82350158691406",
+          "search_duty_cycle": "0.7445304916975942",
+          "dataset_prefetch_wasted_wall_seconds_total": "0.0",
+          "gpu_search_command_non_gpu_seconds_total": "177.1946818716242",
+          "elapsed_seconds": "44485.567005991936",
+          "tuning_source_prebuild_batch_nonces": "tuned",
+          "search_pipeline_max_threads": "64",
+          "dataset_source": "built",
+          "reconnects": "10",
+          "dataset_prefetch_wait_seconds_total": "0.0",
+          "dataset_prefetch_builds_completed_total": "0",
+          "donation_active_recipient": "user",
+          "build_pipeline_depth": "2",
+          "batch_nonces": "4194304",
+          "dataset_prefetch_build_gpu_seconds_total": "0.0",
+          "gpu_generation": "m4",
+          "shares_accepted": "35",
+          "donation_shares_found": "0",
+          "dataset_prefetch_waits_total": "0",
+          "tuning_source_build_chunk_elements": "tuned",
+          "effective_hashrate": "11260410.070810795",
+          "tuning_source_build_pipeline_depth": "tuned",
+          "soc_temperature_average_celsius": "62.24282709757487",
+          "hashrate": "0.0",
+          "share_luck_ratio": "1.2194218835586705",
+          "dataset_cold_builds_cancelled_total": "89",
+          "state": "stopped",
+          "dataset_activation_seconds_total": "9581.236711952002",
+          "donation_shares_stale": "0",
+          "gpu_architecture": "applegpu_g16g",
+          "search_seconds": "33120.86107641745",
+          "dataset_prefetched_activations_total": "0",
+          "donation_shares_accepted": "0",
+          "donation_shares_submitted": "0",
+          "dataset_activations_total": "329",
+          "build_chunk_elements": "2097152",
+          "shares_found": "35",
+          "donation_window_seconds": "0.0",
+          "temperature_source": "iohid_soc_die",
+          "gpu_search_command_gpu_busy_seconds_total": "33114.57570391636",
+          "soc_temperature_maximum_celsius": "71.71128845214844",
+          "gpu_search_commands_completed_total": "119430",
+          "gpu_search_command_gpu_seconds_total": "66059.31999279355",
+          "gpu_search_command_non_gpu_busy_seconds_total": "6.285372501093661",
+          "dataset_cold_build_gpu_seconds_total": "11265.205993624782",
+          "dataset_cold_build_resumed_elements_total": "532676608",
+          "tuning_source_prefetch_chunk_elements": "tuned",
+          "donation_failures": "0",
+          "threadgroup_size": "64",
+          "gpu_search_command_wall_seconds_total": "66236.51467466517",
+          "profile": "peak",
+          "thermal_state": "nominal",
+          "nonces": "500925726720",
+          "dataset_threadgroup_size": "256",
+          "gpu_seconds": "66059.31999279355",
+          "gpu_build_command_gpu_seconds_total": "11265.205993624782",
+          "prebuild_batch_nonces": "131072",
+          "dataset_build_seconds": "33.743811625",
+          "protocol_errors": "0",
+          "tuning_source_dataset_threadgroup_size": "tuned",
+          "shares_rejected": "0",
+          "gpu_family": "apple9",
+          "prefetch_chunk_elements": "1048576",
+          "pool_connected": "false",
+          "dataset_prefetch_builds_started_total": "0",
+          "dataset_build_gpu_seconds": "33.517973083333345",
+          "shares_submitted": "35",
+          "soc_temperature_sensor_count": "24",
+          "donation_switches": "0",
+          "build_pipeline_max_threads": "256",
+          "dataset_prefetch_wasted_gpu_seconds_total": "0.0",
+          "tuning_provenance": "tuned",
+          "difficulty": "1.0",
+          "tuning_source_search_pipeline_depth": "tuned"
+        },
+        "chronology_and_monotonicity_issues": [
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 2.1465087918186327 -> 2.1465008335071616",
+          "nonmonotonic gpu_build_command_non_gpu_seconds_total: 43.24775895976927 -> 43.24775750141998"
+        ],
+        "monotonic_fields_checked": [
+          "dataset_activation_seconds_total",
+          "dataset_activations_total",
+          "dataset_built_activations_total",
+          "dataset_cached_activations_total",
+          "dataset_cold_build_gpu_seconds_total",
+          "dataset_cold_build_resumed_elements_total",
+          "dataset_cold_build_wall_seconds_total",
+          "dataset_cold_builds_cancelled_total",
+          "dataset_cold_builds_completed_total",
+          "dataset_cold_builds_failed_total",
+          "dataset_cold_builds_resumed_total",
+          "dataset_prefetch_build_gpu_seconds_total",
+          "dataset_prefetch_build_wall_seconds_total",
+          "dataset_prefetch_builds_cancelled_total",
+          "dataset_prefetch_builds_completed_total",
+          "dataset_prefetch_builds_discarded_total",
+          "dataset_prefetch_builds_failed_total",
+          "dataset_prefetch_builds_started_total",
+          "dataset_prefetch_wait_seconds_total",
+          "dataset_prefetch_waits_total",
+          "dataset_prefetch_wasted_gpu_seconds_total",
+          "dataset_prefetch_wasted_wall_seconds_total",
+          "dataset_prefetched_activations_total",
+          "elapsed_seconds",
+          "gpu_build_command_gpu_seconds_total",
+          "gpu_build_command_non_gpu_seconds_total",
+          "gpu_build_command_wall_seconds_total",
+          "gpu_build_commands_completed_total",
+          "gpu_search_command_gpu_busy_seconds_total",
+          "gpu_search_command_gpu_seconds_total",
+          "gpu_search_command_non_gpu_busy_seconds_total",
+          "gpu_search_command_non_gpu_seconds_total",
+          "gpu_search_command_wall_busy_seconds_total",
+          "gpu_search_command_wall_seconds_total",
+          "gpu_search_commands_completed_total",
+          "gpu_seconds",
+          "nonces",
+          "protocol_errors",
+          "reconnects",
+          "search_seconds",
+          "shares_accepted",
+          "shares_found",
+          "shares_rejected",
+          "shares_stale",
+          "shares_submitted"
+        ],
+        "invariant_residuals": {
+          "active_hashrate": 0.0,
+          "effective_hashrate": 0.0,
+          "search_duty": 0.0,
+          "search_wall_busy": 0.0,
+          "search_busy_partition": 0.0,
+          "nonce_command_count": 0
+        },
+        "unaccounted_wall_seconds": 12.396443452487802,
+        "cold_build_seconds": {
+          "n": 290,
+          "minimum": 31.53270525,
+          "median": 33.236942229,
+          "maximum": 37.604152458,
+          "mean": 33.30490267813793,
+          "stdev": 0.5892599307001188
+        },
+        "cold_build_gpu_seconds": {
+          "n": 290,
+          "minimum": 31.295917083290988,
+          "median": 32.971831708309765,
+          "maximum": 37.25936933334742,
+          "mean": 33.07128982988386,
+          "stdev": 0.5782670029412573
+        },
+        "sampled_sensor_maximum_celsius": {
+          "n": 186,
+          "minimum": 69.71231079101562,
+          "median": 73.5103530883789,
+          "maximum": 86.82350158691406,
+          "mean": 75.02742234096732,
+          "stdev": 4.07796387171814
+        },
+        "intervals": [
+          {
+            "start": "2026-09-15T15:52:39Z",
+            "end": "2026-09-15T15:56:39Z",
+            "active_mhs": 15.270893922745438,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-15T15:56:39Z",
+            "end": "2026-09-15T16:00:39Z",
+            "active_mhs": 15.348811901162504,
+            "temperature_end": 70.11210632324219
+          },
+          {
+            "start": "2026-09-15T16:00:39Z",
+            "end": "2026-09-15T16:04:39Z",
+            "active_mhs": 15.3356253555694,
+            "temperature_end": 79.14744567871094
+          },
+          {
+            "start": "2026-09-15T16:04:39Z",
+            "end": "2026-09-15T16:08:39Z",
+            "active_mhs": 15.217991589747209,
+            "temperature_end": 70.03215026855469
+          },
+          {
+            "start": "2026-09-15T16:08:39Z",
+            "end": "2026-09-15T16:12:39Z",
+            "active_mhs": 14.783304254327353,
+            "temperature_end": 79.70716857910156
+          },
+          {
+            "start": "2026-09-15T16:12:39Z",
+            "end": "2026-09-15T16:16:39Z",
+            "active_mhs": 14.59356130620263,
+            "temperature_end": 73.63029479980469
+          },
+          {
+            "start": "2026-09-15T16:16:39Z",
+            "end": "2026-09-15T16:20:39Z",
+            "active_mhs": 14.788151528869525,
+            "temperature_end": 76.82864379882812
+          },
+          {
+            "start": "2026-09-15T16:20:39Z",
+            "end": "2026-09-15T16:24:39Z",
+            "active_mhs": 14.341469409015685,
+            "temperature_end": 84.26481628417969
+          },
+          {
+            "start": "2026-09-15T16:24:39Z",
+            "end": "2026-09-15T16:28:39Z",
+            "active_mhs": 14.381880900603882,
+            "temperature_end": 72.99061584472656
+          },
+          {
+            "start": "2026-09-15T16:28:39Z",
+            "end": "2026-09-15T16:32:39Z",
+            "active_mhs": 14.637958987949835,
+            "temperature_end": 73.63029479980469
+          },
+          {
+            "start": "2026-09-15T16:32:39Z",
+            "end": "2026-09-15T16:36:39Z",
+            "active_mhs": 14.732364397248446,
+            "temperature_end": 72.5108642578125
+          },
+          {
+            "start": "2026-09-15T16:36:39Z",
+            "end": "2026-09-15T16:40:39Z",
+            "active_mhs": 14.789181044744568,
+            "temperature_end": 72.27099609375
+          },
+          {
+            "start": "2026-09-15T16:40:39Z",
+            "end": "2026-09-15T16:44:39Z",
+            "active_mhs": 14.78593697543203,
+            "temperature_end": 73.87016296386719
+          },
+          {
+            "start": "2026-09-15T16:44:39Z",
+            "end": "2026-09-15T16:48:39Z",
+            "active_mhs": 14.603313651998286,
+            "temperature_end": 83.70510864257812
+          },
+          {
+            "start": "2026-09-15T16:48:39Z",
+            "end": "2026-09-15T16:52:39Z",
+            "active_mhs": 14.575444560285685,
+            "temperature_end": 83.38526916503906
+          },
+          {
+            "start": "2026-09-15T16:52:39Z",
+            "end": "2026-09-15T16:56:39Z",
+            "active_mhs": 14.59640705374491,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-15T16:56:39Z",
+            "end": "2026-09-15T17:00:39Z",
+            "active_mhs": 14.736431758202997,
+            "temperature_end": 73.31045532226562
+          },
+          {
+            "start": "2026-09-15T17:00:39Z",
+            "end": "2026-09-15T17:04:39Z",
+            "active_mhs": 14.64430775369631,
+            "temperature_end": 75.14950561523438
+          },
+          {
+            "start": "2026-09-15T17:04:39Z",
+            "end": "2026-09-15T17:08:39Z",
+            "active_mhs": 14.31229207741737,
+            "temperature_end": 74.98959350585938
+          },
+          {
+            "start": "2026-09-15T17:08:39Z",
+            "end": "2026-09-15T17:12:39Z",
+            "active_mhs": 14.370697771270146,
+            "temperature_end": 76.58876037597656
+          },
+          {
+            "start": "2026-09-15T17:12:39Z",
+            "end": "2026-09-15T17:16:39Z",
+            "active_mhs": 14.360706847624217,
+            "temperature_end": 74.82968139648438
+          },
+          {
+            "start": "2026-09-15T17:16:39Z",
+            "end": "2026-09-15T17:20:39Z",
+            "active_mhs": 14.242809479230345,
+            "temperature_end": 86.82350158691406
+          },
+          {
+            "start": "2026-09-15T17:20:39Z",
+            "end": "2026-09-15T17:24:39Z",
+            "active_mhs": 14.38688019068583,
+            "temperature_end": 84.18486022949219
+          },
+          {
+            "start": "2026-09-15T17:24:39Z",
+            "end": "2026-09-15T17:28:39Z",
+            "active_mhs": 14.536926257819838,
+            "temperature_end": 73.79020690917969
+          },
+          {
+            "start": "2026-09-15T17:28:39Z",
+            "end": "2026-09-15T17:32:39Z",
+            "active_mhs": 15.114034788930512,
+            "temperature_end": 80.82658386230469
+          },
+          {
+            "start": "2026-09-15T17:32:39Z",
+            "end": "2026-09-15T17:36:39Z",
+            "active_mhs": 15.032024824509477,
+            "temperature_end": 75.22946166992188
+          },
+          {
+            "start": "2026-09-15T17:36:39Z",
+            "end": "2026-09-15T17:40:39Z",
+            "active_mhs": 15.113659606911481,
+            "temperature_end": 83.78506469726562
+          },
+          {
+            "start": "2026-09-15T17:40:39Z",
+            "end": "2026-09-15T17:44:39Z",
+            "active_mhs": 15.013682419503594,
+            "temperature_end": 77.30839538574219
+          },
+          {
+            "start": "2026-09-15T17:44:39Z",
+            "end": "2026-09-15T17:48:39Z",
+            "active_mhs": 15.190997306990868,
+            "temperature_end": 81.62617492675781
+          },
+          {
+            "start": "2026-09-15T17:48:39Z",
+            "end": "2026-09-15T17:52:39Z",
+            "active_mhs": 15.084510435248914,
+            "temperature_end": 74.90963745117188
+          },
+          {
+            "start": "2026-09-15T17:52:39Z",
+            "end": "2026-09-15T17:56:39Z",
+            "active_mhs": 15.081099193504622,
+            "temperature_end": 83.30531311035156
+          },
+          {
+            "start": "2026-09-15T17:56:39Z",
+            "end": "2026-09-15T18:00:40Z",
+            "active_mhs": 15.05044465621622,
+            "temperature_end": 79.86708068847656
+          },
+          {
+            "start": "2026-09-15T18:00:40Z",
+            "end": "2026-09-15T18:04:39Z",
+            "active_mhs": 15.088824221096676,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-15T18:04:39Z",
+            "end": "2026-09-15T18:08:40Z",
+            "active_mhs": 15.171175720829142,
+            "temperature_end": 80.34683227539062
+          },
+          {
+            "start": "2026-09-15T18:08:40Z",
+            "end": "2026-09-15T18:12:40Z",
+            "active_mhs": 15.190706909762822,
+            "temperature_end": 72.5108642578125
+          },
+          {
+            "start": "2026-09-15T18:12:40Z",
+            "end": "2026-09-15T18:16:40Z",
+            "active_mhs": 15.172699011300338,
+            "temperature_end": 81.38629150390625
+          },
+          {
+            "start": "2026-09-15T18:16:40Z",
+            "end": "2026-09-15T18:20:40Z",
+            "active_mhs": 15.202653814324353,
+            "temperature_end": 73.15054321289062
+          },
+          {
+            "start": "2026-09-15T18:20:40Z",
+            "end": "2026-09-15T18:24:40Z",
+            "active_mhs": 15.245353296637894,
+            "temperature_end": 78.50778198242188
+          },
+          {
+            "start": "2026-09-15T18:24:40Z",
+            "end": "2026-09-15T18:28:40Z",
+            "active_mhs": 15.30509688243958,
+            "temperature_end": 79.3873291015625
+          },
+          {
+            "start": "2026-09-15T18:28:40Z",
+            "end": "2026-09-15T18:32:39Z",
+            "active_mhs": 15.174238573025109,
+            "temperature_end": 79.5472412109375
+          },
+          {
+            "start": "2026-09-15T18:32:39Z",
+            "end": "2026-09-15T18:36:40Z",
+            "active_mhs": 15.146448991171221,
+            "temperature_end": 72.75074768066406
+          },
+          {
+            "start": "2026-09-15T18:36:40Z",
+            "end": "2026-09-15T18:40:40Z",
+            "active_mhs": 15.251485600478652,
+            "temperature_end": 73.71025085449219
+          },
+          {
+            "start": "2026-09-15T18:40:40Z",
+            "end": "2026-09-15T18:44:40Z",
+            "active_mhs": 15.18670118096771,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-15T18:44:40Z",
+            "end": "2026-09-15T18:48:40Z",
+            "active_mhs": 15.205997018112397,
+            "temperature_end": 77.70819091796875
+          },
+          {
+            "start": "2026-09-15T18:48:40Z",
+            "end": "2026-09-15T18:52:40Z",
+            "active_mhs": 15.27254073620183,
+            "temperature_end": 69.79226684570312
+          },
+          {
+            "start": "2026-09-15T18:52:40Z",
+            "end": "2026-09-15T18:56:39Z",
+            "active_mhs": 15.239054005213546,
+            "temperature_end": 73.95013427734375
+          },
+          {
+            "start": "2026-09-15T18:56:39Z",
+            "end": "2026-09-15T19:00:40Z",
+            "active_mhs": 15.128844894910058,
+            "temperature_end": 73.23049926757812
+          },
+          {
+            "start": "2026-09-15T19:00:40Z",
+            "end": "2026-09-15T19:04:40Z",
+            "active_mhs": 15.148751530803125,
+            "temperature_end": 72.430908203125
+          },
+          {
+            "start": "2026-09-15T19:04:40Z",
+            "end": "2026-09-15T19:08:40Z",
+            "active_mhs": 15.186782855663543,
+            "temperature_end": 82.26583862304688
+          },
+          {
+            "start": "2026-09-15T19:08:40Z",
+            "end": "2026-09-15T19:12:40Z",
+            "active_mhs": 15.274009241155465,
+            "temperature_end": 70.91169738769531
+          },
+          {
+            "start": "2026-09-15T19:12:40Z",
+            "end": "2026-09-15T19:16:40Z",
+            "active_mhs": 15.21300104734279,
+            "temperature_end": 75.62925720214844
+          },
+          {
+            "start": "2026-09-15T19:16:40Z",
+            "end": "2026-09-15T19:20:39Z",
+            "active_mhs": 15.189833480343179,
+            "temperature_end": 75.30943298339844
+          },
+          {
+            "start": "2026-09-15T19:20:39Z",
+            "end": "2026-09-15T19:24:39Z",
+            "active_mhs": 15.238897755025725,
+            "temperature_end": 71.23152160644531
+          },
+          {
+            "start": "2026-09-15T19:24:39Z",
+            "end": "2026-09-15T19:28:39Z",
+            "active_mhs": 15.158850136501995,
+            "temperature_end": 70.99165344238281
+          },
+          {
+            "start": "2026-09-15T19:28:39Z",
+            "end": "2026-09-15T19:32:39Z",
+            "active_mhs": 15.156558108715881,
+            "temperature_end": 72.5108642578125
+          },
+          {
+            "start": "2026-09-15T19:32:39Z",
+            "end": "2026-09-15T19:36:39Z",
+            "active_mhs": 15.172838676667553,
+            "temperature_end": 75.30943298339844
+          },
+          {
+            "start": "2026-09-15T19:36:39Z",
+            "end": "2026-09-15T19:40:39Z",
+            "active_mhs": 15.260306861679108,
+            "temperature_end": 70.83174133300781
+          },
+          {
+            "start": "2026-09-15T19:40:39Z",
+            "end": "2026-09-15T19:44:39Z",
+            "active_mhs": 15.240851088725016,
+            "temperature_end": 74.03009033203125
+          },
+          {
+            "start": "2026-09-15T19:44:39Z",
+            "end": "2026-09-15T19:48:39Z",
+            "active_mhs": 15.243719849762332,
+            "temperature_end": 71.23152160644531
+          },
+          {
+            "start": "2026-09-15T19:48:39Z",
+            "end": "2026-09-15T19:52:40Z",
+            "active_mhs": 15.153477580457693,
+            "temperature_end": 72.75074768066406
+          },
+          {
+            "start": "2026-09-15T19:52:40Z",
+            "end": "2026-09-15T19:56:39Z",
+            "active_mhs": 15.156715320834863,
+            "temperature_end": 81.06646728515625
+          },
+          {
+            "start": "2026-09-15T19:56:39Z",
+            "end": "2026-09-15T20:00:40Z",
+            "active_mhs": 15.160423830627623,
+            "temperature_end": 71.63131713867188
+          },
+          {
+            "start": "2026-09-15T20:00:40Z",
+            "end": "2026-09-15T20:04:40Z",
+            "active_mhs": 15.237430380198106,
+            "temperature_end": 79.307373046875
+          },
+          {
+            "start": "2026-09-15T20:04:40Z",
+            "end": "2026-09-15T20:08:40Z",
+            "active_mhs": 15.16587657922938,
+            "temperature_end": 70.91169738769531
+          },
+          {
+            "start": "2026-09-15T20:08:40Z",
+            "end": "2026-09-15T20:12:40Z",
+            "active_mhs": 15.200383499001928,
+            "temperature_end": 70.99165344238281
+          },
+          {
+            "start": "2026-09-15T20:12:40Z",
+            "end": "2026-09-15T20:16:40Z",
+            "active_mhs": 15.213092199927825,
+            "temperature_end": 72.27099609375
+          },
+          {
+            "start": "2026-09-15T20:16:40Z",
+            "end": "2026-09-15T20:20:39Z",
+            "active_mhs": 15.255580158800534,
+            "temperature_end": 76.1090087890625
+          },
+          {
+            "start": "2026-09-15T20:20:39Z",
+            "end": "2026-09-15T20:24:39Z",
+            "active_mhs": 15.197560120481198,
+            "temperature_end": 72.83070373535156
+          },
+          {
+            "start": "2026-09-15T20:24:39Z",
+            "end": "2026-09-15T20:28:39Z",
+            "active_mhs": 15.150384887819474,
+            "temperature_end": 72.430908203125
+          },
+          {
+            "start": "2026-09-15T20:28:39Z",
+            "end": "2026-09-15T20:32:39Z",
+            "active_mhs": 15.206216029184935,
+            "temperature_end": 71.31149291992188
+          },
+          {
+            "start": "2026-09-15T20:32:39Z",
+            "end": "2026-09-15T20:36:39Z",
+            "active_mhs": 15.217684433916558,
+            "temperature_end": 72.83070373535156
+          },
+          {
+            "start": "2026-09-15T20:36:39Z",
+            "end": "2026-09-15T20:40:39Z",
+            "active_mhs": 15.311627504114842,
+            "temperature_end": 70.91169738769531
+          },
+          {
+            "start": "2026-09-15T20:40:39Z",
+            "end": "2026-09-15T20:44:39Z",
+            "active_mhs": 15.242176970032798,
+            "temperature_end": 82.8255615234375
+          },
+          {
+            "start": "2026-09-15T20:44:39Z",
+            "end": "2026-09-15T20:48:39Z",
+            "active_mhs": 15.23865219520385,
+            "temperature_end": 79.70716857910156
+          },
+          {
+            "start": "2026-09-15T20:48:39Z",
+            "end": "2026-09-15T20:52:39Z",
+            "active_mhs": 15.109278474381197,
+            "temperature_end": 73.71025085449219
+          },
+          {
+            "start": "2026-09-15T20:52:39Z",
+            "end": "2026-09-15T20:56:39Z",
+            "active_mhs": 15.411899072538102,
+            "temperature_end": 80.50674438476562
+          },
+          {
+            "start": "2026-09-15T20:56:39Z",
+            "end": "2026-09-15T21:00:39Z",
+            "active_mhs": 15.17541491805457,
+            "temperature_end": 73.39041137695312
+          },
+          {
+            "start": "2026-09-15T21:00:39Z",
+            "end": "2026-09-15T21:04:39Z",
+            "active_mhs": 15.20910932571491,
+            "temperature_end": 73.63029479980469
+          },
+          {
+            "start": "2026-09-15T21:04:39Z",
+            "end": "2026-09-15T21:08:39Z",
+            "active_mhs": 15.22165846421815,
+            "temperature_end": 74.98959350585938
+          },
+          {
+            "start": "2026-09-15T21:08:39Z",
+            "end": "2026-09-15T21:12:39Z",
+            "active_mhs": 15.162986114524378,
+            "temperature_end": 72.3509521484375
+          },
+          {
+            "start": "2026-09-15T21:12:39Z",
+            "end": "2026-09-15T21:16:39Z",
+            "active_mhs": 15.084146296424185,
+            "temperature_end": 71.15156555175781
+          },
+          {
+            "start": "2026-09-15T21:16:39Z",
+            "end": "2026-09-15T21:20:39Z",
+            "active_mhs": 15.336339881317828,
+            "temperature_end": 75.22946166992188
+          },
+          {
+            "start": "2026-09-15T21:20:39Z",
+            "end": "2026-09-15T21:24:39Z",
+            "active_mhs": 15.212202004839579,
+            "temperature_end": 70.35197448730469
+          },
+          {
+            "start": "2026-09-15T21:24:39Z",
+            "end": "2026-09-15T21:28:39Z",
+            "active_mhs": 15.136025312952318,
+            "temperature_end": 74.58979797363281
+          },
+          {
+            "start": "2026-09-15T21:28:39Z",
+            "end": "2026-09-15T21:32:39Z",
+            "active_mhs": 15.221616986515338,
+            "temperature_end": 74.26995849609375
+          },
+          {
+            "start": "2026-09-15T21:32:39Z",
+            "end": "2026-09-15T21:36:39Z",
+            "active_mhs": 15.19322391249573,
+            "temperature_end": 82.50572204589844
+          },
+          {
+            "start": "2026-09-15T21:36:39Z",
+            "end": "2026-09-15T21:40:39Z",
+            "active_mhs": 15.204257467384863,
+            "temperature_end": 70.67181396484375
+          },
+          {
+            "start": "2026-09-15T21:40:39Z",
+            "end": "2026-09-15T21:44:39Z",
+            "active_mhs": 15.213966949777785,
+            "temperature_end": 81.06646728515625
+          },
+          {
+            "start": "2026-09-15T21:44:39Z",
+            "end": "2026-09-15T21:48:39Z",
+            "active_mhs": 15.161764727140902,
+            "temperature_end": 83.62513732910156
+          },
+          {
+            "start": "2026-09-15T21:48:39Z",
+            "end": "2026-09-15T21:52:39Z",
+            "active_mhs": 15.18296747836522,
+            "temperature_end": 71.07160949707031
+          },
+          {
+            "start": "2026-09-15T21:52:39Z",
+            "end": "2026-09-15T21:56:39Z",
+            "active_mhs": 15.230035223228422,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-15T21:56:39Z",
+            "end": "2026-09-15T22:00:39Z",
+            "active_mhs": 15.24534427191382,
+            "temperature_end": 72.11106872558594
+          },
+          {
+            "start": "2026-09-15T22:00:39Z",
+            "end": "2026-09-15T22:04:39Z",
+            "active_mhs": 15.174078223431886,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-15T22:04:39Z",
+            "end": "2026-09-15T22:08:39Z",
+            "active_mhs": 15.106463326253335,
+            "temperature_end": 70.51190185546875
+          },
+          {
+            "start": "2026-09-15T22:08:39Z",
+            "end": "2026-09-15T22:12:39Z",
+            "active_mhs": 15.177975628231614,
+            "temperature_end": 72.1910400390625
+          },
+          {
+            "start": "2026-09-15T22:12:39Z",
+            "end": "2026-09-15T22:16:39Z",
+            "active_mhs": 15.189464851222688,
+            "temperature_end": 73.55033874511719
+          },
+          {
+            "start": "2026-09-15T22:16:39Z",
+            "end": "2026-09-15T22:20:39Z",
+            "active_mhs": 15.182864462519804,
+            "temperature_end": 72.67079162597656
+          },
+          {
+            "start": "2026-09-15T22:20:39Z",
+            "end": "2026-09-15T22:24:39Z",
+            "active_mhs": 15.276059838243025,
+            "temperature_end": 73.87016296386719
+          },
+          {
+            "start": "2026-09-15T22:24:39Z",
+            "end": "2026-09-15T22:28:39Z",
+            "active_mhs": 15.216473296633952,
+            "temperature_end": 80.10694885253906
+          },
+          {
+            "start": "2026-09-15T22:28:39Z",
+            "end": "2026-09-15T22:32:39Z",
+            "active_mhs": 15.108675843313248,
+            "temperature_end": 81.38629150390625
+          },
+          {
+            "start": "2026-09-15T22:32:39Z",
+            "end": "2026-09-15T22:36:39Z",
+            "active_mhs": 15.138140300794904,
+            "temperature_end": 72.5108642578125
+          },
+          {
+            "start": "2026-09-15T22:36:39Z",
+            "end": "2026-09-15T22:40:39Z",
+            "active_mhs": 15.219729722784722,
+            "temperature_end": 77.14848327636719
+          },
+          {
+            "start": "2026-09-15T22:40:39Z",
+            "end": "2026-09-15T22:44:39Z",
+            "active_mhs": 15.283120814355843,
+            "temperature_end": 71.47140502929688
+          },
+          {
+            "start": "2026-09-15T22:44:39Z",
+            "end": "2026-09-15T22:48:39Z",
+            "active_mhs": 15.256885274353106,
+            "temperature_end": 76.90859985351562
+          },
+          {
+            "start": "2026-09-15T22:48:39Z",
+            "end": "2026-09-15T22:52:39Z",
+            "active_mhs": 15.162295699188977,
+            "temperature_end": 75.46934509277344
+          },
+          {
+            "start": "2026-09-15T22:52:39Z",
+            "end": "2026-09-15T22:56:39Z",
+            "active_mhs": 15.199286069643728,
+            "temperature_end": 71.31149291992188
+          },
+          {
+            "start": "2026-09-15T22:56:39Z",
+            "end": "2026-09-15T23:00:39Z",
+            "active_mhs": 15.227199677872147,
+            "temperature_end": 71.23152160644531
+          },
+          {
+            "start": "2026-09-15T23:00:39Z",
+            "end": "2026-09-15T23:04:39Z",
+            "active_mhs": 15.221686149428272,
+            "temperature_end": 72.3509521484375
+          },
+          {
+            "start": "2026-09-15T23:04:39Z",
+            "end": "2026-09-15T23:08:39Z",
+            "active_mhs": 15.198691391974021,
+            "temperature_end": 79.94703674316406
+          },
+          {
+            "start": "2026-09-15T23:08:39Z",
+            "end": "2026-09-15T23:12:39Z",
+            "active_mhs": 15.157446585028106,
+            "temperature_end": 75.7891845703125
+          },
+          {
+            "start": "2026-09-15T23:12:39Z",
+            "end": "2026-09-15T23:16:39Z",
+            "active_mhs": 15.17628463847831,
+            "temperature_end": 72.75074768066406
+          },
+          {
+            "start": "2026-09-15T23:16:39Z",
+            "end": "2026-09-15T23:20:39Z",
+            "active_mhs": 15.211336724133343,
+            "temperature_end": 80.98649597167969
+          },
+          {
+            "start": "2026-09-15T23:20:39Z",
+            "end": "2026-09-15T23:24:39Z",
+            "active_mhs": 15.305266679495514,
+            "temperature_end": 74.50984191894531
+          },
+          {
+            "start": "2026-09-15T23:24:39Z",
+            "end": "2026-09-15T23:28:39Z",
+            "active_mhs": 15.176138256025695,
+            "temperature_end": 72.67079162597656
+          },
+          {
+            "start": "2026-09-15T23:28:39Z",
+            "end": "2026-09-15T23:32:39Z",
+            "active_mhs": 15.2123512345678,
+            "temperature_end": 71.31149291992188
+          },
+          {
+            "start": "2026-09-15T23:32:39Z",
+            "end": "2026-09-15T23:36:40Z",
+            "active_mhs": 15.303624999986429,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-15T23:36:40Z",
+            "end": "2026-09-15T23:40:40Z",
+            "active_mhs": 15.328275265312909,
+            "temperature_end": 73.07058715820312
+          },
+          {
+            "start": "2026-09-15T23:40:40Z",
+            "end": "2026-09-15T23:44:40Z",
+            "active_mhs": 15.120482389797727,
+            "temperature_end": 76.82864379882812
+          },
+          {
+            "start": "2026-09-15T23:44:40Z",
+            "end": "2026-09-15T23:48:40Z",
+            "active_mhs": 15.190414690450734,
+            "temperature_end": 73.31045532226562
+          },
+          {
+            "start": "2026-09-15T23:48:40Z",
+            "end": "2026-09-15T23:52:40Z",
+            "active_mhs": 15.182978604157146,
+            "temperature_end": 75.869140625
+          },
+          {
+            "start": "2026-09-15T23:52:40Z",
+            "end": "2026-09-15T23:56:39Z",
+            "active_mhs": 15.17755238145596,
+            "temperature_end": 71.63131713867188
+          },
+          {
+            "start": "2026-09-15T23:56:39Z",
+            "end": "2026-09-16T00:00:40Z",
+            "active_mhs": 15.209699616055147,
+            "temperature_end": 71.39144897460938
+          },
+          {
+            "start": "2026-09-16T00:00:40Z",
+            "end": "2026-09-16T00:04:39Z",
+            "active_mhs": 15.255225834145794,
+            "temperature_end": 73.95013427734375
+          },
+          {
+            "start": "2026-09-16T00:04:39Z",
+            "end": "2026-09-16T00:08:39Z",
+            "active_mhs": 15.149628087616199,
+            "temperature_end": 82.9854736328125
+          },
+          {
+            "start": "2026-09-16T00:08:39Z",
+            "end": "2026-09-16T00:12:39Z",
+            "active_mhs": 15.202239521700928,
+            "temperature_end": 69.71231079101562
+          },
+          {
+            "start": "2026-09-16T00:12:39Z",
+            "end": "2026-09-16T00:16:39Z",
+            "active_mhs": 15.221888203382969,
+            "temperature_end": 72.03111267089844
+          },
+          {
+            "start": "2026-09-16T00:16:39Z",
+            "end": "2026-09-16T00:20:39Z",
+            "active_mhs": 15.211609417895795,
+            "temperature_end": 80.50674438476562
+          },
+          {
+            "start": "2026-09-16T00:20:39Z",
+            "end": "2026-09-16T00:24:39Z",
+            "active_mhs": 15.18701485788578,
+            "temperature_end": 71.63131713867188
+          },
+          {
+            "start": "2026-09-16T00:24:39Z",
+            "end": "2026-09-16T00:28:39Z",
+            "active_mhs": 15.188530308321466,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-16T00:28:39Z",
+            "end": "2026-09-16T00:32:39Z",
+            "active_mhs": 15.242447923739688,
+            "temperature_end": 71.55136108398438
+          },
+          {
+            "start": "2026-09-16T00:32:39Z",
+            "end": "2026-09-16T00:36:39Z",
+            "active_mhs": 15.22455856589365,
+            "temperature_end": 80.42678833007812
+          },
+          {
+            "start": "2026-09-16T00:36:39Z",
+            "end": "2026-09-16T00:40:39Z",
+            "active_mhs": 15.163026959050784,
+            "temperature_end": 71.23152160644531
+          },
+          {
+            "start": "2026-09-16T00:40:39Z",
+            "end": "2026-09-16T00:44:39Z",
+            "active_mhs": 15.131933795749994,
+            "temperature_end": 72.91065979003906
+          },
+          {
+            "start": "2026-09-16T00:44:39Z",
+            "end": "2026-09-16T00:48:39Z",
+            "active_mhs": 15.149869079758812,
+            "temperature_end": 71.95115661621094
+          },
+          {
+            "start": "2026-09-16T00:48:39Z",
+            "end": "2026-09-16T00:52:39Z",
+            "active_mhs": 15.168212463967373,
+            "temperature_end": 82.18588256835938
+          },
+          {
+            "start": "2026-09-16T00:52:39Z",
+            "end": "2026-09-16T00:56:39Z",
+            "active_mhs": 15.233259679995015,
+            "temperature_end": 72.91065979003906
+          },
+          {
+            "start": "2026-09-16T00:56:39Z",
+            "end": "2026-09-16T01:00:39Z",
+            "active_mhs": 15.225667395253014,
+            "temperature_end": 73.79020690917969
+          },
+          {
+            "start": "2026-09-16T01:00:39Z",
+            "end": "2026-09-16T01:04:39Z",
+            "active_mhs": 15.220096116088719,
+            "temperature_end": 80.90653991699219
+          },
+          {
+            "start": "2026-09-16T01:04:39Z",
+            "end": "2026-09-16T01:08:39Z",
+            "active_mhs": 15.210386233232118,
+            "temperature_end": 71.95115661621094
+          },
+          {
+            "start": "2026-09-16T01:08:39Z",
+            "end": "2026-09-16T01:12:39Z",
+            "active_mhs": 15.240711783786525,
+            "temperature_end": 70.51190185546875
+          },
+          {
+            "start": "2026-09-16T01:12:39Z",
+            "end": "2026-09-16T01:16:39Z",
+            "active_mhs": 15.209792752931932,
+            "temperature_end": 72.99061584472656
+          },
+          {
+            "start": "2026-09-16T01:16:39Z",
+            "end": "2026-09-16T01:20:39Z",
+            "active_mhs": 15.2243219667096,
+            "temperature_end": 71.55136108398438
+          },
+          {
+            "start": "2026-09-16T01:20:39Z",
+            "end": "2026-09-16T01:24:39Z",
+            "active_mhs": 15.215450430569557,
+            "temperature_end": 73.71025085449219
+          },
+          {
+            "start": "2026-09-16T01:24:39Z",
+            "end": "2026-09-16T01:28:39Z",
+            "active_mhs": 15.168259750127795,
+            "temperature_end": 75.54930114746094
+          },
+          {
+            "start": "2026-09-16T01:28:39Z",
+            "end": "2026-09-16T01:32:39Z",
+            "active_mhs": 15.16194778134877,
+            "temperature_end": 71.87120056152344
+          },
+          {
+            "start": "2026-09-16T01:32:39Z",
+            "end": "2026-09-16T01:36:40Z",
+            "active_mhs": 15.203543519084446,
+            "temperature_end": 81.38629150390625
+          },
+          {
+            "start": "2026-09-16T01:36:40Z",
+            "end": "2026-09-16T01:40:39Z",
+            "active_mhs": 15.183825271002949,
+            "temperature_end": 80.58670043945312
+          },
+          {
+            "start": "2026-09-16T01:40:39Z",
+            "end": "2026-09-16T01:44:39Z",
+            "active_mhs": 15.227524017111847,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-16T01:44:39Z",
+            "end": "2026-09-16T01:48:39Z",
+            "active_mhs": 15.17763965218639,
+            "temperature_end": 80.02699279785156
+          },
+          {
+            "start": "2026-09-16T01:48:39Z",
+            "end": "2026-09-16T01:52:39Z",
+            "active_mhs": 15.14568362502103,
+            "temperature_end": 82.26583862304688
+          },
+          {
+            "start": "2026-09-16T01:52:39Z",
+            "end": "2026-09-16T01:56:40Z",
+            "active_mhs": 15.1429222898921,
+            "temperature_end": 72.83070373535156
+          },
+          {
+            "start": "2026-09-16T01:56:40Z",
+            "end": "2026-09-16T02:00:40Z",
+            "active_mhs": 15.192897836297492,
+            "temperature_end": 71.79124450683594
+          },
+          {
+            "start": "2026-09-16T02:00:40Z",
+            "end": "2026-09-16T02:04:39Z",
+            "active_mhs": 15.238838599421053,
+            "temperature_end": 71.23152160644531
+          },
+          {
+            "start": "2026-09-16T02:04:39Z",
+            "end": "2026-09-16T02:08:39Z",
+            "active_mhs": 15.239697727533963,
+            "temperature_end": 79.22740173339844
+          },
+          {
+            "start": "2026-09-16T02:08:39Z",
+            "end": "2026-09-16T02:12:39Z",
+            "active_mhs": 15.098902695661637,
+            "temperature_end": 81.70613098144531
+          },
+          {
+            "start": "2026-09-16T02:12:39Z",
+            "end": "2026-09-16T02:16:39Z",
+            "active_mhs": 14.869601013917396,
+            "temperature_end": 73.23049926757812
+          },
+          {
+            "start": "2026-09-16T02:16:39Z",
+            "end": "2026-09-16T02:20:39Z",
+            "active_mhs": 14.9978436138477,
+            "temperature_end": 73.07058715820312
+          },
+          {
+            "start": "2026-09-16T02:20:39Z",
+            "end": "2026-09-16T02:24:39Z",
+            "active_mhs": 14.926151041113084,
+            "temperature_end": 73.55033874511719
+          },
+          {
+            "start": "2026-09-16T02:24:39Z",
+            "end": "2026-09-16T02:28:39Z",
+            "active_mhs": 14.942099921500079,
+            "temperature_end": 76.42884826660156
+          },
+          {
+            "start": "2026-09-16T02:28:39Z",
+            "end": "2026-09-16T02:32:39Z",
+            "active_mhs": 15.019124669060286,
+            "temperature_end": 73.07058715820312
+          },
+          {
+            "start": "2026-09-16T02:32:39Z",
+            "end": "2026-09-16T02:36:39Z",
+            "active_mhs": 15.146104615970403,
+            "temperature_end": 75.46934509277344
+          },
+          {
+            "start": "2026-09-16T02:36:39Z",
+            "end": "2026-09-16T02:40:40Z",
+            "active_mhs": 15.18992721866918,
+            "temperature_end": 78.66769409179688
+          },
+          {
+            "start": "2026-09-16T02:40:40Z",
+            "end": "2026-09-16T02:44:40Z",
+            "active_mhs": 15.220519861615053,
+            "temperature_end": 70.99165344238281
+          },
+          {
+            "start": "2026-09-16T02:44:40Z",
+            "end": "2026-09-16T02:48:39Z",
+            "active_mhs": 15.216332184470744,
+            "temperature_end": 73.47036743164062
+          },
+          {
+            "start": "2026-09-16T02:48:39Z",
+            "end": "2026-09-16T02:52:39Z",
+            "active_mhs": 15.127375643805816,
+            "temperature_end": 73.79020690917969
+          },
+          {
+            "start": "2026-09-16T02:52:39Z",
+            "end": "2026-09-16T02:56:39Z",
+            "active_mhs": 15.215498386387207,
+            "temperature_end": 75.46934509277344
+          },
+          {
+            "start": "2026-09-16T02:56:39Z",
+            "end": "2026-09-16T03:00:40Z",
+            "active_mhs": 15.085084396869712,
+            "temperature_end": 82.42576599121094
+          },
+          {
+            "start": "2026-09-16T03:00:40Z",
+            "end": "2026-09-16T03:04:40Z",
+            "active_mhs": 15.169727741923094,
+            "temperature_end": 70.75177001953125
+          },
+          {
+            "start": "2026-09-16T03:04:40Z",
+            "end": "2026-09-16T03:08:40Z",
+            "active_mhs": 15.171031345903799,
+            "temperature_end": 72.59083557128906
+          },
+          {
+            "start": "2026-09-16T03:08:40Z",
+            "end": "2026-09-16T03:12:40Z",
+            "active_mhs": 15.167700012289982,
+            "temperature_end": 73.15054321289062
+          },
+          {
+            "start": "2026-09-16T03:12:40Z",
+            "end": "2026-09-16T03:16:40Z",
+            "active_mhs": 15.18131218435211,
+            "temperature_end": 80.58670043945312
+          },
+          {
+            "start": "2026-09-16T03:16:40Z",
+            "end": "2026-09-16T03:20:40Z",
+            "active_mhs": 15.17393612925417,
+            "temperature_end": 81.30633544921875
+          },
+          {
+            "start": "2026-09-16T03:20:40Z",
+            "end": "2026-09-16T03:24:40Z",
+            "active_mhs": 15.169825953147503,
+            "temperature_end": 73.63029479980469
+          },
+          {
+            "start": "2026-09-16T03:24:40Z",
+            "end": "2026-09-16T03:28:40Z",
+            "active_mhs": 15.195504647193715,
+            "temperature_end": 71.79124450683594
+          },
+          {
+            "start": "2026-09-16T03:28:40Z",
+            "end": "2026-09-16T03:32:40Z",
+            "active_mhs": 15.113079481574033,
+            "temperature_end": 75.38938903808594
+          },
+          {
+            "start": "2026-09-16T03:32:40Z",
+            "end": "2026-09-16T03:36:40Z",
+            "active_mhs": 15.136632789858822,
+            "temperature_end": 84.34477233886719
+          },
+          {
+            "start": "2026-09-16T03:36:40Z",
+            "end": "2026-09-16T03:40:40Z",
+            "active_mhs": 15.189258463448605,
+            "temperature_end": 72.430908203125
+          },
+          {
+            "start": "2026-09-16T03:40:40Z",
+            "end": "2026-09-16T03:44:40Z",
+            "active_mhs": 15.197843489792287,
+            "temperature_end": 71.39144897460938
+          },
+          {
+            "start": "2026-09-16T03:44:40Z",
+            "end": "2026-09-16T03:48:40Z",
+            "active_mhs": 15.241935821502748,
+            "temperature_end": 71.07160949707031
+          },
+          {
+            "start": "2026-09-16T03:48:40Z",
+            "end": "2026-09-16T03:52:40Z",
+            "active_mhs": 15.239246216804055,
+            "temperature_end": 75.7891845703125
+          },
+          {
+            "start": "2026-09-16T03:52:40Z",
+            "end": "2026-09-16T03:56:40Z",
+            "active_mhs": 15.21766557118379,
+            "temperature_end": 71.71128845214844
+          },
+          {
+            "start": "2026-09-16T03:56:40Z",
+            "end": "2026-09-16T04:00:40Z",
+            "active_mhs": 15.237109816136376,
+            "temperature_end": 71.39144897460938
+          },
+          {
+            "start": "2026-09-16T04:00:40Z",
+            "end": "2026-09-16T04:04:40Z",
+            "active_mhs": 15.233448293487651,
+            "temperature_end": 73.07058715820312
+          },
+          {
+            "start": "2026-09-16T04:04:40Z",
+            "end": "2026-09-16T04:08:40Z",
+            "active_mhs": 15.235572472219554,
+            "temperature_end": 72.1910400390625
+          },
+          {
+            "start": "2026-09-16T04:08:40Z",
+            "end": "2026-09-16T04:10:05Z",
+            "active_mhs": 15.213281105223787,
+            "temperature_end": 71.71128845214844
+          }
+        ]
+      }
+    ]
+  }
+]

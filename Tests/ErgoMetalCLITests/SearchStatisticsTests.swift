@@ -1,7 +1,7 @@
-import XCTest
+import Testing
 @testable import MetalErgoCore
 
-final class SearchStatisticsTests: XCTestCase {
+struct SearchStatisticsTests {
     private let batchNonces = 1_048_576
 
     private func batch(start: Double, end: Double, nonces: Int = 1_048_576) -> SearchBatch {
@@ -15,7 +15,7 @@ final class SearchStatisticsTests: XCTestCase {
         sample.record(in: stats)
     }
 
-    func testOverlappingPartialWindowUsesItsCompleteCommandInterval() throws {
+    @Test func testOverlappingPartialWindowUsesItsCompleteCommandInterval() throws {
         let stats = StatisticsStore(mode: .mining)
         stats.update { $0.state = .searching }
         var accumulator = SearchStatisticsAccumulator()
@@ -26,38 +26,37 @@ final class SearchStatisticsTests: XCTestCase {
             let sample = accumulator.append(batch(
                 start: Double(max(0, index - 3)) * secondsPerBatch,
                 end: Double(index + 1) * secondsPerBatch))
-            if index < 15 { XCTAssertNil(sample) }
+            if index < 15 { #expect(sample == nil) }
             if let sample { record(sample, in: stats) }
         }
         let frontier = 16 * secondsPerBatch
         let tailStart = 13 * secondsPerBatch
         let tailEnd = frontier + 0.000_018_458_333
-        XCTAssertNil(accumulator.append(batch(start: tailStart, end: tailEnd)))
-        record(try XCTUnwrap(accumulator.flush()), in: stats)
+        #expect(accumulator.append(batch(start: tailStart, end: tailEnd)) == nil)
+        let tailSample = accumulator.flush()
+        record(try #require(tailSample), in: stats)
 
-        XCTAssertEqual(
-            stats.snapshot().hashrate,
-            Double(batchNonces) / (tailEnd - tailStart), accuracy: 1e-6)
-        XCTAssertEqual(stats.snapshot().nonces, UInt64(17 * batchNonces))
-        XCTAssertEqual(stats.snapshot().searchSeconds, tailEnd, accuracy: 1e-12)
-        XCTAssertNil(accumulator.flush())
+        #expect(abs(stats.snapshot().hashrate - (Double(batchNonces) / (tailEnd - tailStart))) <= 1e-6)
+        #expect(stats.snapshot().nonces == UInt64(17 * batchNonces))
+        #expect(abs(stats.snapshot().searchSeconds - tailEnd) <= 1e-12)
+        #expect(accumulator.flush() == nil)
     }
 
-    func testDatasetBuildDoesNotRetainPreviousSearchRate() {
+    @Test func testDatasetBuildDoesNotRetainPreviousSearchRate() {
         let stats = StatisticsStore(mode: .mining)
         stats.update { $0.state = .searching }
         stats.recordBatch(nonces: batchNonces, gpuSeconds: 0.05, wallSeconds: 0.1)
-        XCTAssertGreaterThan(stats.snapshot().hashrate, 0)
+        #expect(stats.snapshot().hashrate > 0)
 
         stats.update { $0.state = .buildingDataset }
-        XCTAssertEqual(stats.snapshot().hashrate, 0)
-        XCTAssertEqual(stats.refresh().hashrate, 0)
+        #expect(stats.snapshot().hashrate == 0)
+        #expect(stats.refresh().hashrate == 0)
         stats.update { $0.state = .searching }
-        XCTAssertEqual(stats.snapshot().hashrate, 0)
-        XCTAssertEqual(stats.snapshot().nonces, UInt64(batchNonces))
+        #expect(stats.snapshot().hashrate == 0)
+        #expect(stats.snapshot().nonces == UInt64(batchNonces))
     }
 
-    func testWindowBoundariesAndEveryTailLengthAtPipelineDepthsOneThroughFour() throws {
+    @Test func testWindowBoundariesAndEveryTailLengthAtPipelineDepthsOneThroughFour() throws {
         for depth in 1...4 {
             for tailCount in 1...15 {
                 let stats = StatisticsStore(mode: .mining)
@@ -73,161 +72,164 @@ final class SearchStatisticsTests: XCTestCase {
                         samples.append(sample)
                     }
                 }
-                samples.append(try XCTUnwrap(accumulator.flush()))
-                XCTAssertNil(accumulator.flush())
-                XCTAssertEqual(samples.count, 3)
+                let tailSample = accumulator.flush()
+                samples.append(try #require(tailSample))
+                #expect(accumulator.flush() == nil)
+                #expect(samples.count == 3)
                 for (index, sample) in samples.enumerated() {
                     let windowCount = index < 2 ? 16 : tailCount
                     let windowSeconds = Double(windowCount - 1 + depth) / 8
-                    XCTAssertEqual(sample.nonces, windowCount * batchNonces)
-                    XCTAssertEqual(sample.hashrateWindowSeconds, windowSeconds)
-                    XCTAssertEqual(
-                        sample.activeSearchSeconds,
-                        index == 0 ? windowSeconds : Double(windowCount) / 8)
+                    #expect(sample.nonces == windowCount * batchNonces)
+                    #expect(sample.hashrateWindowSeconds == windowSeconds)
+                    #expect(sample.activeSearchSeconds == (index == 0 ? windowSeconds : Double(windowCount) / 8))
                     sample.record(in: stats)
                     let snapshot = stats.snapshot()
-                    XCTAssertEqual(
-                        snapshot.hashrate, Double(windowCount * batchNonces) / windowSeconds,
-                        accuracy: 1e-6, "depth=\(depth), tail=\(tailCount), window=\(index)")
+                    #expect(abs(snapshot.hashrate - (Double(windowCount * batchNonces) / windowSeconds)) <= 1e-6, "depth=\(depth), tail=\(tailCount), window=\(index)")
                 }
                 let snapshot = stats.snapshot()
                 let totalSeconds = Double(count - 1 + depth) / 8
-                XCTAssertEqual(snapshot.nonces, UInt64(count * batchNonces))
-                XCTAssertEqual(snapshot.searchSeconds, totalSeconds)
-                XCTAssertEqual(snapshot.gpuSeconds, Double(count) * 0.05, accuracy: 1e-12)
-                XCTAssertEqual(
-                    snapshot.averageHashrate, Double(count * batchNonces) / totalSeconds,
-                    accuracy: 1e-6)
-                XCTAssertEqual(
-                    snapshot.effectiveHashrate,
-                    Double(snapshot.nonces) / snapshot.sampledAt.timeIntervalSince(snapshot.startedAt),
-                    accuracy: 1e-6)
+                #expect(snapshot.nonces == UInt64(count * batchNonces))
+                #expect(snapshot.searchSeconds == totalSeconds)
+                #expect(abs(snapshot.gpuSeconds - (Double(count) * 0.05)) <= 1e-12)
+                #expect(abs(snapshot.averageHashrate - (Double(count * batchNonces) / totalSeconds)) <= 1e-6)
+                #expect(abs(snapshot.effectiveHashrate - (Double(snapshot.nonces) / snapshot.sampledAt.timeIntervalSince(snapshot.startedAt))) <= 1e-6)
             }
         }
     }
 
-    func testFlushRetainsFrontierForFullyCoveredAndOutOfOrderCompletions() throws {
+    @Test func testFlushRetainsFrontierForFullyCoveredAndOutOfOrderCompletions() throws {
         let stats = StatisticsStore(mode: .mining)
         stats.update { $0.state = .searching }
         var accumulator = SearchStatisticsAccumulator()
-        XCTAssertNil(accumulator.flush())
-        try XCTUnwrap(accumulator.append(batch(start: 0, end: 10), flush: true)).record(in: stats)
+        #expect(accumulator.flush() == nil)
+        let initialSample = accumulator.append(batch(start: 0, end: 10), flush: true)
+        try #require(initialSample).record(in: stats)
         // Starts are FIFO, but a delayed callback can end after later commands.
-        XCTAssertNil(accumulator.append(batch(start: 1, end: 7)))
-        XCTAssertNil(accumulator.append(batch(start: 2, end: 6)))
-        let covered = try XCTUnwrap(accumulator.flush())
-        XCTAssertEqual(covered.activeSearchSeconds, 0)
-        XCTAssertEqual(covered.hashrateWindowSeconds, 6)
+        #expect(accumulator.append(batch(start: 1, end: 7)) == nil)
+        #expect(accumulator.append(batch(start: 2, end: 6)) == nil)
+        let coveredSample = accumulator.flush()
+        let covered = try #require(coveredSample)
+        #expect(covered.activeSearchSeconds == 0)
+        #expect(covered.hashrateWindowSeconds == 6)
         covered.record(in: stats)
-        XCTAssertEqual(stats.snapshot().hashrate, Double(2 * batchNonces) / 6)
-        XCTAssertEqual(stats.snapshot().searchSeconds, 10)
-        XCTAssertNil(accumulator.flush())
+        #expect(stats.snapshot().hashrate == Double(2 * batchNonces) / 6)
+        #expect(stats.snapshot().searchSeconds == 10)
+        #expect(accumulator.flush() == nil)
 
-        let next = try XCTUnwrap(accumulator.append(batch(start: 7, end: 11), flush: true))
-        XCTAssertEqual(next.activeSearchSeconds, 1)
-        XCTAssertEqual(next.hashrateWindowSeconds, 4)
+        let nextSample = accumulator.append(batch(start: 7, end: 11), flush: true)
+        let next = try #require(nextSample)
+        #expect(next.activeSearchSeconds == 1)
+        #expect(next.hashrateWindowSeconds == 4)
         next.record(in: stats)
-        XCTAssertEqual(stats.snapshot().nonces, UInt64(4 * batchNonces))
-        XCTAssertEqual(stats.snapshot().searchSeconds, 11)
+        #expect(stats.snapshot().nonces == UInt64(4 * batchNonces))
+        #expect(stats.snapshot().searchSeconds == 11)
     }
 
-    func testTimeGapsDoNotBecomeActiveTimeInsideOrBetweenWindows() throws {
+    @Test func testTimeGapsDoNotBecomeActiveTimeInsideOrBetweenWindows() throws {
         let stats = StatisticsStore(mode: .mining)
         stats.update { $0.state = .searching }
         var accumulator = SearchStatisticsAccumulator()
-        XCTAssertNil(accumulator.append(batch(start: 10, end: 11)))
-        XCTAssertNil(accumulator.append(batch(start: 13, end: 15)))
-        let first = try XCTUnwrap(accumulator.flush())
-        XCTAssertEqual(first.hashrateWindowSeconds, 3)
-        XCTAssertEqual(first.activeSearchSeconds, 3)
+        #expect(accumulator.append(batch(start: 10, end: 11)) == nil)
+        #expect(accumulator.append(batch(start: 13, end: 15)) == nil)
+        let firstSample = accumulator.flush()
+        let first = try #require(firstSample)
+        #expect(first.hashrateWindowSeconds == 3)
+        #expect(first.activeSearchSeconds == 3)
         first.record(in: stats)
 
-        XCTAssertNil(accumulator.append(batch(start: 14, end: 16)))
-        XCTAssertNil(accumulator.append(batch(start: 20, end: 21)))
-        let second = try XCTUnwrap(accumulator.flush())
-        XCTAssertEqual(second.hashrateWindowSeconds, 3)
-        XCTAssertEqual(second.activeSearchSeconds, 2)
+        #expect(accumulator.append(batch(start: 14, end: 16)) == nil)
+        #expect(accumulator.append(batch(start: 20, end: 21)) == nil)
+        let secondSample = accumulator.flush()
+        let second = try #require(secondSample)
+        #expect(second.hashrateWindowSeconds == 3)
+        #expect(second.activeSearchSeconds == 2)
         second.record(in: stats)
-        XCTAssertEqual(stats.snapshot().hashrate, Double(2 * batchNonces) / 3)
-        XCTAssertEqual(stats.snapshot().searchSeconds, 5)
-        XCTAssertEqual(stats.snapshot().averageHashrate, Double(4 * batchNonces) / 5)
+        #expect(stats.snapshot().hashrate == Double(2 * batchNonces) / 3)
+        #expect(stats.snapshot().searchSeconds == 5)
+        #expect(stats.snapshot().averageHashrate == Double(4 * batchNonces) / 5)
 
         // Evaluate the synthetic session's duty cycle without sleeping or
         // involving the real system clock: 5 active seconds in 21 elapsed.
         var snapshot = stats.snapshot()
         snapshot.sampledAt = snapshot.startedAt.addingTimeInterval(21)
-        XCTAssertEqual(snapshot.searchDutyCycle, 5.0 / 21, accuracy: 1e-12)
+        #expect(abs(snapshot.searchDutyCycle - (5.0 / 21)) <= 1e-12)
     }
 
-    func testZeroTimeAndInvalidDurationCountNoncesWithoutInventingTime() throws {
+    @Test func testZeroTimeAndInvalidDurationCountNoncesWithoutInventingTime() throws {
         let stats = StatisticsStore(mode: .mining)
         stats.update { $0.state = .searching }
         var accumulator = SearchStatisticsAccumulator()
         for _ in 0..<16 {
             accumulator.append(batch(start: 0, end: 0))?.record(in: stats)
         }
-        XCTAssertEqual(stats.snapshot().nonces, UInt64(16 * batchNonces))
-        XCTAssertEqual(stats.snapshot().searchSeconds, 0)
-        XCTAssertEqual(stats.snapshot().hashrate, 0)
-        XCTAssertEqual(stats.snapshot().averageHashrate, 0)
-        XCTAssertNil(accumulator.flush())
+        #expect(stats.snapshot().nonces == UInt64(16 * batchNonces))
+        #expect(stats.snapshot().searchSeconds == 0)
+        #expect(stats.snapshot().hashrate == 0)
+        #expect(stats.snapshot().averageHashrate == 0)
+        #expect(accumulator.flush() == nil)
 
-        let valid = try XCTUnwrap(accumulator.append(batch(start: 2, end: 3), flush: true))
+        let validSample = accumulator.append(batch(start: 2, end: 3), flush: true)
+        let valid = try #require(validSample)
         valid.record(in: stats)
-        XCTAssertEqual(stats.snapshot().searchSeconds, 1)
-        XCTAssertEqual(stats.snapshot().hashrate, Double(batchNonces))
-        XCTAssertNil(accumulator.append(batch(start: 3, end: 3)))
-        XCTAssertNil(accumulator.append(batch(start: 4, end: 3)))
-        let zero = try XCTUnwrap(accumulator.flush())
-        XCTAssertEqual(zero.hashrateWindowSeconds, 0)
-        XCTAssertEqual(zero.activeSearchSeconds, 0)
+        #expect(stats.snapshot().searchSeconds == 1)
+        #expect(stats.snapshot().hashrate == Double(batchNonces))
+        #expect(accumulator.append(batch(start: 3, end: 3)) == nil)
+        #expect(accumulator.append(batch(start: 4, end: 3)) == nil)
+        let zeroSample = accumulator.flush()
+        let zero = try #require(zeroSample)
+        #expect(zero.hashrateWindowSeconds == 0)
+        #expect(zero.activeSearchSeconds == 0)
         zero.record(in: stats)
-        XCTAssertEqual(stats.snapshot().nonces, UInt64(19 * batchNonces))
-        XCTAssertEqual(stats.snapshot().searchSeconds, 1)
-        XCTAssertEqual(stats.snapshot().hashrate, 0)
-        XCTAssertEqual(stats.snapshot().averageHashrate, Double(19 * batchNonces))
+        #expect(stats.snapshot().nonces == UInt64(19 * batchNonces))
+        #expect(stats.snapshot().searchSeconds == 1)
+        #expect(stats.snapshot().hashrate == 0)
+        #expect(stats.snapshot().averageHashrate == Double(19 * batchNonces))
     }
 
-    func testVariableBatchSizesAndShortMeasuredIntervalsAreNotCapped() throws {
+    @Test func testVariableBatchSizesAndShortMeasuredIntervalsAreNotCapped() throws {
         let stats = StatisticsStore(mode: .mining)
         stats.update { $0.state = .searching }
         var accumulator = SearchStatisticsAccumulator()
-        XCTAssertNil(accumulator.append(batch(start: 0, end: 2, nonces: 100)))
-        XCTAssertNil(accumulator.append(batch(start: 1, end: 3, nonces: 200)))
-        try XCTUnwrap(accumulator.flush()).record(in: stats)
-        XCTAssertEqual(stats.snapshot().nonces, 300)
-        XCTAssertEqual(stats.snapshot().hashrate, 100)
+        #expect(accumulator.append(batch(start: 0, end: 2, nonces: 100)) == nil)
+        #expect(accumulator.append(batch(start: 1, end: 3, nonces: 200)) == nil)
+        let windowSample = accumulator.flush()
+        try #require(windowSample).record(in: stats)
+        #expect(stats.snapshot().nonces == 300)
+        #expect(stats.snapshot().hashrate == 100)
 
         let end = 4.000_001
-        try XCTUnwrap(accumulator.append(batch(start: 4, end: end), flush: true)).record(in: stats)
-        XCTAssertEqual(stats.snapshot().hashrate, Double(batchNonces) / (end - 4))
-        XCTAssertGreaterThan(stats.snapshot().hashrate, 1_000_000_000_000)
-        XCTAssertEqual(stats.snapshot().nonces, UInt64(300 + batchNonces))
+        let shortSample = accumulator.append(batch(start: 4, end: end), flush: true)
+        try #require(shortSample).record(in: stats)
+        #expect(stats.snapshot().hashrate == Double(batchNonces) / (end - 4))
+        #expect(stats.snapshot().hashrate > 1_000_000_000_000)
+        #expect(stats.snapshot().nonces == UInt64(300 + batchNonces))
     }
 
-    func testDatasetBoundaryFlushKeepsSeparateWindowsAndExcludesBuildGap() throws {
+    @Test func testDatasetBoundaryFlushKeepsSeparateWindowsAndExcludesBuildGap() throws {
         let stats = StatisticsStore(mode: .benchmark)
         stats.update { $0.state = .searching }
         var accumulator = SearchStatisticsAccumulator()
-        XCTAssertNil(accumulator.append(batch(start: 0, end: 1)))
-        XCTAssertNil(accumulator.append(batch(start: 0.5, end: 1.5)))
-        try XCTUnwrap(accumulator.flush()).record(in: stats)
+        #expect(accumulator.append(batch(start: 0, end: 1)) == nil)
+        #expect(accumulator.append(batch(start: 0.5, end: 1.5)) == nil)
+        let prebuildSample = accumulator.flush()
+        try #require(prebuildSample).record(in: stats)
         let beforeBuild = stats.snapshot()
         stats.update { $0.state = .buildingDataset }
-        XCTAssertEqual(stats.refresh().hashrate, 0)
-        XCTAssertEqual(stats.snapshot().nonces, beforeBuild.nonces)
-        XCTAssertEqual(stats.snapshot().averageHashrate, beforeBuild.averageHashrate)
+        #expect(stats.refresh().hashrate == 0)
+        #expect(stats.snapshot().nonces == beforeBuild.nonces)
+        #expect(stats.snapshot().averageHashrate == beforeBuild.averageHashrate)
 
         stats.update { $0.state = .searching }
-        XCTAssertEqual(stats.snapshot().hashrate, 0)
-        let afterBuild = try XCTUnwrap(accumulator.append(batch(start: 10, end: 11), flush: true))
-        XCTAssertEqual(afterBuild.nonces, batchNonces)
-        XCTAssertEqual(afterBuild.activeSearchSeconds, 1)
-        XCTAssertEqual(afterBuild.hashrateWindowSeconds, 1)
+        #expect(stats.snapshot().hashrate == 0)
+        let postbuildSample = accumulator.append(batch(start: 10, end: 11), flush: true)
+        let afterBuild = try #require(postbuildSample)
+        #expect(afterBuild.nonces == batchNonces)
+        #expect(afterBuild.activeSearchSeconds == 1)
+        #expect(afterBuild.hashrateWindowSeconds == 1)
         afterBuild.record(in: stats)
-        XCTAssertEqual(stats.snapshot().nonces, UInt64(3 * batchNonces))
-        XCTAssertEqual(stats.snapshot().searchSeconds, 2.5)
-        XCTAssertEqual(stats.snapshot().hashrate, Double(batchNonces))
-        XCTAssertEqual(stats.snapshot().averageHashrate, Double(3 * batchNonces) / 2.5)
+        #expect(stats.snapshot().nonces == UInt64(3 * batchNonces))
+        #expect(stats.snapshot().searchSeconds == 2.5)
+        #expect(stats.snapshot().hashrate == Double(batchNonces))
+        #expect(stats.snapshot().averageHashrate == Double(3 * batchNonces) / 2.5)
     }
 }

@@ -1,9 +1,9 @@
 import Foundation
-import XCTest
+import Testing
 @testable import MetalErgoCore
 
-final class MiningCoordinatorTests: XCTestCase {
-    func testJobChangeDrainsEveryPendingNonceBeforeResettingSearchWindow() throws {
+struct MiningCoordinatorTests {
+    @Test func testJobChangeDrainsEveryPendingNonceBeforeResettingSearchWindow() throws {
         for depth in 1...4 {
             let stats = StatisticsStore(mode: .mining)
             let coordinator = MiningCoordinator(
@@ -14,7 +14,7 @@ final class MiningCoordinatorTests: XCTestCase {
             coordinator.start()
             defer { coordinator.stop() }
             coordinator.handle(.job(makeJob(generation: 1)))
-            let oldJob = try XCTUnwrap(coordinator.nextJob())
+            let oldJob = try #require(coordinator.nextJob())
             stats.update { $0.state = .searching }
             var accumulator = SearchStatisticsAccumulator()
             func batch(_ index: Int) -> SearchBatch {
@@ -29,40 +29,42 @@ final class MiningCoordinatorTests: XCTestCase {
             }
             let pending = (16..<(16 + depth)).map(batch)
             coordinator.handle(.job(makeJob(generation: 2)))
-            XCTAssertFalse(coordinator.isCurrent(oldJob))
+            #expect(!coordinator.isCurrent(oldJob))
             // The CLI's normal/deferred drain uses the old target and recipient
             // even though the coordinator already knows about the new job.
             for completed in pending {
                 accumulator.append(completed)?.record(
                     in: stats, shareTarget: oldJob.target, recipient: oldJob.recipient)
             }
-            try XCTUnwrap(accumulator.flush()).record(
+            let oldSample = accumulator.flush()
+            try #require(oldSample).record(
                 in: stats, shareTarget: oldJob.target, recipient: oldJob.recipient)
-            XCTAssertNil(accumulator.flush())
+            #expect(accumulator.flush() == nil)
             let completedCount = 16 + depth
-            XCTAssertEqual(stats.snapshot().nonces, UInt64(completedCount * 1_048_576))
-            XCTAssertEqual(stats.snapshot().searchSeconds, Double(15 + 2 * depth))
-            XCTAssertEqual(stats.snapshot().shares.expected, Double(completedCount * 65_536))
+            #expect(stats.snapshot().nonces == UInt64(completedCount * 1_048_576))
+            #expect(stats.snapshot().searchSeconds == Double(15 + 2 * depth))
+            #expect(stats.snapshot().shares.expected == Double(completedCount * 65_536))
 
-            let newJob = try XCTUnwrap(coordinator.nextJob())
-            XCTAssertTrue(coordinator.isCurrent(newJob))
-            XCTAssertEqual(newJob.height, oldJob.height)
+            let newJob = try #require(coordinator.nextJob())
+            #expect(coordinator.isCurrent(newJob))
+            #expect(newJob.height == oldJob.height)
             stats.update { $0.state = .buildingDataset }
-            XCTAssertEqual(stats.refresh().hashrate, 0)
+            #expect(stats.refresh().hashrate == 0)
             stats.update { $0.state = .searching }
-            XCTAssertEqual(stats.snapshot().hashrate, 0)
+            #expect(stats.snapshot().hashrate == 0)
             var nextAccumulator = SearchStatisticsAccumulator()
             let newBatch = batch(40)
-            try XCTUnwrap(nextAccumulator.append(newBatch, flush: true)).record(
+            let newSample = nextAccumulator.append(newBatch, flush: true)
+            try #require(newSample).record(
                 in: stats, shareTarget: newJob.target, recipient: newJob.recipient)
-            XCTAssertEqual(stats.snapshot().nonces, UInt64((completedCount + 1) * 1_048_576))
-            XCTAssertEqual(stats.snapshot().searchSeconds, Double(15 + 3 * depth))
-            XCTAssertEqual(stats.snapshot().hashrate, 1_048_576 / Double(depth))
-            XCTAssertEqual(stats.snapshot().shares.expected, Double((completedCount + 1) * 65_536))
+            #expect(stats.snapshot().nonces == UInt64((completedCount + 1) * 1_048_576))
+            #expect(stats.snapshot().searchSeconds == Double(15 + 3 * depth))
+            #expect(stats.snapshot().hashrate == 1_048_576 / Double(depth))
+            #expect(stats.snapshot().shares.expected == Double((completedCount + 1) * 65_536))
         }
     }
 
-    func testStopFinalizesOnlyAfterCompletedSearchIsAccountedFor() throws {
+    @Test func testStopFinalizesOnlyAfterCompletedSearchIsAccountedFor() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: url) }
         let stats = StatisticsStore(mode: .mining)
@@ -74,67 +76,67 @@ final class MiningCoordinatorTests: XCTestCase {
         coordinator.start()
 
         coordinator.requestStop()
-        XCTAssertTrue(coordinator.isStopped)
-        XCTAssertNil(coordinator.nextJob())
-        XCTAssertEqual(try Data(contentsOf: url).count, 0)
+        #expect(coordinator.isStopped)
+        #expect(coordinator.nextJob() == nil)
+        #expect(try Data(contentsOf: url).count == 0)
         stats.recordBatch(nonces: 2_048, gpuSeconds: 0.1, wallSeconds: 0.2)
         coordinator.stop()
         coordinator.stop()
         coordinator.recordStatisticsSample()
 
         let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
-        XCTAssertEqual(lines.count, 1)
+        #expect(lines.count == 1)
         let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
-        let event = try decoder.decode(MinerEvent.self, from: Data(try XCTUnwrap(lines.first).utf8))
-        XCTAssertEqual(event.type, "session_ended")
-        XCTAssertEqual(event.fields["nonces"], "2048")
-        XCTAssertEqual(event.fields["search_seconds"], "0.2")
+        let event = try decoder.decode(MinerEvent.self, from: Data(try #require(lines.first).utf8))
+        #expect(event.type == "session_ended")
+        #expect(event.fields["nonces"] == "2048")
+        #expect(event.fields["search_seconds"] == "0.2")
     }
 
-    func testReconnectAtSameHeightResumesBuildButInvalidatesOldJob() throws {
+    @Test func testReconnectAtSameHeightResumesBuildButInvalidatesOldJob() throws {
         let coordinator = makeCoordinator(percent: 0)
         coordinator.configure(userClient: FakeStratumClient(), donationClient: nil)
         coordinator.start()
         defer { coordinator.stop() }
         coordinator.handle(.job(makeJob(generation: 1)), recipient: .user)
-        let original = try XCTUnwrap(coordinator.nextJob())
+        let original = try #require(coordinator.nextJob())
         let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
         var checks = 0
-        XCTAssertThrowsError(try solver.buildDataset(
-            height: original.height, tableSize: 257, preserveOnCancellation: true,
-            shouldContinue: {
-                checks += 1
-                if checks == 3 {
-                    coordinator.handle(.disconnected("local test"), recipient: .user)
-                }
-                return coordinator.isHeightCurrent(original.height)
-            })) { error in
-                guard case MetalSolverError.cancelled = error else {
-                    return XCTFail("Expected cancellation, got \(error)")
-                }
-            }
-        XCTAssertFalse(coordinator.isCurrent(original))
-        XCTAssertFalse(coordinator.isHeightCurrent(original.height))
-        XCTAssertThrowsError(try solver.datasetElements(at: [0]))
+        #expect {
+            try solver.buildDataset(
+                height: original.height, tableSize: 257, preserveOnCancellation: true,
+                shouldContinue: {
+                    checks += 1
+                    if checks == 3 {
+                        coordinator.handle(.disconnected("local test"), recipient: .user)
+                    }
+                    return coordinator.isHeightCurrent(original.height)
+                })
+        } throws: { error in
+            if case MetalSolverError.cancelled = error { true } else { false }
+        }
+        #expect(!coordinator.isCurrent(original))
+        #expect(!coordinator.isHeightCurrent(original.height))
+        #expect(throws: (any Error).self) { try solver.datasetElements(at: [0]) }
 
         coordinator.handle(.authorized, recipient: .user)
         coordinator.handle(.job(makeJob(generation: 2)), recipient: .user)
-        let resumed = try XCTUnwrap(coordinator.nextJob())
+        let resumed = try #require(coordinator.nextJob())
         _ = try solver.buildDataset(
             height: resumed.height, tableSize: 257, preserveOnCancellation: true,
             shouldContinue: { coordinator.isHeightCurrent(resumed.height) })
-        XCTAssertFalse(coordinator.isCurrent(original))
-        XCTAssertTrue(coordinator.isCurrent(resumed))
-        XCTAssertEqual(solver.datasetWorkMetrics().buildCommandsCompleted, 5)
-        XCTAssertEqual(solver.datasetWorkMetrics().coldBuildsResumed, 1)
-        XCTAssertEqual(solver.datasetWorkMetrics().coldBuildResumedElements, 128)
+        #expect(!coordinator.isCurrent(original))
+        #expect(coordinator.isCurrent(resumed))
+        #expect(solver.datasetWorkMetrics().buildCommandsCompleted == 5)
+        #expect(solver.datasetWorkMetrics().coldBuildsResumed == 1)
+        #expect(solver.datasetWorkMetrics().coldBuildResumedElements == 128)
         let indices = [0, 127, 128, 256]
-        XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+        #expect(try solver.datasetElements(at: indices) == (try indices.map {
             try AutolykosV2.datasetElement(index: $0, height: resumed.height)
-        })
+        }))
     }
 
-    func testRecipientRoundTripInvalidatesPendingReconnect() {
+    @Test func testRecipientRoundTripInvalidatesPendingReconnect() {
         let user = FakeStratumClient()
         let coordinator = makeCoordinator(percent: 1, cycleSeconds: 100)
         coordinator.configure(userClient: user, donationClient: FakeStratumClient())
@@ -142,13 +144,13 @@ final class MiningCoordinatorTests: XCTestCase {
         coordinator.handle(.disconnected("local test"), recipient: .user)
         coordinator.advanceSchedule(to: 99)
         coordinator.advanceSchedule(to: 100)
-        XCTAssertEqual(user.connectCount, 2)
+        #expect(user.connectCount == 2)
         Thread.sleep(forTimeInterval: 1.7)
-        XCTAssertEqual(user.connectCount, 2)
+        #expect(user.connectCount == 2)
         coordinator.stop()
     }
 
-    func testAuthorizationInvalidatesPendingReconnect() {
+    @Test func testAuthorizationInvalidatesPendingReconnect() {
         let user = FakeStratumClient()
         let coordinator = makeCoordinator(percent: 0)
         coordinator.configure(userClient: user, donationClient: nil)
@@ -156,11 +158,11 @@ final class MiningCoordinatorTests: XCTestCase {
         coordinator.handle(.disconnected("local test"), recipient: .user)
         coordinator.handle(.authorized, recipient: .user)
         Thread.sleep(forTimeInterval: 1.7)
-        XCTAssertEqual(user.connectCount, 1)
+        #expect(user.connectCount == 1)
         coordinator.stop()
     }
 
-    func testPoolMessagesRedactCredentialsWithoutRedactingCounters() throws {
+    @Test func testPoolMessagesRedactCredentialsWithoutRedactingCounters() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: url) }
         let coordinator = MiningCoordinator(
@@ -173,21 +175,21 @@ final class MiningCoordinatorTests: XCTestCase {
         coordinator.handle(.shareResult(id: 10, accepted: false,
             message: "WALLET_SENTINEL secret/password secret%2Fpassword"), recipient: .user)
         coordinator.handle(.protocolError("invalid WALLET_SENTINEL secret/password"), recipient: .user)
-        XCTAssertFalse(coordinator.stats.snapshot().lastError!.contains("secret/password"))
+        #expect(!coordinator.stats.snapshot().lastError!.contains("secret/password"))
         coordinator.stop()
         let text = try String(contentsOf: url, encoding: .utf8)
         for secret in ["WALLET_SENTINEL", "secret/password", "secret%2Fpassword"] {
-            XCTAssertFalse(text.contains(secret))
+            #expect(!text.contains(secret))
         }
         let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
         let events = try text.split(separator: "\n").map {
             try decoder.decode(MinerEvent.self, from: Data($0.utf8))
         }
-        XCTAssertEqual(events.last?.fields["shares_rejected"], "1")
-        XCTAssertEqual(events.last?.fields["protocol_errors"], "1")
+        #expect(events.last?.fields["shares_rejected"] == "1")
+        #expect(events.last?.fields["protocol_errors"] == "1")
     }
 
-    func testDisabledDonationNeverConnectsDonationClient() throws {
+    @Test func testDisabledDonationNeverConnectsDonationClient() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()
         let coordinator = makeCoordinator(percent: 0)
@@ -195,45 +197,45 @@ final class MiningCoordinatorTests: XCTestCase {
 
         coordinator.start()
 
-        XCTAssertEqual(user.connectCount, 1)
-        XCTAssertEqual(donation.connectCount, 0)
-        XCTAssertEqual(coordinator.stats.snapshot().donation.percent, 0)
-        XCTAssertEqual(coordinator.stats.snapshot().donation.activeRecipient, .user)
+        #expect(user.connectCount == 1)
+        #expect(donation.connectCount == 0)
+        #expect(coordinator.stats.snapshot().donation.percent == 0)
+        #expect(coordinator.stats.snapshot().donation.activeRecipient == .user)
         coordinator.stop()
     }
 
-    func testScheduledSwitchInvalidatesOldWorkAndDonationFailureFallsBack() throws {
+    @Test func testScheduledSwitchInvalidatesOldWorkAndDonationFailureFallsBack() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()
         let coordinator = makeCoordinator(percent: 1, cycleSeconds: 100)
         coordinator.configure(userClient: user, donationClient: donation)
         coordinator.start()
         coordinator.handle(.job(makeJob(generation: 1)), recipient: .user)
-        let oldWork = try XCTUnwrap(coordinator.nextJob())
+        let oldWork = try #require(coordinator.nextJob())
 
         coordinator.advanceSchedule(to: 99)
 
-        XCTAssertEqual(user.disconnectCount, 1)
-        XCTAssertEqual(donation.connectCount, 1)
-        XCTAssertFalse(coordinator.isCurrent(oldWork))
-        XCTAssertEqual(coordinator.stats.snapshot().donation.activeRecipient, .donation)
+        #expect(user.disconnectCount == 1)
+        #expect(donation.connectCount == 1)
+        #expect(!coordinator.isCurrent(oldWork))
+        #expect(coordinator.stats.snapshot().donation.activeRecipient == .donation)
 
         coordinator.handle(.disconnected("test failure"), recipient: .donation)
 
         let failed = coordinator.stats.snapshot().donation
-        XCTAssertEqual(failed.failures, 1)
-        XCTAssertEqual(failed.activeRecipient, .user)
-        XCTAssertEqual(user.connectCount, 2)
-        XCTAssertEqual(donation.connectCount, 1)
+        #expect(failed.failures == 1)
+        #expect(failed.activeRecipient == .user)
+        #expect(user.connectCount == 2)
+        #expect(donation.connectCount == 1)
 
         coordinator.advanceSchedule(to: 100)
-        XCTAssertEqual(donation.connectCount, 1, "failed time must not be retried in the user window")
+        #expect(donation.connectCount == 1, "failed time must not be retried in the user window")
         coordinator.advanceSchedule(to: 199)
-        XCTAssertEqual(donation.connectCount, 2, "donation retries only in the next donation window")
+        #expect(donation.connectCount == 2, "donation retries only in the next donation window")
         coordinator.stop()
     }
 
-    func testDonationSharesAndSearchAreAttributedWithoutChangingScheduling() throws {
+    @Test func testDonationSharesAndSearchAreAttributedWithoutChangingScheduling() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()
         let coordinator = makeCoordinator(percent: 100, cycleSeconds: 100)
@@ -242,7 +244,7 @@ final class MiningCoordinatorTests: XCTestCase {
         let job = makeJob(generation: 1)
         coordinator.handle(.authorized, recipient: .donation)
         coordinator.handle(.job(job), recipient: .donation)
-        let work = try XCTUnwrap(coordinator.nextJob())
+        let work = try #require(coordinator.nextJob())
 
         coordinator.stats.recordBatch(
             nonces: 1_000,
@@ -258,17 +260,17 @@ final class MiningCoordinatorTests: XCTestCase {
             recipient: .donation)
 
         let snapshot = coordinator.stats.snapshot()
-        XCTAssertEqual(snapshot.nonces, 1_000)
-        XCTAssertEqual(snapshot.donation.nonces, 1_000)
-        XCTAssertEqual(snapshot.donation.searchSeconds, 0.2)
-        XCTAssertEqual(snapshot.donation.shares.found, 1)
-        XCTAssertEqual(snapshot.donation.shares.submitted, 1)
-        XCTAssertEqual(snapshot.donation.shares.accepted, 1)
-        XCTAssertEqual(donation.submittedNonces, [42])
+        #expect(snapshot.nonces == 1_000)
+        #expect(snapshot.donation.nonces == 1_000)
+        #expect(snapshot.donation.searchSeconds == 0.2)
+        #expect(snapshot.donation.shares.found == 1)
+        #expect(snapshot.donation.shares.submitted == 1)
+        #expect(snapshot.donation.shares.accepted == 1)
+        #expect(donation.submittedNonces == [42])
         coordinator.stop()
     }
 
-    func testDonationJobWithoutAuthorizationStillTimesOut() throws {
+    @Test func testDonationJobWithoutAuthorizationStillTimesOut() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()
         let coordinator = makeCoordinator(
@@ -284,13 +286,13 @@ final class MiningCoordinatorTests: XCTestCase {
             Thread.sleep(forTimeInterval: 0.005)
         }
 
-        XCTAssertEqual(coordinator.stats.snapshot().donation.failures, 1)
-        XCTAssertEqual(coordinator.stats.snapshot().donation.activeRecipient, .user)
-        XCTAssertEqual(user.connectCount, 1)
+        #expect(coordinator.stats.snapshot().donation.failures == 1)
+        #expect(coordinator.stats.snapshot().donation.activeRecipient == .user)
+        #expect(user.connectCount == 1)
         coordinator.stop()
     }
 
-    func testAuthorizedDonationJobCancelsTimeout() throws {
+    @Test func testAuthorizedDonationJobCancelsTimeout() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()
         let coordinator = makeCoordinator(
@@ -304,13 +306,13 @@ final class MiningCoordinatorTests: XCTestCase {
 
         Thread.sleep(forTimeInterval: 0.05)
 
-        XCTAssertEqual(coordinator.stats.snapshot().donation.failures, 0)
-        XCTAssertEqual(coordinator.stats.snapshot().donation.activeRecipient, .donation)
-        XCTAssertEqual(user.connectCount, 0)
+        #expect(coordinator.stats.snapshot().donation.failures == 0)
+        #expect(coordinator.stats.snapshot().donation.activeRecipient == .donation)
+        #expect(user.connectCount == 0)
         coordinator.stop()
     }
 
-    func testDonationTimeoutReturnsToUser() throws {
+    @Test func testDonationTimeoutReturnsToUser() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()
         let coordinator = makeCoordinator(
@@ -325,13 +327,13 @@ final class MiningCoordinatorTests: XCTestCase {
             Thread.sleep(forTimeInterval: 0.005)
         }
 
-        XCTAssertEqual(coordinator.stats.snapshot().donation.failures, 1)
-        XCTAssertEqual(coordinator.stats.snapshot().donation.activeRecipient, .user)
-        XCTAssertEqual(user.connectCount, 1)
+        #expect(coordinator.stats.snapshot().donation.failures == 1)
+        #expect(coordinator.stats.snapshot().donation.activeRecipient == .user)
+        #expect(user.connectCount == 1)
         coordinator.stop()
     }
 
-    func testConcurrentDonationFailuresTriggerOneFailback() throws {
+    @Test func testConcurrentDonationFailuresTriggerOneFailback() throws {
         let user = FakeStratumClient()
         let donation = FakeStratumClient()
         let coordinator = makeCoordinator(percent: 100, cycleSeconds: 100)
@@ -342,9 +344,9 @@ final class MiningCoordinatorTests: XCTestCase {
             coordinator.handle(.disconnected("simultaneous failure"), recipient: .donation)
         }
 
-        XCTAssertEqual(coordinator.stats.snapshot().donation.failures, 1)
-        XCTAssertEqual(coordinator.stats.snapshot().donation.activeRecipient, .user)
-        XCTAssertEqual(user.connectCount, 1)
+        #expect(coordinator.stats.snapshot().donation.failures == 1)
+        #expect(coordinator.stats.snapshot().donation.activeRecipient == .user)
+        #expect(user.connectCount == 1)
         coordinator.stop()
     }
 

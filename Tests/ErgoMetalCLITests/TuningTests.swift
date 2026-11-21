@@ -1,9 +1,9 @@
 import Foundation
-import XCTest
+import Testing
 import MetalErgoCore
 
-final class TuningTests: XCTestCase {
-    func testBudgetCancelsBuildWithOneElementChunks() throws {
+struct TuningTests {
+    @Test func testBudgetCancelsBuildWithOneElementChunks() throws {
         let probe = try MetalAutolykosSolver()
         let info = probe.info
         let fingerprint = GPUArchitectureFingerprint(
@@ -21,9 +21,9 @@ final class TuningTests: XCTestCase {
             searchKernel: .search, budget: AutotuningBudget(seconds: 0.2),
             fingerprint: fingerprint)
         let outcome = try tuner.run()
-        XCTAssertEqual(outcome.measurements["budget_expired"], 1)
-        XCTAssertEqual(outcome.measurements["autotune.complete"], 0)
-        XCTAssertLessThan(try XCTUnwrap(outcome.measurements["autotune.elapsed_seconds"]), 5)
-        XCTAssertEqual(outcome.configuration, fixed.applying(to: .safeFallback(profile: .peak)))
+        #expect(outcome.measurements["budget_expired"] == 1)
+        #expect(outcome.measurements["autotune.complete"] == 0)
+        #expect(try #require(outcome.measurements["autotune.elapsed_seconds"]) < 5)
+        #expect(outcome.configuration == fixed.applying(to: .safeFallback(profile: .peak)))
     }
 }

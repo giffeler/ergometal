@@ -1,10 +1,10 @@
 import Darwin
 import Foundation
-import XCTest
+import Testing
 @testable import MetalErgoCore
 
-final class StatisticsHTTPServerTests: XCTestCase {
-    func testFragmentedRequestWaitsForCompleteHeaders() throws {
+struct StatisticsHTTPServerTests {
+    @Test func testFragmentedRequestWaitsForCompleteHeaders() throws {
         let server = StatisticsHTTPServer(store: StatisticsStore())
         try server.start(bind: "127.0.0.1:0")
         defer { server.stop() }
@@ -12,31 +12,31 @@ final class StatisticsHTTPServerTests: XCTestCase {
         defer { Darwin.close(socket) }
         try send("GET /hea", to: socket)
         var descriptor = pollfd(fd: socket, events: Int16(POLLIN), revents: 0)
-        XCTAssertEqual(poll(&descriptor, 1, 100), 0, "responded to an incomplete request")
+        #expect(poll(&descriptor, 1, 100) == 0, "responded to an incomplete request")
         try send("lthz HTTP/1.1\r\nHost: local", to: socket)
-        XCTAssertEqual(poll(&descriptor, 1, 100), 0, "responded before the final header terminator")
+        #expect(poll(&descriptor, 1, 100) == 0, "responded before the final header terminator")
         try send("host\r\n\r\n", to: socket)
-        XCTAssertTrue(try receive(from: socket).hasPrefix("HTTP/1.1 200 OK\r\n"))
+        #expect(try receive(from: socket).hasPrefix("HTTP/1.1 200 OK\r\n"))
     }
 
-    func testOversizedHeaderIsRejected() throws {
+    @Test func testOversizedHeaderIsRejected() throws {
         let server = StatisticsHTTPServer(store: StatisticsStore())
         try server.start(bind: "127.0.0.1:0")
         defer { server.stop() }
         let socket = try connect(to: server)
         defer { Darwin.close(socket) }
         try send("GET /healthz HTTP/1.1\r\nX-Large: " + String(repeating: "a", count: 8_192), to: socket)
-        XCTAssertTrue(try receive(from: socket).hasPrefix("HTTP/1.1 431 "))
+        #expect(try receive(from: socket).hasPrefix("HTTP/1.1 431 "))
     }
 
-    func testIncompleteHeaderConnectionTimesOut() throws {
+    @Test func testIncompleteHeaderConnectionTimesOut() throws {
         let server = StatisticsHTTPServer(store: StatisticsStore(), requestTimeout: 0.05)
         try server.start(bind: "127.0.0.1:0")
         defer { server.stop() }
         let socket = try connect(to: server)
         defer { Darwin.close(socket) }
         try send("GET /", to: socket)
-        XCTAssertEqual(try receive(from: socket), "")
+        #expect(try receive(from: socket) == "")
     }
 
     private func connect(to server: StatisticsHTTPServer) throws -> Int32 {
@@ -44,7 +44,7 @@ final class StatisticsHTTPServerTests: XCTestCase {
         while server.listeningPort == nil && Date() < deadline {
             Thread.sleep(forTimeInterval: 0.005)
         }
-        let port = try XCTUnwrap(server.listeningPort)
+        let port = try #require(server.listeningPort)
         let socket = Darwin.socket(AF_INET, SOCK_STREAM, 0)
         guard socket >= 0 else { throw posixError() }
         var timeout = timeval(tv_sec: 2, tv_usec: 0)

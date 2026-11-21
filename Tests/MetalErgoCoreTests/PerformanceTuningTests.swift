@@ -1,52 +1,50 @@
 import Foundation
-import XCTest
+import Testing
 @testable import MetalErgoCore
 
-final class PerformanceTuningTests: XCTestCase {
-    func testSafeFallbackIsM1CompatibleAndProfileSpecific() {
+struct PerformanceTuningTests {
+    @Test func testSafeFallbackIsM1CompatibleAndProfileSpecific() {
         let efficiency = MetalExecutionConfiguration.safeFallback(profile: .efficiency)
-        XCTAssertEqual(efficiency.searchThreadgroupSize, 128)
-        XCTAssertEqual(efficiency.datasetThreadgroupSize, 256)
-        XCTAssertEqual(efficiency.batchNonces, 262_144)
-        XCTAssertEqual(efficiency.prebuildBatchNonces, 65_536)
-        XCTAssertEqual(efficiency.synchronousBuildChunkElements, 2_097_152)
-        XCTAssertEqual(efficiency.prefetchBuildChunkElements, 1_048_576)
-        XCTAssertEqual(efficiency.searchPipelineDepth, 2)
-        XCTAssertEqual(efficiency.buildPipelineDepth, 2)
-        XCTAssertEqual(
-            MetalExecutionConfiguration.safeFallback(profile: .peak).batchNonces,
-            1_048_576)
+        #expect(efficiency.searchThreadgroupSize == 128)
+        #expect(efficiency.datasetThreadgroupSize == 256)
+        #expect(efficiency.batchNonces == 262_144)
+        #expect(efficiency.prebuildBatchNonces == 65_536)
+        #expect(efficiency.synchronousBuildChunkElements == 2_097_152)
+        #expect(efficiency.prefetchBuildChunkElements == 1_048_576)
+        #expect(efficiency.searchPipelineDepth == 2)
+        #expect(efficiency.buildPipelineDepth == 2)
+        #expect(MetalExecutionConfiguration.safeFallback(profile: .peak).batchNonces == 1_048_576)
     }
 
-    func testKnownFamilyClassificationStopsAtInstalledSDKBoundary() {
-        XCTAssertNil(GPUArchitectureFingerprint.highestKnownAppleFamily(
-            supportedFamilies: []))
-        XCTAssertEqual(GPUArchitectureFingerprint.highestKnownAppleFamily(
-            supportedFamilies: [7]), 7)
-        XCTAssertEqual(GPUArchitectureFingerprint.highestKnownAppleFamily(
-            supportedFamilies: [7, 8]), 8)
-        XCTAssertEqual(GPUArchitectureFingerprint.highestKnownAppleFamily(
-            supportedFamilies: [7, 8, 9]), 9)
-        XCTAssertEqual(GPUArchitectureFingerprint.highestKnownAppleFamily(
-            supportedFamilies: [7, 8, 9, 10]), 10)
-        XCTAssertEqual(GPUArchitectureFingerprint.highestKnownAppleFamily(
-            supportedFamilies: [7, 11]), 7)
+    @Test func testKnownFamilyClassificationStopsAtInstalledSDKBoundary() {
+        #expect(GPUArchitectureFingerprint.highestKnownAppleFamily(
+            supportedFamilies: []) == nil)
+        #expect(GPUArchitectureFingerprint.highestKnownAppleFamily(
+            supportedFamilies: [7]) == 7)
+        #expect(GPUArchitectureFingerprint.highestKnownAppleFamily(
+            supportedFamilies: [7, 8]) == 8)
+        #expect(GPUArchitectureFingerprint.highestKnownAppleFamily(
+            supportedFamilies: [7, 8, 9]) == 9)
+        #expect(GPUArchitectureFingerprint.highestKnownAppleFamily(
+            supportedFamilies: [7, 8, 9, 10]) == 10)
+        #expect(GPUArchitectureFingerprint.highestKnownAppleFamily(
+            supportedFamilies: [7, 11]) == 7)
     }
 
-    func testGenerationClassificationIncludesM6WithoutInventingMetalFamily() {
-        XCTAssertEqual(GPUArchitectureFingerprint.generation(for: "Apple M1 Max"), .m1)
-        XCTAssertEqual(GPUArchitectureFingerprint.generation(for: "Apple M2 Pro"), .m2)
-        XCTAssertEqual(GPUArchitectureFingerprint.generation(for: "Apple M3 Ultra"), .m3)
-        XCTAssertEqual(GPUArchitectureFingerprint.generation(for: "Apple M4"), .m4)
-        XCTAssertEqual(GPUArchitectureFingerprint.generation(for: "Apple M5 Ultra"), .m5)
-        XCTAssertEqual(GPUArchitectureFingerprint.generation(for: "Apple M6 Pro"), .m6)
-        XCTAssertEqual(GPUArchitectureFingerprint.generation(for: "Future Apple GPU"), .unknown)
+    @Test func testGenerationClassificationIncludesM6WithoutInventingMetalFamily() {
+        #expect(GPUArchitectureFingerprint.generation(for: "Apple M1 Max") == .m1)
+        #expect(GPUArchitectureFingerprint.generation(for: "Apple M2 Pro") == .m2)
+        #expect(GPUArchitectureFingerprint.generation(for: "Apple M3 Ultra") == .m3)
+        #expect(GPUArchitectureFingerprint.generation(for: "Apple M4") == .m4)
+        #expect(GPUArchitectureFingerprint.generation(for: "Apple M5 Ultra") == .m5)
+        #expect(GPUArchitectureFingerprint.generation(for: "Apple M6 Pro") == .m6)
+        #expect(GPUArchitectureFingerprint.generation(for: "Future Apple GPU") == .unknown)
         let future = fingerprint(name: "Apple M6", architecture: "applegpu_future", family: nil)
-        XCTAssertEqual(future.generation, .m6)
-        XCTAssertEqual(future.familyName, "unknown")
+        #expect(future.generation == .m6)
+        #expect(future.familyName == "unknown")
     }
 
-    func testResolverPrecedenceIsExplicitThenCacheThenTuningThenFallback() {
+    @Test func testResolverPrecedenceIsExplicitThenCacheThenTuningThenFallback() {
         var tuned = MetalExecutionConfiguration.safeFallback(profile: .efficiency)
         tuned.batchNonces = 131_072
         tuned.searchPipelineDepth = 3
@@ -57,49 +55,39 @@ final class PerformanceTuningTests: XCTestCase {
         let resolved = MetalTuningResolver.resolve(
             profile: .efficiency, cached: cached, tuned: tuned,
             overrides: overrides, cacheKey: "test")
-        XCTAssertEqual(resolved.configuration.batchNonces, 777_216)
-        XCTAssertEqual(resolved.configuration.searchPipelineDepth, 4)
-        XCTAssertEqual(resolved.provenance["batch_nonces"], .explicit)
-        XCTAssertEqual(resolved.provenance["search_pipeline_depth"], .cache)
-        XCTAssertEqual(resolved.cacheKey, "test")
+        #expect(resolved.configuration.batchNonces == 777_216)
+        #expect(resolved.configuration.searchPipelineDepth == 4)
+        #expect(resolved.provenance["batch_nonces"] == .explicit)
+        #expect(resolved.provenance["search_pipeline_depth"] == .cache)
+        #expect(resolved.cacheKey == "test")
     }
 
-    func testCandidateSetsRespectSIMDWidthAndImprovementGate() {
-        XCTAssertEqual(
-            AutotuningPolicy.buildThreadgroupCandidates(width: 32, limit: 256),
-            [32, 64, 128, 256])
-        XCTAssertEqual(
-            AutotuningPolicy.buildThreadgroupCandidates(width: 64, limit: 128),
-            [64, 128])
-        XCTAssertEqual(
-            AutotuningPolicy.buildThreadgroupCandidates(width: 32, limit: 32), [32])
-        XCTAssertEqual(
-            AutotuningPolicy.buildThreadgroupCandidates(width: 64, limit: 32), [])
-        XCTAssertEqual(
-            AutotuningPolicy.threadgroupCandidates(width: 32, limit: 256),
-            [64, 128, 256])
-        XCTAssertEqual(
-            AutotuningPolicy.threadgroupCandidates(width: 64, limit: 128),
-            [64, 128])
-        XCTAssertFalse(AutotuningPolicy.isMeaningfulImprovement(
+    @Test func testCandidateSetsRespectSIMDWidthAndImprovementGate() {
+        #expect(AutotuningPolicy.buildThreadgroupCandidates(width: 32, limit: 256) == [32, 64, 128, 256])
+        #expect(AutotuningPolicy.buildThreadgroupCandidates(width: 64, limit: 128) == [64, 128])
+        #expect(AutotuningPolicy.buildThreadgroupCandidates(width: 32, limit: 32) == [32])
+        #expect(AutotuningPolicy.buildThreadgroupCandidates(width: 64, limit: 32) == [])
+        #expect(AutotuningPolicy.threadgroupCandidates(width: 32, limit: 256) == [64, 128, 256])
+        #expect(AutotuningPolicy.threadgroupCandidates(width: 64, limit: 128) == [64, 128])
+        #expect(!AutotuningPolicy.isMeaningfulImprovement(
             baseline: [100, 100], candidate: [101.99, 101.99]))
-        XCTAssertTrue(AutotuningPolicy.isMeaningfulImprovement(
+        #expect(AutotuningPolicy.isMeaningfulImprovement(
             baseline: [100, 100], candidate: [102, 102]))
-        XCTAssertEqual(AutotuningPolicy.pipelineDepthCandidates, [1, 2, 3, 4])
+        #expect(AutotuningPolicy.pipelineDepthCandidates == [1, 2, 3, 4])
     }
 
-    func testBudgetAndThermalSafetyGates() {
+    @Test func testBudgetAndThermalSafetyGates() {
         let start = Date(timeIntervalSince1970: 1_000)
         let budget = AutotuningBudget(seconds: 120, now: start)
-        XCTAssertTrue(budget.hasTimeRemaining(at: start.addingTimeInterval(119.999)))
-        XCTAssertFalse(budget.hasTimeRemaining(at: start.addingTimeInterval(120)))
-        XCTAssertFalse(AutotuningSafety.shouldAbort(thermalState: .nominal))
-        XCTAssertFalse(AutotuningSafety.shouldAbort(thermalState: .fair))
-        XCTAssertTrue(AutotuningSafety.shouldAbort(thermalState: .serious))
-        XCTAssertTrue(AutotuningSafety.shouldAbort(thermalState: .critical))
+        #expect(budget.hasTimeRemaining(at: start.addingTimeInterval(119.999)))
+        #expect(!budget.hasTimeRemaining(at: start.addingTimeInterval(120)))
+        #expect(!AutotuningSafety.shouldAbort(thermalState: .nominal))
+        #expect(!AutotuningSafety.shouldAbort(thermalState: .fair))
+        #expect(AutotuningSafety.shouldAbort(thermalState: .serious))
+        #expect(AutotuningSafety.shouldAbort(thermalState: .critical))
     }
 
-    func testCacheIsKeyedByArchitectureBinaryAndProfileAndRecoversFromCorruption() throws {
+    @Test func testCacheIsKeyedByArchitectureBinaryAndProfileAndRecoversFromCorruption() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("ergometal-tuning-tests-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: directory) }
@@ -111,26 +99,26 @@ final class PerformanceTuningTests: XCTestCase {
             configuration: .safeFallback(profile: .efficiency),
             measurements: ["search.ratio": 1.03],
             tunedAt: Date(timeIntervalSince1970: 123))
-        XCTAssertTrue(store.save(record))
-        XCTAssertEqual(store.load(identity: identity), record)
-        let permissions = try XCTUnwrap(
+        #expect(store.save(record))
+        #expect(store.load(identity: identity) == record)
+        let permissions = try #require(
             FileManager.default.attributesOfItem(atPath: url.path)[.posixPermissions]
                 as? NSNumber)
-        XCTAssertEqual(permissions.intValue & 0o777, 0o600)
-        XCTAssertNil(store.load(identity: cacheIdentity(
-            binary: "bbb", architecture: "g16", profile: .efficiency)))
-        XCTAssertNil(store.load(identity: cacheIdentity(
-            binary: "aaa", architecture: "g17", profile: .efficiency)))
-        XCTAssertNil(store.load(identity: cacheIdentity(
-            binary: "aaa", architecture: "g16", profile: .peak)))
+        #expect(permissions.intValue & 0o777 == 0o600)
+        #expect(store.load(identity: cacheIdentity(
+            binary: "bbb", architecture: "g16", profile: .efficiency)) == nil)
+        #expect(store.load(identity: cacheIdentity(
+            binary: "aaa", architecture: "g17", profile: .efficiency)) == nil)
+        #expect(store.load(identity: cacheIdentity(
+            binary: "aaa", architecture: "g16", profile: .peak)) == nil)
 
         try Data("not-json".utf8).write(to: url)
-        XCTAssertNil(store.load(identity: identity))
-        XCTAssertTrue(store.save(record))
-        XCTAssertEqual(store.load(identity: identity), record)
+        #expect(store.load(identity: identity) == nil)
+        #expect(store.save(record))
+        #expect(store.load(identity: identity) == record)
     }
 
-    func testConcurrentCacheWritesRemainDecodableAndPreserveRecords() {
+    @Test func testConcurrentCacheWritesRemainDecodableAndPreserveRecords() {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("ergometal-tuning-concurrency-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: directory) }
@@ -145,11 +133,11 @@ final class PerformanceTuningTests: XCTestCase {
                 measurements: [:]))
         }
         for identity in identities {
-            XCTAssertNotNil(store.load(identity: identity))
+            #expect(store.load(identity: identity) != nil)
         }
     }
 
-    func testSemanticallyInvalidCacheRecordsAreIgnoredAndReplaceable() throws {
+    @Test func testSemanticallyInvalidCacheRecordsAreIgnoredAndReplaceable() throws {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("ergometal-invalid-cache-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: directory) }
@@ -159,8 +147,8 @@ final class PerformanceTuningTests: XCTestCase {
         let valid = AutotuneRecord(identity: identity,
             configuration: .safeFallback(profile: .peak), measurements: [:],
             tunedAt: Date(timeIntervalSince1970: 123))
-        XCTAssertTrue(store.save(valid))
-        let original = try XCTUnwrap(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
+        #expect(store.save(valid))
+        let original = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any])
         for (field, value) in [
             ("batchNonces", 0), ("prebuildBatchNonces", -1),
             ("synchronousBuildChunkElements", 0), ("prefetchBuildChunkElements", 16_777_217),
@@ -168,42 +156,42 @@ final class PerformanceTuningTests: XCTestCase {
             ("searchThreadgroupSize", 33), ("datasetThreadgroupSize", 2_048)
         ] {
             var envelope = original
-            var records = try XCTUnwrap(envelope["records"] as? [[String: Any]])
-            var configuration = try XCTUnwrap(records[0]["configuration"] as? [String: Any])
+            var records = try #require(envelope["records"] as? [[String: Any]])
+            var configuration = try #require(records[0]["configuration"] as? [String: Any])
             configuration[field] = value
             records[0]["configuration"] = configuration
             envelope["records"] = records
             try JSONSerialization.data(withJSONObject: envelope).write(to: url)
-            XCTAssertNil(store.load(identity: identity), "accepted invalid \(field)=\(value)")
+            #expect(store.load(identity: identity) == nil, "accepted invalid \(field)=\(value)")
         }
-        XCTAssertTrue(store.save(valid))
-        XCTAssertEqual(store.load(identity: identity), valid)
+        #expect(store.save(valid))
+        #expect(store.load(identity: identity) == valid)
         var invalid = valid.configuration
         invalid.batchNonces = 0
-        XCTAssertFalse(store.save(AutotuneRecord(identity: identity,
+        #expect(!store.save(AutotuneRecord(identity: identity,
             configuration: invalid, measurements: [:])))
-        XCTAssertEqual(store.load(identity: identity), valid)
+        #expect(store.load(identity: identity) == valid)
     }
 
-    func testExecutionConfigurationRespectsDevicePipelineLimits() {
+    @Test func testExecutionConfigurationRespectsDevicePipelineLimits() {
         let limited = GPUArchitectureFingerprint(deviceName: "Test", architectureName: "test",
             highestKnownAppleFamily: nil, searchThreadExecutionWidth: 32,
             searchMaxThreadsPerThreadgroup: 64, buildThreadExecutionWidth: 32,
             buildMaxThreadsPerThreadgroup: 128, operatingSystemBuild: "test")
         var configuration = MetalExecutionConfiguration.safeFallback(profile: .peak)
-        XCTAssertFalse(configuration.isValid(for: limited))
+        #expect(!configuration.isValid(for: limited))
         configuration.searchThreadgroupSize = 64
         configuration.datasetThreadgroupSize = 128
-        XCTAssertTrue(configuration.isValid(for: limited))
+        #expect(configuration.isValid(for: limited))
     }
 
-    func testPipelineDepthsOneThroughFourPreserveSearchConsensus() throws {
+    @Test func testPipelineDepthsOneThroughFourPreserveSearchConsensus() throws {
         let message = Blake2b256.hash(Array("pipeline-depth-test".utf8))
         for depth in 1...4 {
             let solver = try MetalAutolykosSolver(
                 searchPipelineDepth: depth, buildPipelineDepth: depth)
-            XCTAssertEqual(solver.searchPipelineDepth, depth)
-            XCTAssertEqual(solver.buildPipelineDepth, depth)
+            #expect(solver.searchPipelineDepth == depth)
+            #expect(solver.buildPipelineDepth == depth)
             _ = try solver.buildDataset(height: 614_400, tableSize: 1_024)
             let hit = try AutolykosV2.hit(
                 message: message,
@@ -218,131 +206,130 @@ final class PerformanceTuningTests: XCTestCase {
                     baseNonce: 42, nonceCount: 1)
             }
             for submission in submissions {
-                XCTAssertEqual(try submission.wait().candidates, [42])
+                #expect(try submission.wait().candidates == [42])
             }
         }
-        XCTAssertThrowsError(try MetalAutolykosSolver(searchPipelineDepth: 0))
-        XCTAssertThrowsError(try MetalAutolykosSolver(buildPipelineDepth: 5))
+        #expect(throws: (any Error).self) { try MetalAutolykosSolver(searchPipelineDepth: 0) }
+        #expect(throws: (any Error).self) { try MetalAutolykosSolver(buildPipelineDepth: 5) }
     }
 
-    func testBuildPipelineDepthsOneThroughFourDrainSubmittedWorkOnCancellation() throws {
+    @Test func testBuildPipelineDepthsOneThroughFourDrainSubmittedWorkOnCancellation() throws {
         for depth in 1...4 {
             let solver = try MetalAutolykosSolver(
                 synchronousBuildChunkElements: 64,
                 searchPipelineDepth: 1,
                 buildPipelineDepth: depth)
             var checks = 0
-            XCTAssertThrowsError(try solver.buildDataset(
-                height: 614_400,
-                tableSize: 1_024,
-                shouldContinue: {
-                    checks += 1
-                    return checks <= depth
-                })) { error in
-                    guard case MetalSolverError.cancelled = error else {
-                        return XCTFail("Expected cancellation at depth \(depth), got \(error)")
-                    }
-                }
+            #expect {
+                try solver.buildDataset(
+                    height: 614_400,
+                    tableSize: 1_024,
+                    shouldContinue: {
+                        checks += 1
+                        return checks <= depth
+                    })
+            } throws: { error in
+                if case MetalSolverError.cancelled = error { true } else { false }
+            }
             let metrics = solver.datasetWorkMetrics()
-            XCTAssertEqual(metrics.buildCommandsCompleted, depth)
-            XCTAssertEqual(metrics.coldBuildsCancelled, 1)
-            XCTAssertEqual(
-                metrics.coldBuildGPUSeconds,
-                metrics.buildCommandGPUSeconds,
-                accuracy: 1e-9)
+            #expect(metrics.buildCommandsCompleted == depth)
+            #expect(metrics.coldBuildsCancelled == 1)
+            #expect(abs(metrics.coldBuildGPUSeconds - metrics.buildCommandGPUSeconds) <= 1e-9)
         }
     }
 
-    func testCancelledBuildResumesDrainedChunksWithExactConsensusAtEveryDepth() throws {
+    @Test func testCancelledBuildResumesDrainedChunksWithExactConsensusAtEveryDepth() throws {
         for depth in 1...4 {
             let solver = try MetalAutolykosSolver(
                 synchronousBuildChunkElements: 64, datasetThreadgroupSize: 32,
                 buildPipelineDepth: depth)
             try cancelBuild(solver, height: 614_400, tableSize: 1_025, afterChecks: depth)
-            XCTAssertThrowsError(try solver.datasetElements(at: [0]))
-            XCTAssertThrowsError(try solver.search(
-                message: [UInt8](repeating: 0, count: 32), target: .zero,
-                baseNonce: 0, nonceCount: 1))
-            XCTAssertEqual(solver.datasetWorkMetrics().buildCommandsCompleted, depth)
+            #expect(throws: (any Error).self) { try solver.datasetElements(at: [0]) }
+            #expect(throws: (any Error).self) {
+                try solver.search(
+                    message: [UInt8](repeating: 0, count: 32), target: .zero,
+                    baseNonce: 0, nonceCount: 1)
+            }
+            #expect(solver.datasetWorkMetrics().buildCommandsCompleted == depth)
 
             let build = try solver.buildDataset(
                 height: 614_400, tableSize: 1_025, preserveOnCancellation: true)
             let indices = [0, 1, 63, 64, depth * 64 - 1, depth * 64, 1_024]
-            XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+            #expect(try solver.datasetElements(at: indices) == (try indices.map {
                 try AutolykosV2.datasetElement(index: $0, height: 614_400)
-            })
+            }))
             let metrics = solver.datasetWorkMetrics()
-            XCTAssertEqual(metrics.buildCommandsCompleted, 17, "Recomputed a completed chunk")
-            XCTAssertEqual(metrics.coldBuildsCancelled, 1)
-            XCTAssertEqual(metrics.coldBuildsCompleted, 1)
-            XCTAssertEqual(metrics.coldBuildsFailed, 0)
-            XCTAssertEqual(metrics.coldBuildsResumed, 1)
-            XCTAssertEqual(metrics.coldBuildResumedElements, UInt64(depth * 64))
-            XCTAssertEqual(build.seconds, metrics.coldBuildWallSeconds, accuracy: 1e-9)
-            XCTAssertEqual(build.gpuSeconds, metrics.coldBuildGPUSeconds, accuracy: 1e-9)
-            XCTAssertEqual(build.gpuSeconds, metrics.buildCommandGPUSeconds, accuracy: 1e-9)
-            XCTAssertEqual(try solver.buildDataset(
-                height: 614_400, tableSize: 1_025).source, .cached)
-            XCTAssertEqual(solver.datasetWorkMetrics(), metrics)
+            #expect(metrics.buildCommandsCompleted == 17, "Recomputed a completed chunk")
+            #expect(metrics.coldBuildsCancelled == 1)
+            #expect(metrics.coldBuildsCompleted == 1)
+            #expect(metrics.coldBuildsFailed == 0)
+            #expect(metrics.coldBuildsResumed == 1)
+            #expect(metrics.coldBuildResumedElements == UInt64(depth * 64))
+            #expect(abs(build.seconds - metrics.coldBuildWallSeconds) <= 1e-9)
+            #expect(abs(build.gpuSeconds - metrics.coldBuildGPUSeconds) <= 1e-9)
+            #expect(abs(build.gpuSeconds - metrics.buildCommandGPUSeconds) <= 1e-9)
+            #expect(try solver.buildDataset(
+                height: 614_400, tableSize: 1_025).source == .cached)
+            #expect(solver.datasetWorkMetrics() == metrics)
         }
     }
 
-    func testResumptionRejectsDifferentHeightSizeAndOptOut() throws {
+    @Test func testResumptionRejectsDifferentHeightSizeAndOptOut() throws {
         for (height, size, preserve) in [(614_401, 257, true), (614_400, 513, true), (614_400, 257, false)] {
             let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
             try cancelBuild(solver, height: 614_400, tableSize: 257, afterChecks: 2)
             _ = try solver.buildDataset(
                 height: height, tableSize: size, preserveOnCancellation: preserve)
             let metrics = solver.datasetWorkMetrics()
-            XCTAssertEqual(metrics.coldBuildsResumed, 0)
-            XCTAssertEqual(metrics.buildCommandsCompleted, 2 + (size + 63) / 64)
+            #expect(metrics.coldBuildsResumed == 0)
+            #expect(metrics.buildCommandsCompleted == 2 + (size + 63) / 64)
             let indices = [0, 63, 64, size - 1]
-            XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+            #expect(try solver.datasetElements(at: indices) == (try indices.map {
                 try AutolykosV2.datasetElement(index: $0, height: height)
-            })
+            }))
         }
     }
 
-    func testRepeatedCancellationPreservesOneContiguousPrefix() throws {
+    @Test func testRepeatedCancellationPreservesOneContiguousPrefix() throws {
         let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
         try cancelBuild(solver, height: 614_400, tableSize: 513, afterChecks: 2)
         try cancelBuild(solver, height: 614_400, tableSize: 513, afterChecks: 2)
         let build = try solver.buildDataset(
             height: 614_400, tableSize: 513, preserveOnCancellation: true)
         let metrics = solver.datasetWorkMetrics()
-        XCTAssertEqual(metrics.buildCommandsCompleted, 9)
-        XCTAssertEqual(metrics.coldBuildsResumed, 2)
-        XCTAssertEqual(metrics.coldBuildResumedElements, 128 + 256)
-        XCTAssertEqual(metrics.coldBuildsCancelled, 2)
-        XCTAssertEqual(build.seconds, metrics.coldBuildWallSeconds, accuracy: 1e-9)
+        #expect(metrics.buildCommandsCompleted == 9)
+        #expect(metrics.coldBuildsResumed == 2)
+        #expect(metrics.coldBuildResumedElements == 128 + 256)
+        #expect(metrics.coldBuildsCancelled == 2)
+        #expect(abs(build.seconds - metrics.coldBuildWallSeconds) <= 1e-9)
         let indices = [0, 127, 128, 255, 256, 512]
-        XCTAssertEqual(try solver.datasetElements(at: indices), try indices.map {
+        #expect(try solver.datasetElements(at: indices) == (try indices.map {
             try AutolykosV2.datasetElement(index: $0, height: 614_400)
-        })
+        }))
     }
 
-    func testCancellationBeforeSubmissionDoesNotRetainAnEmptyBuild() throws {
+    @Test func testCancellationBeforeSubmissionDoesNotRetainAnEmptyBuild() throws {
         let solver = try MetalAutolykosSolver(synchronousBuildChunkElements: 64)
         try cancelBuild(solver, height: 614_400, tableSize: 257, afterChecks: 0)
         _ = try solver.buildDataset(height: 614_400, tableSize: 257, preserveOnCancellation: true)
-        XCTAssertEqual(solver.datasetWorkMetrics().coldBuildsResumed, 0)
-        XCTAssertEqual(solver.datasetWorkMetrics().buildCommandsCompleted, 5)
+        #expect(solver.datasetWorkMetrics().coldBuildsResumed == 0)
+        #expect(solver.datasetWorkMetrics().buildCommandsCompleted == 5)
     }
 
     private func cancelBuild(
         _ solver: MetalAutolykosSolver, height: Int, tableSize: Int, afterChecks limit: Int
     ) throws {
         var checks = 0
-        XCTAssertThrowsError(try solver.buildDataset(
-            height: height, tableSize: tableSize, preserveOnCancellation: true,
-            shouldContinue: {
-                checks += 1
-                return checks <= limit
-            })) { error in
-                guard case MetalSolverError.cancelled = error else {
-                    return XCTFail("Expected cancellation, got \(error)")
-                }
-            }
+        #expect {
+            try solver.buildDataset(
+                height: height, tableSize: tableSize, preserveOnCancellation: true,
+                shouldContinue: {
+                    checks += 1
+                    return checks <= limit
+                })
+        } throws: { error in
+            if case MetalSolverError.cancelled = error { true } else { false }
+        }
     }
 
     private func fingerprint(

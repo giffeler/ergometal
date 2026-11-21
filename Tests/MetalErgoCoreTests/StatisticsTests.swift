@@ -1,8 +1,9 @@
-import XCTest
+import Foundation
+import Testing
 @testable import MetalErgoCore
 
-final class StatisticsTests: XCTestCase {
-    func testIndependentHashrateWindowPreservesCumulativeAndDonationAccounting() {
+struct StatisticsTests {
+    @Test func testIndependentHashrateWindowPreservesCumulativeAndDonationAccounting() {
         let stats = StatisticsStore(mode: .mining)
         stats.update { $0.state = .searching }
         let target = UInt256(limbs: [0x8000_0000] + [UInt32](repeating: 0, count: 7))
@@ -13,69 +14,69 @@ final class StatisticsTests: XCTestCase {
             nonces: 100, gpuSeconds: 0.4, wallSeconds: 0,
             hashrateWindowSeconds: 1, shareTarget: target, recipient: .donation)
         let searching = stats.snapshot()
-        XCTAssertEqual(searching.hashrate, 100)
-        XCTAssertEqual(searching.averageHashrate, 100)
-        XCTAssertEqual(searching.nonces, 200)
-        XCTAssertEqual(searching.searchSeconds, 2)
-        XCTAssertEqual(searching.gpuSeconds, 0.7, accuracy: 1e-12)
-        XCTAssertEqual(searching.shares.expected, 100)
-        XCTAssertEqual(searching.donation.nonces, 200)
-        XCTAssertEqual(searching.donation.searchSeconds, 2)
-        XCTAssertEqual(searching.donation.shares.expected, 100)
+        #expect(searching.hashrate == 100)
+        #expect(searching.averageHashrate == 100)
+        #expect(searching.nonces == 200)
+        #expect(searching.searchSeconds == 2)
+        #expect(abs(searching.gpuSeconds - 0.7) <= 1e-12)
+        #expect(searching.shares.expected == 100)
+        #expect(searching.donation.nonces == 200)
+        #expect(searching.donation.searchSeconds == 2)
+        #expect(searching.donation.shares.expected == 100)
 
         // No new completions during dataset work or idle time. The active
         // average stays fixed; effective rate and duty include the whole gap.
         stats.update { $0.state = .buildingDataset }
         let building = stats.refresh(at: searching.startedAt.addingTimeInterval(10))
-        XCTAssertEqual(building.hashrate, 0)
-        XCTAssertEqual(building.averageHashrate, 100)
-        XCTAssertEqual(building.effectiveHashrate, 20)
-        XCTAssertEqual(building.searchDutyCycle, 0.2)
+        #expect(building.hashrate == 0)
+        #expect(building.averageHashrate == 100)
+        #expect(building.effectiveHashrate == 20)
+        #expect(building.searchDutyCycle == 0.2)
         stats.update { $0.state = .reconnecting }
         let idle = stats.refresh(at: searching.startedAt.addingTimeInterval(20))
-        XCTAssertEqual(idle.hashrate, 0)
-        XCTAssertEqual(idle.nonces, 200)
-        XCTAssertEqual(idle.searchSeconds, 2)
-        XCTAssertEqual(idle.averageHashrate, 100)
-        XCTAssertEqual(idle.effectiveHashrate, 10)
-        XCTAssertEqual(idle.searchDutyCycle, 0.1)
-        XCTAssertEqual(idle.averageHashrate * idle.searchDutyCycle, idle.effectiveHashrate)
-        XCTAssertEqual(idle.eventFields["hashrate"], "0.0")
-        XCTAssertEqual(idle.eventFields["effective_hashrate"], "10.0")
-        XCTAssertEqual(idle.eventFields["search_duty_cycle"], "0.1")
+        #expect(idle.hashrate == 0)
+        #expect(idle.nonces == 200)
+        #expect(idle.searchSeconds == 2)
+        #expect(idle.averageHashrate == 100)
+        #expect(idle.effectiveHashrate == 10)
+        #expect(idle.searchDutyCycle == 0.1)
+        #expect(idle.averageHashrate * idle.searchDutyCycle == idle.effectiveHashrate)
+        #expect(idle.eventFields["hashrate"] == "0.0")
+        #expect(idle.eventFields["effective_hashrate"] == "10.0")
+        #expect(idle.eventFields["search_duty_cycle"] == "0.1")
     }
 
-    func testNonSearchStatesClearRateAndLateCompletionsCannotRestoreIt() throws {
+    @Test func testNonSearchStatesClearRateAndLateCompletionsCannotRestoreIt() throws {
         for nextState: MinerState in [.starting, .buildingDataset, .reconnecting, .stopped, .failed] {
             let stats = StatisticsStore(mode: .mining)
             stats.update { $0.state = .searching }
             stats.recordBatch(nonces: 100, gpuSeconds: 0.1, wallSeconds: 1)
-            XCTAssertEqual(stats.snapshot().hashrate, 100)
+            #expect(stats.snapshot().hashrate == 100)
             stats.update { $0.state = nextState }
-            XCTAssertEqual(stats.snapshot().hashrate, 0)
+            #expect(stats.snapshot().hashrate == 0)
             // A reconnect or recipient switch can precede the old work's drain.
             stats.recordBatch(
                 nonces: 100, gpuSeconds: 0.1, wallSeconds: 1, hashrateWindowSeconds: 2)
             let snapshot = stats.refresh()
-            XCTAssertEqual(snapshot.hashrate, 0)
-            XCTAssertEqual(snapshot.nonces, 200)
-            XCTAssertEqual(snapshot.searchSeconds, 2)
-            XCTAssertEqual(snapshot.averageHashrate, 100)
-            XCTAssertEqual(snapshot.eventFields["hashrate"], "0.0")
-            let json = try XCTUnwrap(JSONSerialization.jsonObject(
+            #expect(snapshot.hashrate == 0)
+            #expect(snapshot.nonces == 200)
+            #expect(snapshot.searchSeconds == 2)
+            #expect(snapshot.averageHashrate == 100)
+            #expect(snapshot.eventFields["hashrate"] == "0.0")
+            let json = try #require(JSONSerialization.jsonObject(
                 with: JSONEncoder().encode(snapshot)) as? [String: Any])
-            XCTAssertEqual(json["hashrate"] as? Double, 0)
-            XCTAssertTrue(stats.prometheus().split(separator: "\n").contains {
+            #expect(json["hashrate"] as? Double == 0)
+            #expect(stats.prometheus().split(separator: "\n").contains {
                 $0.hasPrefix("ergometal_hashrate{") && $0.hasSuffix(" 0.0")
             })
             stats.update { $0.state = .searching }
-            XCTAssertEqual(stats.snapshot().hashrate, 0)
+            #expect(stats.snapshot().hashrate == 0)
             stats.recordBatch(nonces: 300, gpuSeconds: 0.1, wallSeconds: 1)
-            XCTAssertEqual(stats.snapshot().hashrate, 300)
+            #expect(stats.snapshot().hashrate == 300)
         }
     }
 
-    func testStatusAndEventFieldsExposeResolvedTuning() {
+    @Test func testStatusAndEventFieldsExposeResolvedTuning() {
         let configuration = MetalExecutionConfiguration.safeFallback(profile: .peak)
         let tuning = MetalTuningResolver.resolve(
             profile: .peak,
@@ -99,17 +100,17 @@ final class StatisticsTests: XCTestCase {
             device: device,
             autotuneMode: .auto,
             tuning: tuning).snapshot()
-        XCTAssertEqual(snapshot.autotuneMode, .auto)
-        XCTAssertEqual(snapshot.tuning?.configuration, configuration)
-        XCTAssertEqual(snapshot.device?.generation, .m6)
-        XCTAssertEqual(snapshot.eventFields["gpu_architecture"], "applegpu_future")
-        XCTAssertEqual(snapshot.eventFields["gpu_family"], "unknown")
-        XCTAssertEqual(snapshot.eventFields["autotune_cache_key"], "cache-key")
-        XCTAssertEqual(snapshot.eventFields["search_pipeline_depth"], "2")
-        XCTAssertEqual(snapshot.eventFields["tuning_source_batch_nonces"], "cache")
+        #expect(snapshot.autotuneMode == .auto)
+        #expect(snapshot.tuning?.configuration == configuration)
+        #expect(snapshot.device?.generation == .m6)
+        #expect(snapshot.eventFields["gpu_architecture"] == "applegpu_future")
+        #expect(snapshot.eventFields["gpu_family"] == "unknown")
+        #expect(snapshot.eventFields["autotune_cache_key"] == "cache-key")
+        #expect(snapshot.eventFields["search_pipeline_depth"] == "2")
+        #expect(snapshot.eventFields["tuning_source_batch_nonces"] == "cache")
     }
 
-    func testPrometheusIsStableAndContainsNoPoolCredentials() {
+    @Test func testPrometheusIsStableAndContainsNoPoolCredentials() {
         let stats = StatisticsStore(mode: .mining)
         stats.update { snapshot in
             snapshot.poolHost = "pool.example:1234"
@@ -121,27 +122,27 @@ final class StatisticsTests: XCTestCase {
         }
         stats.recordBatch(nonces: 65_536, gpuSeconds: 0.1, wallSeconds: 0.2)
         let output = stats.prometheus()
-        XCTAssertTrue(output.contains("ergometal_nonces_total"))
-        XCTAssertTrue(output.contains("ergometal_effective_hashrate"))
-        XCTAssertTrue(output.contains("ergometal_search_duty_cycle"))
-        XCTAssertTrue(output.contains("ergometal_dataset_prefetch_progress"))
-        XCTAssertTrue(output.contains("ergometal_dataset_activations_total"))
-        XCTAssertTrue(output.contains("ergometal_dataset_prefetch_builds_completed_total"))
-        XCTAssertTrue(output.contains("ergometal_gpu_build_commands_completed_total"))
-        XCTAssertTrue(output.contains("ergometal_gpu_search_commands_completed_total"))
-        XCTAssertTrue(output.contains("ergometal_gpu_search_command_wall_busy_seconds_total"))
-        XCTAssertTrue(output.contains("ergometal_gpu_search_command_gpu_busy_seconds_total"))
-        XCTAssertTrue(output.contains("ergometal_gpu_search_command_non_gpu_busy_seconds_total"))
-        XCTAssertTrue(output.contains("ergometal_shares_accepted_total"))
-        XCTAssertTrue(output.contains("ergometal_shares_expected_total"))
-        XCTAssertTrue(output.contains("ergometal_share_luck_ratio"))
-        XCTAssertTrue(output.contains("ergometal_soc_temperature_average_celsius"))
-        XCTAssertTrue(output.contains("ergometal_soc_temperature_maximum_celsius"))
-        XCTAssertTrue(output.contains("ergometal_soc_temperature_session_peak_celsius"))
-        XCTAssertFalse(output.contains("pool.example"))
+        #expect(output.contains("ergometal_nonces_total"))
+        #expect(output.contains("ergometal_effective_hashrate"))
+        #expect(output.contains("ergometal_search_duty_cycle"))
+        #expect(output.contains("ergometal_dataset_prefetch_progress"))
+        #expect(output.contains("ergometal_dataset_activations_total"))
+        #expect(output.contains("ergometal_dataset_prefetch_builds_completed_total"))
+        #expect(output.contains("ergometal_gpu_build_commands_completed_total"))
+        #expect(output.contains("ergometal_gpu_search_commands_completed_total"))
+        #expect(output.contains("ergometal_gpu_search_command_wall_busy_seconds_total"))
+        #expect(output.contains("ergometal_gpu_search_command_gpu_busy_seconds_total"))
+        #expect(output.contains("ergometal_gpu_search_command_non_gpu_busy_seconds_total"))
+        #expect(output.contains("ergometal_shares_accepted_total"))
+        #expect(output.contains("ergometal_shares_expected_total"))
+        #expect(output.contains("ergometal_share_luck_ratio"))
+        #expect(output.contains("ergometal_soc_temperature_average_celsius"))
+        #expect(output.contains("ergometal_soc_temperature_maximum_celsius"))
+        #expect(output.contains("ergometal_soc_temperature_session_peak_celsius"))
+        #expect(!output.contains("pool.example"))
     }
 
-    func testRefreshAndEventFieldsCaptureLongTermStatisticsWithoutPoolHost() {
+    @Test func testRefreshAndEventFieldsCaptureLongTermStatisticsWithoutPoolHost() {
         let stats = StatisticsStore(mode: .mining, profile: "peak")
         stats.update { snapshot in
             snapshot.poolHost = "private.pool.example:1234"
@@ -159,19 +160,19 @@ final class StatisticsTests: XCTestCase {
         let snapshot = stats.refresh()
         let fields = snapshot.eventFields
 
-        XCTAssertEqual(fields["nonces"], "65536")
-        XCTAssertEqual(fields["height"], "1839730")
-        XCTAssertEqual(fields["job_target_hex"], String(repeating: "ab", count: 32))
-        XCTAssertEqual(fields["dataset_source"], "prefetched")
-        XCTAssertEqual(fields["shares_expected"], "4.25")
-        XCTAssertEqual(fields["shares_accepted"], "3")
-        XCTAssertGreaterThan(Double(fields["elapsed_seconds"] ?? "") ?? -1, 0)
-        XCTAssertGreaterThan(Double(fields["effective_hashrate"] ?? "") ?? 0, 0)
-        XCTAssertFalse(fields.values.contains { $0.contains("private.pool.example") })
-        XCTAssertNil(fields["pool_host"])
+        #expect(fields["nonces"] == "65536")
+        #expect(fields["height"] == "1839730")
+        #expect(fields["job_target_hex"] == String(repeating: "ab", count: 32))
+        #expect(fields["dataset_source"] == "prefetched")
+        #expect(fields["shares_expected"] == "4.25")
+        #expect(fields["shares_accepted"] == "3")
+        #expect(Double(fields["elapsed_seconds"] ?? "") ?? -1 > 0)
+        #expect(Double(fields["effective_hashrate"] ?? "") ?? 0 > 0)
+        #expect(!fields.values.contains { $0.contains("private.pool.example") })
+        #expect(fields["pool_host"] == nil)
     }
 
-    func testEventFieldsIncludeSoCTemperatureTelemetry() {
+    @Test func testEventFieldsIncludeSoCTemperatureTelemetry() {
         var snapshot = StatisticsStore().snapshot()
         snapshot.socTemperatureAverageCelsius = 61.25
         snapshot.socTemperatureMaximumCelsius = 67.5
@@ -181,14 +182,14 @@ final class StatisticsTests: XCTestCase {
 
         let fields = snapshot.eventFields
 
-        XCTAssertEqual(fields["soc_temperature_average_celsius"], "61.25")
-        XCTAssertEqual(fields["soc_temperature_maximum_celsius"], "67.5")
-        XCTAssertEqual(fields["soc_temperature_session_peak_celsius"], "72.25")
-        XCTAssertEqual(fields["soc_temperature_sensor_count"], "12")
-        XCTAssertEqual(fields["temperature_source"], "iohid_soc_die")
+        #expect(fields["soc_temperature_average_celsius"] == "61.25")
+        #expect(fields["soc_temperature_maximum_celsius"] == "67.5")
+        #expect(fields["soc_temperature_session_peak_celsius"] == "72.25")
+        #expect(fields["soc_temperature_sensor_count"] == "12")
+        #expect(fields["temperature_source"] == "iohid_soc_die")
     }
 
-    func testEventFieldsIncludePipelineOccupancyTelemetry() {
+    @Test func testEventFieldsIncludePipelineOccupancyTelemetry() {
         let device = MetalDeviceInfo(
             name: "Test GPU",
             registryID: 1,
@@ -200,11 +201,11 @@ final class StatisticsTests: XCTestCase {
 
         let fields = StatisticsStore(device: device).snapshot().eventFields
 
-        XCTAssertEqual(fields["search_pipeline_max_threads"], "256")
-        XCTAssertEqual(fields["build_pipeline_max_threads"], "512")
+        #expect(fields["search_pipeline_max_threads"] == "256")
+        #expect(fields["build_pipeline_max_threads"] == "512")
     }
 
-    func testExpectedSharesUseFull256BitTarget() {
+    @Test func testExpectedSharesUseFull256BitTarget() {
         let stats = StatisticsStore()
         let halfRangeTarget = UInt256(
             limbs: [0x8000_0000] + [UInt32](repeating: 0, count: 7))
@@ -215,10 +216,10 @@ final class StatisticsTests: XCTestCase {
             wallSeconds: 0.2,
             shareTarget: halfRangeTarget)
 
-        XCTAssertEqual(stats.snapshot().shares.expected, 500, accuracy: 1e-12)
+        #expect(abs(stats.snapshot().shares.expected - 500) <= 1e-12)
     }
 
-    func testDonationTelemetryIsAttributedAndCredentialFree() {
+    @Test func testDonationTelemetryIsAttributedAndCredentialFree() {
         let stats = StatisticsStore(mode: .mining)
         let halfRangeTarget = UInt256(
             limbs: [0x8000_0000] + [UInt32](repeating: 0, count: 7))
@@ -240,34 +241,34 @@ final class StatisticsTests: XCTestCase {
         let fields = snapshot.eventFields
         let prometheus = stats.prometheus()
 
-        XCTAssertEqual(snapshot.donation.percent, 1)
-        XCTAssertEqual(snapshot.donation.scheduledRecipient, .donation)
-        XCTAssertEqual(snapshot.donation.activeRecipient, .donation)
-        XCTAssertEqual(snapshot.donation.nonces, 1_000)
-        XCTAssertEqual(snapshot.donation.searchSeconds, 0.2)
-        XCTAssertEqual(snapshot.donation.shares.expected, 500, accuracy: 1e-12)
-        XCTAssertEqual(snapshot.donation.shares.accepted, 1)
-        XCTAssertEqual(snapshot.donation.switches, 1)
-        XCTAssertEqual(snapshot.donation.failures, 1)
-        XCTAssertEqual(fields["donation_percent"], "1")
-        XCTAssertEqual(fields["donation_active_recipient"], "donation")
-        XCTAssertTrue(prometheus.contains("ergometal_donation_percent"))
-        XCTAssertTrue(prometheus.contains("ergometal_donation_nonces_total"))
-        XCTAssertFalse(fields.values.contains { $0.contains("2miners") })
-        XCTAssertFalse(prometheus.contains("2miners"))
+        #expect(snapshot.donation.percent == 1)
+        #expect(snapshot.donation.scheduledRecipient == .donation)
+        #expect(snapshot.donation.activeRecipient == .donation)
+        #expect(snapshot.donation.nonces == 1_000)
+        #expect(snapshot.donation.searchSeconds == 0.2)
+        #expect(abs(snapshot.donation.shares.expected - 500) <= 1e-12)
+        #expect(snapshot.donation.shares.accepted == 1)
+        #expect(snapshot.donation.switches == 1)
+        #expect(snapshot.donation.failures == 1)
+        #expect(fields["donation_percent"] == "1")
+        #expect(fields["donation_active_recipient"] == "donation")
+        #expect(prometheus.contains("ergometal_donation_percent"))
+        #expect(prometheus.contains("ergometal_donation_nonces_total"))
+        #expect(!fields.values.contains { $0.contains("2miners") })
+        #expect(!prometheus.contains("2miners"))
     }
 
-    func testStatisticsStoreSerializesConcurrentUpdates() {
+    @Test func testStatisticsStoreSerializesConcurrentUpdates() {
         let stats = StatisticsStore()
 
         DispatchQueue.concurrentPerform(iterations: 128) { _ in
             stats.update { $0.shares.accepted += 1 }
         }
 
-        XCTAssertEqual(stats.snapshot().shares.accepted, 128)
+        #expect(stats.snapshot().shares.accepted == 128)
     }
 
-    func testDatasetAndPrefetchMetricsRemainCumulative() {
+    @Test func testDatasetAndPrefetchMetricsRemainCumulative() {
         let stats = StatisticsStore(mode: .mining)
         let build = DatasetBuild(
             height: 1_840_500,
@@ -307,43 +308,43 @@ final class StatisticsTests: XCTestCase {
         let snapshot = stats.refresh()
         let fields = snapshot.eventFields
 
-        XCTAssertEqual(fields["dataset_cold_builds_resumed_total"], "1")
-        XCTAssertEqual(fields["dataset_cold_build_resumed_elements_total"], "128")
+        #expect(fields["dataset_cold_builds_resumed_total"] == "1")
+        #expect(fields["dataset_cold_build_resumed_elements_total"] == "128")
 
-        XCTAssertEqual(snapshot.datasetActivations, 1)
-        XCTAssertEqual(snapshot.datasetPrefetchedActivations, 1)
-        XCTAssertEqual(snapshot.datasetPrefetchWaits, 1)
-        XCTAssertEqual(snapshot.datasetActivationSecondsTotal, 0.4, accuracy: 1e-12)
-        XCTAssertEqual(snapshot.datasetPrefetchWaitSecondsTotal, 0.35, accuracy: 1e-12)
-        XCTAssertEqual(fields["dataset_build_gpu_seconds"], "1.25")
-        XCTAssertEqual(fields["dataset_prefetch_builds_completed_total"], "2")
-        XCTAssertEqual(fields["dataset_prefetch_builds_cancelled_total"], "1")
-        XCTAssertEqual(fields["dataset_prefetch_wasted_gpu_seconds_total"], "0.75")
-        XCTAssertEqual(fields["gpu_build_commands_completed_total"], "12")
-        XCTAssertEqual(fields["gpu_build_command_non_gpu_seconds_total"], "0.25")
-        XCTAssertEqual(fields["gpu_search_commands_completed_total"], "24")
-        XCTAssertEqual(fields["gpu_search_command_non_gpu_seconds_total"], "0.25")
-        XCTAssertEqual(fields["gpu_search_command_wall_busy_seconds_total"], "2.9")
-        XCTAssertEqual(fields["gpu_search_command_gpu_busy_seconds_total"], "2.4")
-        XCTAssertEqual(fields["gpu_search_command_non_gpu_busy_seconds_total"], "0.5")
+        #expect(snapshot.datasetActivations == 1)
+        #expect(snapshot.datasetPrefetchedActivations == 1)
+        #expect(snapshot.datasetPrefetchWaits == 1)
+        #expect(abs(snapshot.datasetActivationSecondsTotal - 0.4) <= 1e-12)
+        #expect(abs(snapshot.datasetPrefetchWaitSecondsTotal - 0.35) <= 1e-12)
+        #expect(fields["dataset_build_gpu_seconds"] == "1.25")
+        #expect(fields["dataset_prefetch_builds_completed_total"] == "2")
+        #expect(fields["dataset_prefetch_builds_cancelled_total"] == "1")
+        #expect(fields["dataset_prefetch_wasted_gpu_seconds_total"] == "0.75")
+        #expect(fields["gpu_build_commands_completed_total"] == "12")
+        #expect(fields["gpu_build_command_non_gpu_seconds_total"] == "0.25")
+        #expect(fields["gpu_search_commands_completed_total"] == "24")
+        #expect(fields["gpu_search_command_non_gpu_seconds_total"] == "0.25")
+        #expect(fields["gpu_search_command_wall_busy_seconds_total"] == "2.9")
+        #expect(fields["gpu_search_command_gpu_busy_seconds_total"] == "2.4")
+        #expect(fields["gpu_search_command_non_gpu_busy_seconds_total"] == "0.5")
         let prometheus = stats.prometheus()
-        XCTAssertTrue(prometheus.split(separator: "\n").contains {
+        #expect(prometheus.split(separator: "\n").contains {
             $0.hasPrefix("ergometal_gpu_search_command_wall_busy_seconds_total{")
                 && $0.hasSuffix(" 2.9")
         })
-        XCTAssertTrue(prometheus.split(separator: "\n").contains {
+        #expect(prometheus.split(separator: "\n").contains {
             $0.hasPrefix("ergometal_gpu_search_command_gpu_busy_seconds_total{")
                 && $0.hasSuffix(" 2.4")
         })
-        XCTAssertTrue(prometheus.split(separator: "\n").contains {
+        #expect(prometheus.split(separator: "\n").contains {
             $0.hasPrefix("ergometal_gpu_search_command_non_gpu_busy_seconds_total{")
                 && $0.hasSuffix(" 0.5")
         })
-        XCTAssertEqual(Double(fields["share_luck_ratio"] ?? ""), 0.75)
-        XCTAssertGreaterThanOrEqual(Double(fields["search_duty_cycle"] ?? "") ?? -1, 0)
+        #expect(Double(fields["share_luck_ratio"] ?? "") == 0.75)
+        #expect(Double(fields["search_duty_cycle"] ?? "") ?? -1 >= 0)
     }
 
-    func testEventWriterAppendsValidJSONLinesAcrossRestarts() throws {
+    @Test func testEventWriterAppendsValidJSONLinesAcrossRestarts() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: url) }
         let stats = StatisticsStore()
@@ -356,15 +357,15 @@ final class StatisticsTests: XCTestCase {
             writer.write(MinerEvent(sessionID: stats.snapshot().sessionID, type: "second"))
         }
         let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
-        XCTAssertEqual(lines.count, 2)
+        #expect(lines.count == 2)
         let objects = try lines.map {
-            try XCTUnwrap(JSONSerialization.jsonObject(
+            try #require(JSONSerialization.jsonObject(
                 with: Data($0.utf8)) as? [String: Any])
         }
-        XCTAssertEqual(objects.compactMap { $0["type"] as? String }, ["first", "second"])
+        #expect(objects.compactMap { $0["type"] as? String } == ["first", "second"])
     }
 
-    func testEventWriterSerializesConcurrentWrites() throws {
+    @Test func testEventWriterSerializesConcurrentWrites() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: url) }
         let writer = JSONLEventWriter(path: url.path)
@@ -377,18 +378,18 @@ final class StatisticsTests: XCTestCase {
                 fields: ["index": String(index)]))
         }
 
-        XCTAssertNil(writer.failure)
+        #expect(writer.failure == nil)
         let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
-        XCTAssertEqual(lines.count, 64)
+        #expect(lines.count == 64)
         let indices = try Set(lines.map { line in
-            let object = try XCTUnwrap(
+            let object = try #require(
                 JSONSerialization.jsonObject(with: Data(line.utf8)) as? [String: Any])
-            return try XCTUnwrap((object["fields"] as? [String: String])?["index"])
+            return try #require((object["fields"] as? [String: String])?["index"])
         })
-        XCTAssertEqual(indices.count, 64)
+        #expect(indices.count == 64)
     }
 
-    func testIndependentEventWritersAppendCompleteRecordsToTheSameFile() throws {
+    @Test func testIndependentEventWritersAppendCompleteRecordsToTheSameFile() throws {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: url) }
         let writers = (0..<8).map { _ in JSONLEventWriter(path: url.path) }
@@ -398,16 +399,16 @@ final class StatisticsTests: XCTestCase {
                 sessionID: sessionID, type: "shared_file",
                 fields: ["index": String(index), "payload": String(repeating: "x", count: 32_768)]))
         }
-        for writer in writers { XCTAssertNil(writer.failure) }
+        for writer in writers { #expect(writer.failure == nil) }
         let lines = try String(contentsOf: url, encoding: .utf8).split(separator: "\n")
-        XCTAssertEqual(lines.count, 128)
+        #expect(lines.count == 128)
         let decoder = JSONDecoder(); decoder.dateDecodingStrategy = .iso8601
         let events = try lines.map { try decoder.decode(MinerEvent.self, from: Data($0.utf8)) }
-        XCTAssertEqual(Set(events.compactMap { $0.fields["index"] }).count, 128)
-        XCTAssertTrue(events.allSatisfy { $0.fields["payload"]?.count == 32_768 })
+        #expect(Set(events.compactMap { $0.fields["index"] }).count == 128)
+        #expect(events.allSatisfy { $0.fields["payload"]?.count == 32_768 })
     }
 
-    func testMinerStatusLineSelectsARepresentationThatFitsTheTerminal() {
+    @Test func testMinerStatusLineSelectsARepresentationThatFitsTheTerminal() {
         var snapshot = StatisticsStore(mode: .mining).snapshot()
         snapshot.hashrate = 15_660_000
         snapshot.averageHashrate = 15_680_000
@@ -427,15 +428,15 @@ final class StatisticsTests: XCTestCase {
         for width in [200, 120, 80, 50, 20, 8, 1] {
             let line = MinerStatusLineFormatter.format(
                 snapshot, suffix: "shares=15/0", maximumColumns: width)
-            XCTAssertLessThanOrEqual(line.count, width, "line for width \(width): \(line)")
-            XCTAssertFalse(line.contains("\n"))
-            XCTAssertFalse(line.contains("\r"))
+            #expect(line.count <= width, "line for width \(width): \(line)")
+            #expect(!line.contains("\n"))
+            #expect(!line.contains("\r"))
         }
-        XCTAssertTrue(MinerStatusLineFormatter.format(
+        #expect(MinerStatusLineFormatter.format(
             snapshot, suffix: "shares=15/0", maximumColumns: 20).contains("sh=15/0"))
     }
 
-    func testMinerStatusLinePreservesFullTelemetryWhenSpaceAllows() {
+    @Test func testMinerStatusLinePreservesFullTelemetryWhenSpaceAllows() {
         var snapshot = StatisticsStore(mode: .mining).snapshot()
         snapshot.hashrate = 15_660_000
         snapshot.averageHashrate = 15_680_000
@@ -455,16 +456,16 @@ final class StatisticsTests: XCTestCase {
         let line = MinerStatusLineFormatter.format(
             snapshot, suffix: "shares=15/0", maximumColumns: 200)
 
-        XCTAssertTrue(line.contains("current="))
-        XCTAssertTrue(line.contains("avg="))
-        XCTAssertTrue(line.contains("effective="))
-        XCTAssertTrue(line.contains("duty="))
-        XCTAssertTrue(line.contains("prefetch="))
-        XCTAssertTrue(line.contains("temp="))
-        XCTAssertTrue(line.contains("expected="))
-        XCTAssertTrue(line.contains("luck="))
-        XCTAssertTrue(line.contains("nonces="))
-        XCTAssertTrue(line.contains("donation=1% role=donation"))
-        XCTAssertTrue(line.contains("shares=15/0"))
+        #expect(line.contains("current="))
+        #expect(line.contains("avg="))
+        #expect(line.contains("effective="))
+        #expect(line.contains("duty="))
+        #expect(line.contains("prefetch="))
+        #expect(line.contains("temp="))
+        #expect(line.contains("expected="))
+        #expect(line.contains("luck="))
+        #expect(line.contains("nonces="))
+        #expect(line.contains("donation=1% role=donation"))
+        #expect(line.contains("shares=15/0"))
     }
 }

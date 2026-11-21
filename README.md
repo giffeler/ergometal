@@ -100,13 +100,12 @@ for the complete counters, limitations, and log hashes.
 
 ## Standalone distribution
 
-The current public preview is **11 November 2026**:
-[notarized Apple Silicon ZIP](https://ios.gekko.de/apps/ergometal/download),
-[SHA-256 checksum](https://ios.gekko.de/apps/ergometal/ergometal-macos-arm64-2026-11-11-notarized.zip.sha256),
-and [release notes](Releases/2026-11-11.md).
-This production refresh uses Xcode 27.2 / Swift 6.4.2 and gekko's organization
-Developer ID. Existing algorithms and tuning are unchanged; this release makes
-no new performance claim.
+The **21 November 2026** public preview was built with Xcode 27.2 and Swift
+6.4.2. All 96 unit tests passed under Swift Testing in Debug and Release.
+[Notarized Apple Silicon ZIP](https://ios.gekko.de/apps/ergometal/download) ·
+[SHA-256 checksum](https://ios.gekko.de/apps/ergometal/ergometal-macos-arm64-2026-11-21-notarized.zip.sha256) ·
+[Release notes](Releases/2026-11-21.md).
+
 The earlier Swift 6.4 implementation work is described below.
 It uses Xcode 27 and Swift 6.4 to reduce allocation and copying in CPU
 consensus checks and Metal argument preparation. Fixed-size `InlineArray`
